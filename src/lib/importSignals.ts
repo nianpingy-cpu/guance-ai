@@ -131,6 +131,7 @@ function rowsFromJson(text: string): RawRow[] {
 
 
 export interface ParseSignalImportArgs {
+  simulated?: boolean;
   content: string;
   filename: string;
   prefix: string;
@@ -140,6 +141,7 @@ export interface ParseSignalImportArgs {
 
 /** Validates imported rows and returns only valid signals plus any generated sources. */
 export function parseSignalImport({
+  simulated = true,
   content,
   filename,
   prefix,
@@ -208,8 +210,11 @@ export function parseSignalImport({
         kind: category,
         publishedAt,
         url: url || undefined,
-        note: `由 ${filename} 导入的演示来源；导入后请人工核对。`,
-        simulated: true,
+        note: `由 ${filename} 人工导入；请核对原始来源。`,
+        simulated,
+        origin: simulated ? 'demo' : 'manual',
+        collectedAt: new Date().toISOString(),
+        rawContent: quote,
       };
       sources.push(source);
       generatedSources.push(source);

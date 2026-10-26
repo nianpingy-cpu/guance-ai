@@ -17,6 +17,7 @@ import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import { Settings } from '@/desktop/Settings';
 import { flushDesktop } from '@/desktop/client';
 import { AnalysisPanel } from '@/desktop/AnalysisPanel';
+import { CollectionPanel } from '@/desktop/CollectionPanel';
 
 function download(content: string, filename: string, type: string) {
   const url = URL.createObjectURL(new Blob([content], { type }));
@@ -75,6 +76,7 @@ export function AppShell() {
           <ErrorBoundary>
             <Outlet />
             {window.guance && location.pathname === '/strategy' && <AnalysisPanel />}
+            {window.guance && location.pathname === '/signals' && <CollectionPanel />}
           </ErrorBoundary>
         </main>
       </div>

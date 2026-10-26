@@ -3,9 +3,12 @@ import type { Command } from '../src/types/desktop';
 import { LocalDatabase } from './database';
 import { ModelService, providerSchema } from './models';
 import type { Vault } from './models';
+import { CollectionService, collectionSchema, platformSchema } from './collect';
 
 const id = z.string().min(1).max(200);
 export const commands = {
+  'collect.start': collectionSchema, 'collect.retry': z.object({ id }).strict(),
+  'connections.list': z.undefined(), 'connections.save': platformSchema, 'connections.remove': z.object({ platform: z.enum(['wechat', 'xiaohongshu', 'douyin']) }).strict(),
   'models.list': z.undefined(), 'models.save': providerSchema, 'models.remove': z.object({ id }).strict(), 'models.default': z.object({ id }).strict(), 'models.discover': z.object({ id }).strict(), 'models.test': z.object({ id }).strict(),
   'models.analyze': z.object({ projectId: id, signalIds: z.array(id).min(1).max(100) }).strict(),
   'jobs.list': z.object({ projectId: id }).strict(), 'jobs.cancel': z.object({ id }).strict(),
@@ -19,12 +22,18 @@ export const commands = {
 };
 export class DesktopService {
   readonly models: ModelService;
-  constructor(readonly database: LocalDatabase, vault: Vault) { this.models = new ModelService(database, vault); }
+  readonly collect: CollectionService;
+  constructor(readonly database: LocalDatabase, vault: Vault) { this.models = new ModelService(database, vault); this.collect = new CollectionService(database, this.models.jobs, vault); }
   async execute(command: string, input: unknown): Promise<unknown> {
     if (!Object.hasOwn(commands, command)) throw new Error('不支持的操作');
     const name = command as Command;
     const value = commands[name].parse(input);
     switch (name) {
+      case 'collect.start': return this.collect.start(commands[name].parse(value));
+      case 'collect.retry': return this.collect.retry(commands[name].parse(value).id);
+      case 'connections.list': return this.collect.connections();
+      case 'connections.save': return this.collect.saveConnection(value);
+      case 'connections.remove': return this.collect.removeConnection(commands[name].parse(value).platform);
       case 'models.list': return this.models.list();
       case 'models.save': return this.models.save(value);
       case 'models.remove': return this.models.remove(commands[name].parse(value).id);

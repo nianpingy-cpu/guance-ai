@@ -102,7 +102,7 @@ function createReviewFor(approval: ApprovalSnapshot): Review {
     approvalId: approval.id,
     planId: approval.planId,
     dataKind: useAppStore.getState().mode === 'real' ? 'manual' : 'simulated',
-    note: '本轮数据为演示输入；没有真实投放接口。',
+    note: useAppStore.getState().mode === 'real' ? '用户人工录入，请与原始报表核对。' : '本轮数据为演示输入；没有真实投放接口。',
     observations: '',
     possibleReasons: '',
     unconfirmed: '',

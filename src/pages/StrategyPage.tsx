@@ -35,6 +35,7 @@ import { ThemeRankChart } from '@/components/charts/ThemeRankChart';
 import { EvidenceQualityChart } from '@/components/charts/EvidenceQualityChart';
 import { BudgetAllocationChart } from '@/components/charts/BudgetAllocationChart';
 import { ProgressBar } from '@/components/ui/Progress';
+import { flushDesktop } from '@/desktop/client';
 
 export function StrategyPage() {
   const data = useAppStore((state) => state);
@@ -403,12 +404,12 @@ export function StrategyPage() {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border border-line bg-white/60 px-4 py-3">
         <p className="text-[12px] leading-5 text-muted">
           <span className="font-semibold text-ink">决策边界：</span>
-          方案中的“推荐”是基于模拟证据的人工判断；不包含真实模型预测、增量效果估计或自动投放。
+          {data.mode === 'real' ? '方案建议需核实来源并由人工审批。模型生成版本及引用记录可在下方模型分析中追踪。' : '方案中的“推荐”是基于模拟证据的人工判断；不包含真实模型预测、增量效果估计或自动投放。'}
         </p>
         <span className="text-[12px] text-faint">确认后保存不可变快照，后续变更会提示重新确认</span>
       </div>
 
-      <details className="disclosure mt-6"><summary>消费者主题、证据与竞品机会 · 预设模拟分析</summary><div className="pt-5">
+      <details className="disclosure mt-6"><summary>消费者主题、证据与竞品机会 · {data.mode === 'real' ? '来源关联分析' : '预设模拟分析'}</summary><div className="pt-5">
       <div className="grid gap-4 lg:grid-cols-12">
         <div className="space-y-4 lg:col-span-7">
           <ThemeRankChart
@@ -589,7 +590,7 @@ export function StrategyPage() {
             ))}
           </div>
           <InfoBanner tone="neutral">
-            证据为模拟数据，只用于展示“方案—证据—审批”的追溯关系，不代表真实市场结论。
+            {data.mode === 'real' ? '请逐项核实原始来源，保留方案、证据和审批之间的追溯关系。' : '证据为模拟数据，只用于展示“方案—证据—审批”的追溯关系，不代表真实市场结论。'}
           </InfoBanner>
         </div>
       </Modal>
@@ -617,9 +618,7 @@ export function StrategyPage() {
                   toast('确认失败', result.message, 'danger');
                   return;
                 }
-                setConfirmOpen(false);
-                setSuccessApprovalId(result.approvalId);
-                toast('方案已确认', '审批快照已保存，可进入复盘录入实际数据。', 'success');
+                void flushDesktop().then(() => { setConfirmOpen(false); setSuccessApprovalId(result.approvalId); toast('方案已确认', '审批快照已保存，可进入复盘录入实际数据。', 'success'); }).catch((e: unknown) => toast('确认未保存', String(e), 'danger'));
               }}
             >
               确认并保存快照
@@ -662,7 +661,7 @@ export function StrategyPage() {
             </div>
           </div>
           <InfoBanner tone="warning">
-            这是人工确认的模拟方案，不是自动投放指令。系统不会向任何广告平台提交预算或素材。
+            这是人工确认的方案快照。实际投放由用户在相应平台完成。
           </InfoBanner>
         </div>
       </Modal>

@@ -106,7 +106,7 @@ export function SidebarContent({
           恢复演示数据
         </button>
         <div className="mt-2 flex items-center justify-between border-t border-line px-3 pt-3">
-          <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-faint">v0.5 · Web MVP</span>
+          <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-faint">{window.guance ? 'v0.6 · Desktop Trial' : 'v0.6 · Web Preview'}</span>
           <span className="h-1.5 w-1.5 rounded-full bg-mint" title="前端演示环境" />
         </div>
       </div>

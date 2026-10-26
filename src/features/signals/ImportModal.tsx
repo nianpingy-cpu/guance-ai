@@ -50,6 +50,7 @@ export function ImportModal() {
     try {
       const text = await file.text();
       const parsed = parseSignalImport({
+        simulated: useAppStore.getState().mode !== 'real',
         content: text,
         filename: file.name,
         prefix: `IMP-${Date.now()}`,
@@ -93,7 +94,7 @@ export function ImportModal() {
       open={open}
       onClose={close}
       title="导入市场情报"
-      description="支持本地 CSV 或 JSON 演示数据。导入会做字段校验，不连接任何平台爬虫或真实 API。"
+      description="支持本地 CSV 或 JSON 情报；先预览校验结果，再确认入库。演示项目与业务项目分别标记来源。"
       size="lg"
       footer={
         <>

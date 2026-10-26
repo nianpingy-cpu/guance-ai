@@ -181,11 +181,11 @@ export function ReviewPage() {
     <div className="page-wrap">
       <PageHeader
         title="效果复盘"
-        description="对比计划与实际，记录观察、差异和无法确认的判断，并把下一轮需要补充的信息变成真实任务。所有结果均为演示数据。"
+        description="对比计划与实际，记录观察、差异和无法确认的判断，并把下一轮需要补充的信息变成真实任务。"
         meta={
           <>
             <MetaItem label="已确认方案" value={`${approval.planCode} · ${plan.shortName}`} />
-            <MetaItem label="实际数据" value={hasAnyActual ? '已录入 · 演示' : '待录入'} />
+            <MetaItem label="实际数据" value={hasAnyActual ? review?.dataKind === 'manual' ? '已录入 · 人工' : '已录入 · 演示' : '待录入'} />
             <MetaItem label="最近更新" value={review ? formatDateTime(review.updatedAt) : '暂无'} />
             <DemoBadge />
           </>
@@ -217,7 +217,7 @@ export function ReviewPage() {
         </InfoBanner>
       ) : (
         <InfoBanner tone="success" className="mb-4" title={`方案 ${approval.planCode} 已确认，可按渠道录入实际数据`}>
-          审批快照 {approval.id} · {formatDateTime(approval.approvedAt)}。当前数据性质为“演示数据”，不对应真实广告平台报表。
+          审批快照 {approval.id} · {formatDateTime(approval.approvedAt)}。{data.mode === 'real' ? '实际结果由用户录入，请与原始平台报表核对。' : '当前数据性质为“演示数据”，不对应真实广告平台报表。'}
         </InfoBanner>
       )}
 
@@ -276,7 +276,7 @@ export function ReviewPage() {
             description="录入后指标、图表与下一轮建议会立即更新。留空字段显示“暂无数据”，不会按 0 处理。金额单位为元，其余为非负整数。"
             action={
               <Tag tone="warning">
-                <Sparkles size={11} /> 演示数据
+                <Sparkles size={11} /> {review?.dataKind === 'manual' ? '人工录入' : '演示数据'}
               </Tag>
             }
           />
@@ -444,7 +444,7 @@ export function ReviewPage() {
         <Card className="lg:col-span-4">
           <SectionHeader eyebrow="数据质量" title="这份复盘能说明什么" />
           <div className="mt-4 space-y-2.5">
-            <QualityRow label="数据性质" value="演示数据 · 模拟" tone="warning" />
+            <QualityRow label="数据性质" value={review?.dataKind === 'manual' ? '用户人工录入' : '演示数据 · 模拟'} tone="warning" />
             <QualityRow label="覆盖周期" value="一周单轮" />
             <QualityRow label="实际数据完整性" value={hasAnyActual ? '已录入' : '待录入'} tone={hasAnyActual ? 'mint' : 'neutral'} />
             <QualityRow label="缺失字段" value={missingFields(review, plan)} tone={missingFields(review, plan) === '无' ? 'mint' : 'warning'} />
@@ -565,7 +565,7 @@ export function ReviewPage() {
       <div className="mt-5 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border border-line bg-white/60 px-4 py-3">
         <p className="text-[12px] leading-5 text-muted">
           <span className="font-semibold text-ink">复盘边界：</span>
-          所有实际数据为演示输入；无真实投放接口、无归因模型、无成交或退款数据，因此不计算 ROAS，也不将差异解释为因果。
+          实际数据由用户录入；缺少成交与退款数据时不计算 ROAS，渠道差异需进一步核实原因。
         </p>
         <span className="text-[12px] text-faint">数据保存于本机 · 可打印为 PDF</span>
       </div>

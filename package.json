@@ -22,6 +22,8 @@
     "desktop:pack": "npm run desktop:build && electron-builder --publish never"
   },
   "dependencies": {
+    "cheerio": "^1.2.0",
+    "fast-xml-parser": "^5.11.2",
     "lucide-react": "^0.454.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

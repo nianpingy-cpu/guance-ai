@@ -32,6 +32,8 @@ export interface Source {
   collectedAt?: string;
   taskId?: string;
   contentHash?: string;
+  rawContent?: string;
+  origin?: 'manual' | 'public-web' | 'rss' | 'official' | 'demo';
 }
 
 export interface Signal {

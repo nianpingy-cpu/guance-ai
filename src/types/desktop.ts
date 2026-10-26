@@ -6,7 +6,14 @@ export type ModelProtocol = 'chat' | 'responses' | 'anthropic';
 export interface Provider { id: string; name: string; baseUrl: string; protocol: ModelProtocol; models: string[]; model: string; hasKey: boolean }
 export type ProviderInput = Omit<Provider, 'id' | 'hasKey'> & { id?: string; apiKey?: string };
 export interface Job { id: string; projectId: string; kind: 'analysis' | 'collect'; status: 'running' | 'completed' | 'failed' | 'cancelled' | 'interrupted'; progress: string; createdAt: string; error?: string; result?: string }
+export type Platform = 'wechat' | 'xiaohongshu' | 'douyin';
+export interface Connection { id: string; name: string; status: string; link: string; description: string; appId: string; hasSecret: boolean }
 export interface DesktopCommands {
+  'collect.start': { input: { projectId: string; kind: 'web' | 'rss' | Platform; url: string; triggerTaskId?: string }; output: Job };
+  'collect.retry': { input: { id: string }; output: Job };
+  'connections.list': { input: undefined; output: Connection[] };
+  'connections.save': { input: { platform: Platform; appId: string; secret?: string }; output: void };
+  'connections.remove': { input: { platform: Platform }; output: void };
   'models.list': { input: undefined; output: { providers: Provider[]; defaultId: string } };
   'models.save': { input: ProviderInput; output: Provider };
   'models.remove': { input: { id: string }; output: void };

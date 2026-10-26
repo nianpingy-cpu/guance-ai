@@ -64,7 +64,7 @@ export function DashboardPage() {
           {
             label: '市场情报 / 条',
             value: formatNumber(stats.total),
-            note: `${stats.platforms.length} 个模拟平台来源`,
+            note: `${stats.platforms.length} 个${data.mode === "real" ? "" : "模拟"}平台来源`,
             to: () => navigate('/signals'),
           },
           {
@@ -91,7 +91,7 @@ export function DashboardPage() {
         <SignalTrendChart
           points={signalTrend(data.signals, 10)}
           onSelectDate={(date) => navigate(`/signals?date=${date}`)}
-          subtitle="每个点对应当天收集的模拟情报，点击日期查看记录"
+          subtitle="每个点对应当天收集的情报，点击日期查看记录"
         />
         <section className="quiet-section">
           <div className="flex items-center justify-between gap-3">
@@ -151,7 +151,7 @@ export function DashboardPage() {
             </button>
           </div>
           <div>
-            <p className="text-xs text-muted">最近复盘 · 模拟输入</p>
+            <p className="text-xs text-muted">最近复盘 · {review?.dataKind === "manual" ? "人工录入" : "模拟输入"}</p>
             <p className="mt-2 text-sm">
               {metrics
                 ? `实际花费 ${formatCny(metrics.actualSpendCents)} · 有效咨询 ${formatNumber(metrics.leads)} 条`

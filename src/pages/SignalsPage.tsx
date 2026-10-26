@@ -148,7 +148,7 @@ export function SignalsPage() {
 
       <div className="signal-summary" aria-label="筛选结果概览">
         <span><strong>{stats.total}</strong> 条结果</span><span>{stats.high} 条重点</span><span>{stats.pending} 条待核实</span>
-        <span className="ml-auto">{activeFilterCount ? `${activeFilterCount} 个筛选条件` : '全部模拟情报'}</span>
+        <span className="ml-auto">{activeFilterCount ? `${activeFilterCount} 个筛选条件` : data.mode === 'real' ? '全部业务情报' : '全部模拟情报'}</span>
       </div>
       <details className="disclosure mb-5">
         <summary>查看情报分布与来源</summary>
@@ -301,7 +301,7 @@ export function SignalsPage() {
             <div className="p-6">
               <EmptyState
                 title="没有匹配的情报"
-                description="尝试放宽关键词、来源或时间范围；也可以导入新的演示情报。"
+                description="尝试放宽关键词、来源或时间范围；也可以导入新的情报。"
                 action={
                   <div className="flex gap-2">
                     <Button size="sm" onClick={resetFilters} icon={<RotateCcw size={13} />}>
@@ -325,7 +325,7 @@ export function SignalsPage() {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border border-line bg-white/60 px-4 py-3">
         <p className="text-[12px] leading-5 text-muted">
           <span className="font-semibold text-ink">来源边界：</span>
-          情报来源为团队编写的模拟平台摘录，不包含真实爬虫、平台授权数据或真实用户个人信息。
+          {data.mode === 'real' ? '每条情报保留导入或采集来源。公开资料与模型判断均需人工核实。' : '情报来源为团队编写的模拟平台摘录，不包含真实爬虫、平台授权数据或真实用户个人信息。'}
         </p>
         <span className="text-[12px] text-faint">事实 · 判断 · 待核实信息分开展示</span>
       </div>
@@ -443,7 +443,7 @@ function SignalRow({ signal, onOpen }: { signal: Signal; onOpen: (id: string) =>
       <div className="flex flex-wrap items-end justify-between gap-2 pl-6 text-[12px] text-faint lg:col-span-4 lg:pl-0">
         <div>
           <p className="font-medium text-muted">{source?.platform ?? signal.platform}</p>
-          <p className="mt-0.5">{formatDate(signal.capturedAt, true)}</p>
+          <p className="mt-0.5">{source?.publishedAt ? formatDate(source.publishedAt, true) : '原文未提供'}</p>
           <p className="mt-0.5 line-clamp-1 max-w-[210px]">{source?.name}</p>
         </div>
         <span className="inline-flex items-center gap-1 font-semibold text-brand opacity-0 transition-opacity group-hover:opacity-100">
@@ -524,7 +524,7 @@ function SignalDrawer({
               variant="primary"
               onClick={() => {
                 data.updateSignalNote(signal.id, note);
-                toast('备注已保存', '备注仅保存在当前浏览器。', 'success');
+                toast('备注已保存', '备注保存在本机。', 'success');
               }}
             >
               保存备注
@@ -549,7 +549,7 @@ function SignalDrawer({
               <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-faint">原始来源片段</p>
               <p className="mt-1.5 text-[13px] leading-6 text-ink">“{signal.quote}”</p>
             </div>
-            <Tag tone="outline">模拟文本</Tag>
+            <Tag tone="outline">{source?.simulated ? '模拟文本' : source?.origin === 'manual' ? '人工导入' : '公开来源 · 待核实'}</Tag>
           </div>
           <div className="mt-3 grid gap-2 border-t border-line pt-3 text-[11px] leading-5 text-muted sm:grid-cols-2">
             <p>
@@ -562,25 +562,26 @@ function SignalDrawer({
             </p>
             <p>
               <span className="text-faint">发布日期：</span>
-              {formatDate(signal.capturedAt, true)}
+              {source?.publishedAt ? formatDate(source.publishedAt, true) : '原文未提供'}
             </p>
             <p>
               <span className="text-faint">获取依据：</span>
               {source?.note ?? '演示来源说明'}
             </p>
-            {source?.url ? (
+            {source?.url && /^https?:\/\//i.test(source.url) ? (
               <a
                 href={source.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-brand underline underline-offset-2"
               >
-                打开模拟来源链接
+                {source.simulated ? '打开模拟来源链接' : '打开原始来源链接'}
               </a>
             ) : null}
           </div>
         </div>
 
+        {source?.rawContent && <details className="rounded-xl border border-line p-4"><summary className="cursor-pointer text-xs font-semibold">完整采集正文与追踪记录</summary><p className="mt-3 break-all text-xs leading-6 text-muted">采集：{source.collectedAt} · 任务：{source.taskId ?? '人工导入'} · 内容摘要：{source.contentHash ?? '人工记录'}</p><pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap break-words font-sans text-xs leading-6">{source.rawContent}</pre></details>}
         <div className="grid gap-3">
           <section>
             <p className="eyebrow mb-1.5">观测事实</p>
@@ -589,7 +590,7 @@ function SignalDrawer({
             </p>
           </section>
           <section>
-            <p className="eyebrow mb-1.5">分析性判断（演示预设）</p>
+            <p className="eyebrow mb-1.5">分析性判断{source?.simulated ? '（演示预设）' : '（待核实）'}</p>
             <p className="rounded-[11px] border border-[#dce6f3] bg-[#f7faff] px-3.5 py-3 text-[12px] leading-6 text-[#2b4b72]">
               {signal.impact}
             </p>
@@ -603,7 +604,7 @@ function SignalDrawer({
                   ? '该记录存在冲突或争议，需保留双方表述并补充证据。'
                   : signal.status === 'duplicate'
                     ? `该记录被标记为 ${signal.duplicateOf ?? '其他记录'} 的重复项，不重复计入重点统计。`
-                    : '当前记录已人工标记为已核实；仍保留来源说明与演示边界。'}
+                    : '当前记录已人工标记为已核实；仍保留原始来源说明。'}
               {duplicate ? (
                 <button
                   type="button"
