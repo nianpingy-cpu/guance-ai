@@ -8,6 +8,8 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'guance', privileges: { standard
 app.setName('GuanceAI');
 app.setPath('userData', join(app.getPath('appData'), 'GuanceAI'));
 if (process.env.GUANCE_TEST_DATA) app.setPath('userData', resolve(process.env.GUANCE_TEST_DATA));
+const primary = app.requestSingleInstanceLock();
+if (!primary) app.quit();
 const development = !app.isPackaged && process.env.GUANCE_DEV_URL;
 let mainWindow: BrowserWindow;
 let worker: Electron.UtilityProcess;
@@ -16,7 +18,8 @@ const pending = new Map<number, { resolve: (value: unknown) => void; reject: (er
 function request(command: string, input?: unknown): Promise<unknown> {
   return new Promise((resolve, reject) => { const id = ++nextId; pending.set(id, { resolve, reject }); worker.postMessage({ id, command, input, directory: join(app.getPath('userData'), 'data') }); });
 }
-app.whenReady().then(async () => {
+app.on('second-instance', () => { if (mainWindow) { if (mainWindow.isMinimized()) mainWindow.restore(); mainWindow.show(); mainWindow.focus(); } });
+if (primary) app.whenReady().then(async () => {
   const client = resolve(__dirname, '../dist');
   protocol.handle('guance', async (request) => {
     const url = new URL(request.url);
