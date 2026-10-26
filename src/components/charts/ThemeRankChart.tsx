@@ -2,6 +2,7 @@ import type { InsightTheme } from '@/types/domain';
 import { ChartFrame, useChartTip } from './ChartFrame';
 import { ChartTip } from './ChartTip';
 import { chartColors, niceMax } from './chartTheme';
+import { useAppStore } from '@/store/appStore';
 
 export function ThemeRankChart({
   themes,
@@ -15,6 +16,7 @@ export function ThemeRankChart({
   periodLabel?: string;
 }) {
   const { containerRef, tip, showTip, hideTip } = useChartTip();
+  const generated = useAppStore((s) => Boolean(s.analyses?.length));
   const sorted = [...themes].sort((a, b) => a.rank - b.rank);
   const W = 660;
   const rowH = 68;
@@ -28,8 +30,8 @@ export function ThemeRankChart({
   return (
     <ChartFrame
       title="消费者关注主题排序"
-      subtitle={`按可追溯证据的提及强度排序；点击主题查看对应证据${periodLabel ? ` · 证据期 ${periodLabel}` : ''}`}
-      unit="条提及"
+      subtitle={generated ? '数量为去重后的引用情报条数，不代表全网讨论规模；点击主题查看依据' : `按可追溯证据的提及强度排序；点击主题查看对应证据${periodLabel ? ` · 证据期 ${periodLabel}` : ''}`}
+      unit={generated ? '条关联情报' : '条提及'}
       source="GLANCE · 排序对比 · 模拟消费者信号"
       legend={
         <span className="text-[12px] text-faint">
