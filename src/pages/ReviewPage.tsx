@@ -226,7 +226,6 @@ export function ReviewPage() {
           label="实际花费"
           value={metrics.actualSpendCents === null ? <span className="text-[20px] font-semibold">暂无数据</span> : formatCny(metrics.actualSpendCents).replace('¥', '')}
           unit={metrics.actualSpendCents === null ? '' : '元'}
-          tone="terracotta"
           note={
             spendDelta === null
               ? '缺渠道数据，暂不计算'
@@ -251,7 +250,6 @@ export function ReviewPage() {
           label="有效咨询"
           value={metrics.leads === null ? <span className="text-[20px] font-semibold">暂无数据</span> : formatNumber(metrics.leads)}
           unit={metrics.leads === null ? '' : '条'}
-          tone="mint"
           note={`咨询成本 ${formatCny(metrics.costPerLeadCents, 2)}`}
         />
       </div>

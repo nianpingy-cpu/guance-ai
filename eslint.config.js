@@ -8,7 +8,21 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     files: ['**/*.{js,mjs,ts,tsx}'],
-    languageOptions: { globals: { console: 'readonly', process: 'readonly', URL: 'readonly', setTimeout: 'readonly', window: 'readonly', document: 'readonly', localStorage: 'readonly', Blob: 'readonly', structuredClone: 'readonly', FileReader: 'readonly', crypto: 'readonly' } },
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        URL: 'readonly',
+        setTimeout: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        localStorage: 'readonly',
+        Blob: 'readonly',
+        structuredClone: 'readonly',
+        FileReader: 'readonly',
+        crypto: 'readonly',
+      },
+    },
   },
   {
     files: ['src/**/*.{ts,tsx}'],

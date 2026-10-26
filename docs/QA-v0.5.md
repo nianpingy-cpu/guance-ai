@@ -50,3 +50,5 @@
 保持纯前端；数据与预设分析是模拟，不代表真实营销成效。localStorage 不是可信审计存储。长列表和移动端横向表格/图表仍需滚动查看。
 
 独立审查尚未进行，PR 保持草稿，不合并 main。遗留依赖审计的 11 项报告（8 moderate、1 high、2 critical）另列 [Issue #2](https://github.com/nianpingy-cpu/guance-ai/issues/2) 处理；本轮未将其标记已修复，也未在 UI Issue 中混入大版本迁移。
+
+尝试为私有仓库 main 设置强制 PR、一次审批、quality 检查及禁止强推，GitHub 返回 HTTP 403：当前账户需升级 Pro 或改为公开仓库。仓库继续保持私有，已执行分支/草稿 PR 流程，但服务端保护没有启用，不能声称已强制生效。
