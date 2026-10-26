@@ -1,11 +1,12 @@
 import { _electron as electron } from 'playwright';
-import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readdir, unlink, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import assert from 'node:assert/strict';
 import { buildPlanFingerprint } from '../src/lib/calculations.ts';
 const stress = process.env.GUANCE_LONG_TEXT === '1';
 const out = stress ? 'docs/desktop-long-text' : 'docs/desktop-visual'; await mkdir(out, { recursive: true });
+for (const name of await readdir(out)) if (/^native-.*\.png$/.test(name)) await unlink(join(out, name));
 const data = await mkdtemp(join(tmpdir(), 'guance-layout-'));
 const app = await electron.launch({ args: ['.'], env: { ...process.env, GUANCE_TEST_DATA: data } }); const page = await app.firstWindow(); const results = [];
 async function check(name) {
