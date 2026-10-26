@@ -39,6 +39,13 @@ it('rejects duplicate channel identities at the storage boundary', () => {
   p.data.plans[0].channels.push(p.data.plans[0].channels[0]);
   expect(() => db.save(p.id, p.revision, p.data)).toThrow('渠道');
 });
+it('编辑期间版本被同步更新，未保存的编辑保留为可处理冲突', () => {
+  const db = database(); const p = db.create('并发编辑', 'real'); const remote = structuredClone(p.data); remote.company.budgetCents = 888800; db.save(p.id, p.revision, remote);
+  const editing = structuredClone(p.data); editing.company.goal = '用户未保存的长文目标';
+  expect(() => db.save(p.id, p.revision, editing)).toThrow('CONFLICT');
+  expect(db.load(p.id).data.company.budgetCents).toBe(888800);
+  expect(db.conflicts()[0].project.data.company.goal).toBe('用户未保存的长文目标');
+});
 it('旧Web导出可导入、修改并重开；数据库升级前保留可读备份', () => {
   const db = database(); const demo = db.create('旧数据', 'demo'); delete demo.data.mode;
   const imported = db.import('迁移', demo.data); const value = structuredClone(imported.data); value.company.budgetCents = 666600;

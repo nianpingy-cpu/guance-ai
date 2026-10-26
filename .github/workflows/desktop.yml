@@ -3,6 +3,10 @@ on:
   workflow_dispatch:
   push:
     branches: [feat/13-encrypted-sync-release]
+    paths: ['desktop/**', 'src/**', 'scripts/**', 'public/**', 'build/**', 'package*.json', 'tsconfig*.json', 'vite.config.ts', '.github/workflows/desktop.yml', 'THIRD_PARTY*']
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   desktop:
     strategy:
@@ -15,12 +19,12 @@ jobs:
             executable: release/win-unpacked/观策AI.exe
           - os: macos-14
             platform: macos-arm64
-            pack: npm run desktop:pack -- --mac --arm64
-            executable: release/mac-arm64/观策AI.app/Contents/MacOS/观策AI
+            pack: node scripts/package-macos.mjs arm64
+            executable: release/installed-arm64/观策AI.app/Contents/MacOS/观策AI
           - os: macos-15-intel
             platform: macos-x64
-            pack: npm run desktop:pack -- --mac --x64
-            executable: release/mac/观策AI.app/Contents/MacOS/观策AI
+            pack: node scripts/package-macos.mjs x64
+            executable: release/installed-x64/观策AI.app/Contents/MacOS/观策AI
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     permissions:

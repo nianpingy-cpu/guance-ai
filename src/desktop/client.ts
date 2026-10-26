@@ -32,7 +32,7 @@ export async function flushDesktop() {
         pending = undefined;
         const message = error instanceof Error ? error.message : '保存失败';
         try { applyProject(await window.guance.invoke('projects.load', { id: current.id })); } catch { /* The error remains visible; do not substitute demo data. */ }
-        useDesktopState.setState({ error: message }); toast('保存失败，已恢复最近保存版本', message, 'danger'); throw error;
+        useDesktopState.setState({ error: message }); toast(message.includes('CONFLICT') ? '检测到版本冲突，请到设置核对' : '保存失败，已恢复最近保存版本', message, 'danger'); throw error;
       } finally { useDesktopState.setState({ saving: false }); }
     }
   })();

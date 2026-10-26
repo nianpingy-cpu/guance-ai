@@ -61,10 +61,20 @@ export class LocalDatabase {
   }
   save(id: string, expected: string, value: unknown): Project {
     const data = parseData(value);
+    let committedConflict = false;
     this.db.exec('BEGIN IMMEDIATE');
     try {
       const before = this.load(id);
-      if (before.revision !== expected) throw new Error('CONFLICT:项目已被其他操作更新，请重新加载');
+      if (before.revision !== expected) {
+        if (data.mode === before.mode && revision(data) !== before.revision && this.db.prepare('SELECT id FROM changes WHERE project_id=? AND revision=?').get(id, expected)) {
+          const proposed = { ...before, data, revision: revision(data), updatedAt: new Date().toISOString() };
+          const changeId = this.record(proposed, expected);
+          const change: Change = { id: changeId, projectId: id, parentRevision: expected, revision: proposed.revision, project: { ...proposed, data: { ...data, schemaVersion: 4 } }, createdAt: proposed.updatedAt, resolves: [] };
+          this.db.prepare('INSERT INTO conflicts VALUES(?,?,?,?)').run(changeId, id, JSON.stringify(change), change.createdAt);
+          this.db.exec('COMMIT'); committedConflict = true;
+        }
+        throw new Error('CONFLICT:项目已被其他操作更新；不同版本已保留，请到设置→数据同步核对冲突');
+      }
       if (data.mode !== before.data.mode) throw new Error('不能变更项目数据模式');
       for (const approval of before.data.approvals) {
         if (JSON.stringify(data.approvals.find((a) => a.id === approval.id)) !== JSON.stringify(approval)) throw new Error('历史审批快照不可修改或删除');
@@ -83,12 +93,13 @@ export class LocalDatabase {
         this.record(p, before.revision);
       }
       this.db.exec('COMMIT'); return p;
-    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+    } catch (error) { if (!committedConflict) this.db.exec('ROLLBACK'); throw error; }
   }
   record(project: Project, parent: string, resolves: string[] = []) {
     const id = randomUUID();
     this.db.prepare('INSERT INTO changes VALUES(?,?,?,?,?,?,?)').run(id, project.id, parent, project.revision, JSON.stringify(project), project.updatedAt, JSON.stringify(resolves));
     this.db.prepare('INSERT OR IGNORE INTO applied VALUES(?)').run(id);
+    return id;
   }
   changes(): Change[] { return this.db.prepare('SELECT * FROM changes ORDER BY created_at,id').all().map((r) => changeSchema.parse({ id: r.id, projectId: r.project_id, parentRevision: r.parent_revision, revision: r.revision, project: JSON.parse(String(r.body)), createdAt: r.created_at, resolves: JSON.parse(String(r.resolves)) })); }
   conflicts(): Change[] { return this.db.prepare('SELECT body FROM conflicts ORDER BY created_at,id').all().map((r) => changeSchema.parse(JSON.parse(String(r.body)))); }
