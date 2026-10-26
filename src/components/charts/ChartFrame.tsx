@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PointerEvent, ReactNode } from 'react';
 import { cn } from '@/lib/format';
 import { useAppStore } from '@/store/appStore';
@@ -48,6 +48,9 @@ export function ChartFrame({
   note?: ReactNode;
 }) {
   const real = useAppStore((s) => s.mode === 'real');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollable, setScrollable] = useState(false);
+  useEffect(() => { const el = scrollRef.current; if (!el) return; const update = () => setScrollable(el.scrollWidth > el.clientWidth + 1); const observer = new window.ResizeObserver(update); observer.observe(el); update(); return () => observer.disconnect(); }, [children]);
   return (
     <figure className={cn('card card-pad flex min-w-0 flex-col', className)}>
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -63,8 +66,8 @@ export function ChartFrame({
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
       {legend ? <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">{legend}</div> : null}
-      <p className="mt-2 text-xs text-muted sm:hidden">左右滑动查看图表，点击数据查看依据。</p>
-      <div className="chart-scroll mt-3 min-w-0 flex-1" tabIndex={0} aria-label={`${title}，可横向滚动查看`}>{children}</div>
+      {scrollable && <p className="mt-2 text-xs text-muted">图表内可左右滚动，点击数据查看完整依据。</p>}
+      <div ref={scrollRef} className="chart-scroll mt-3 min-w-0 flex-1" tabIndex={0} aria-label={`${title}，可横向滚动查看`}>{children}</div>
       {note ? <div className="mt-2 text-[11px] leading-5 text-muted">{note}</div> : null}
       <p className="mt-3 border-t border-line pt-2.5 text-[11px] font-medium uppercase tracking-[0.11em] text-faint">
         {real ? source.replace('模拟情报库', '当前项目情报库').replace('模拟', '项目') : source}

@@ -404,12 +404,12 @@ export function StrategyPage() {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border border-line bg-white/60 px-4 py-3">
         <p className="text-[12px] leading-5 text-muted">
           <span className="font-semibold text-ink">决策边界：</span>
-          {data.mode === 'real' ? '方案建议需核实来源并由人工审批。模型生成版本及引用记录可在下方模型分析中追踪。' : '方案中的“推荐”是基于模拟证据的人工判断；不包含真实模型预测、增量效果估计或自动投放。'}
+          {data.analyses?.length ? '主题与方案由用户连接的模型生成；引用可追溯，仍需人工核实、编辑和审批。' : data.mode === 'real' ? '方案建议需核实来源并由人工审批。模型生成版本及引用记录可在下方模型分析中追踪。' : '方案中的“推荐”是基于模拟证据的人工判断；不包含真实模型预测、增量效果估计或自动投放。'}
         </p>
         <span className="text-[12px] text-faint">确认后保存不可变快照，后续变更会提示重新确认</span>
       </div>
 
-      <details className="disclosure mt-6"><summary>消费者主题、证据与竞品机会 · {data.mode === 'real' ? '来源关联分析' : '预设模拟分析'}</summary><div className="pt-5">
+      <details className="disclosure mt-6"><summary>消费者主题、证据与竞品机会 · {data.analyses?.length ? '模型生成 · 需人工核实' : data.mode === 'real' ? '来源关联分析' : '预设模拟分析'}</summary><div className="pt-5">
       <div className="grid gap-4 lg:grid-cols-12">
         <div className="space-y-4 lg:col-span-7">
           <ThemeRankChart
