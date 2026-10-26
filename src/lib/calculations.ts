@@ -197,6 +197,7 @@ export function buildPlanFingerprint(
   const canonical = JSON.stringify({
     budget: companyBudgetCents,
     plan: {
+      analysisId: plan.analysisId,
       id: plan.id,
       code: plan.code,
       name: plan.name,

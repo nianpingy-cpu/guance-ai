@@ -15,7 +15,7 @@ import { InfoBanner } from '@/components/ui/Form';
 import { ToastViewport } from '@/components/ui/ToastViewport';
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import { Settings } from '@/desktop/Settings';
-import { flushDesktop } from '@/desktop/client';
+import { applyProject, flushDesktop, refreshProjects, useDesktopState } from '@/desktop/client';
 import { AnalysisPanel } from '@/desktop/AnalysisPanel';
 import { CollectionPanel } from '@/desktop/CollectionPanel';
 
@@ -90,19 +90,14 @@ export function AppShell() {
         open={resetOpen}
         onClose={() => setResetOpen(false)}
         title="恢复演示数据？"
-        description="这会清除当前浏览器里的修改，并重新载入齐鲁茶研的完整演示案例。"
+        description="仅能重置当前演示项目，业务项目会拒绝此操作。桌面重置前自动备份。"
         footer={
           <>
             <Button onClick={() => setResetOpen(false)}>取消</Button>
             <Button
               variant="danger"
               icon={<RotateCcw size={14} />}
-              onClick={() => {
-                resetDemo();
-                setResetOpen(false);
-                navigate('/dashboard');
-                toast('演示数据已恢复', '企业、情报、审批与复盘已回到初始演示状态。', 'success');
-              }}
+              onClick={() => { void (async () => { if (window.guance) { await flushDesktop(); const id = useDesktopState.getState().current!.id; applyProject(await window.guance.invoke('projects.resetDemo', { id })); await refreshProjects(); } else resetDemo(); setResetOpen(false); navigate('/dashboard'); toast('演示数据已恢复', '已回到初始演示状态。', 'success'); })().catch((e: unknown) => toast('未恢复数据', String(e), 'warning')); }}
             >
               确认恢复
             </Button>
@@ -114,7 +109,7 @@ export function AppShell() {
         </InfoBanner>
         <div className="mt-4 space-y-2 text-[12px] leading-6 text-muted">
           <p>恢复后仍会直接进入“工作台”，适合比赛现场重复演示完整流程。</p>
-          <p>所有数据依旧只保存在本机 localStorage，不会上传到任何服务器。</p>
+          <p>桌面版保存到本机数据库，启用同步后业务版本会加密同步；Web预览仅保存在浏览器。</p>
         </div>
       </Modal>
     </div>

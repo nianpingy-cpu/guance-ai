@@ -8,7 +8,14 @@ export type ProviderInput = Omit<Provider, 'id' | 'hasKey'> & { id?: string; api
 export interface Job { id: string; projectId: string; kind: 'analysis' | 'collect'; status: 'running' | 'completed' | 'failed' | 'cancelled' | 'interrupted'; progress: string; createdAt: string; error?: string; result?: string }
 export type Platform = 'wechat' | 'xiaohongshu' | 'douyin';
 export interface Connection { id: string; name: string; status: string; link: string; description: string; appId: string; hasSecret: boolean }
+export interface SyncStatus { configured: boolean; url: string; username: string; automatic: boolean; busy: boolean; lastSuccess: string; error: string; conflicts: Array<{ id: string; projectId: string; name: string; remoteRevision: string; remoteUpdatedAt: string; remoteBudgetCents: number; localBudgetCents: number }> }
 export interface DesktopCommands {
+  'sync.status': { input: undefined; output: SyncStatus };
+  'sync.configure': { input: { url: string; username: string; password?: string; passphrase?: string; automatic: boolean }; output: void };
+  'sync.test': { input: undefined; output: string };
+  'sync.run': { input: undefined; output: SyncStatus };
+  'sync.disconnect': { input: undefined; output: void };
+  'sync.resolve': { input: { id: string; choice: 'local' | 'remote' }; output: void };
   'collect.start': { input: { projectId: string; kind: 'web' | 'rss' | Platform; url: string; triggerTaskId?: string }; output: Job };
   'collect.retry': { input: { id: string }; output: Job };
   'connections.list': { input: undefined; output: Connection[] };

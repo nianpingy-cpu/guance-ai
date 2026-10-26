@@ -192,7 +192,7 @@ export function parseSignalImport({
       return issues.push({ row: rowNumber, message: '发布日期为空或格式无效（建议 YYYY-MM-DD）' });
     }
     if (!summary) return issues.push({ row: rowNumber, message: '缺少摘要' });
-    if (!Number.isFinite(relevanceNumber) || relevanceNumber < 1 || relevanceNumber > 5) {
+    if (!Number.isInteger(relevanceNumber) || relevanceNumber < 1 || relevanceNumber > 5) {
       return issues.push({ row: rowNumber, message: '相关性须为 1–5' });
     }
     const key = `${title}__${platform}`;
@@ -200,7 +200,7 @@ export function parseSignalImport({
 
     let source =
       (sourceIdRaw && sources.find((item) => item.id === sourceIdRaw)) ||
-      sources.find((item) => item.name === sourceName && item.platform === platform);
+      sources.find((item) => item.name === sourceName && item.platform === platform && item.url === (url || undefined) && item.publishedAt === publishedAt && item.rawContent === quote);
 
     if (!source) {
       source = {
@@ -213,6 +213,7 @@ export function parseSignalImport({
         note: `由 ${filename} 人工导入；请核对原始来源。`,
         simulated,
         origin: simulated ? 'demo' : 'manual',
+        taskId: prefix,
         collectedAt: new Date().toISOString(),
         rawContent: quote,
       };

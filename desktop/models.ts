@@ -8,7 +8,7 @@ import { checkPlanBudget } from '../src/lib/calculations';
 import { checkedFetch, endpoint } from './network';
 import { Jobs } from './jobs';
 export interface Vault { encrypt(value: string): Promise<string>; decrypt(value: string): Promise<string> }
-export const providerSchema = z.object({ id: z.string().uuid().optional(), name: z.string().trim().min(1).max(100), baseUrl: z.string().max(2000), protocol: z.enum(['chat', 'responses', 'anthropic']), apiKey: z.string().max(16000).optional(), models: z.array(z.string().min(1).max(200)).max(2000), model: z.string().min(1).max(200) }).strict();
+export const providerSchema = z.object({ id: z.string().uuid().optional(), name: z.string().trim().min(1).max(100), baseUrl: z.string().max(2000), protocol: z.enum(['chat', 'responses', 'anthropic']), apiKey: z.string().max(16000).optional(), models: z.array(z.string().min(1).max(200)).max(2000), model: z.string().max(200) }).strict();
 const analysisSchema = z.object({ themes: z.array(themeSchema).min(1).max(12), plans: z.array(planSchema).length(2) });
 export function validateAnalysis(value: unknown, data: AppData, selected: string[]) {
   const result = analysisSchema.parse(value); const ids = new Set(selected);
@@ -30,7 +30,7 @@ export class ModelService {
     const configs = this.stored(); const before = configs.find((c) => c.id === p.id);
     const cipher = p.apiKey ? await this.vault.encrypt(p.apiKey) : before?.cipher;
     if (!cipher) throw new Error('请填写密钥');
-    const saved: Stored = { id: p.id ?? randomUUID(), name: p.name, baseUrl: p.baseUrl.replace(/\/$/, ''), protocol: p.protocol, models: [...new Set([...p.models, p.model])], model: p.model, hasKey: true, cipher };
+    const saved: Stored = { id: p.id ?? randomUUID(), name: p.name, baseUrl: p.baseUrl.replace(/\/$/, ''), protocol: p.protocol, models: [...new Set([...p.models, p.model].filter(Boolean))], model: p.model, hasKey: true, cipher };
     this.db.setSetting('models', [...configs.filter((c) => c.id !== saved.id), saved]);
     return this.list().providers.find((c) => c.id === saved.id)!;
   }
@@ -45,11 +45,12 @@ export class ModelService {
   }
   async discover(id: string): Promise<string[]> { const raw: unknown = await (await this.request(this.get(id), 'models')).json(); return z.object({ data: z.array(z.object({ id: z.string() })) }).parse(raw).data.map((m) => m.id); }
   async complete(id: string, system: string, user: string, signal?: AbortSignal) {
-    const p = this.get(id); let body: unknown; let path: string;
+    const p = this.get(id); if (!p.model) throw new Error('请先获取或填写模型ID并保存'); let body: unknown; let path: string;
     if (p.protocol === 'responses') { path = 'responses'; body = { model: p.model, instructions: system, input: user, max_output_tokens: 6000, stream: false }; }
     else if (p.protocol === 'anthropic') { path = 'messages'; body = { model: p.model, system, messages: [{ role: 'user', content: user }], max_tokens: 6000, stream: false }; }
     else { path = 'chat/completions'; body = { model: p.model, messages: [{ role: 'system', content: system }, { role: 'user', content: user }], max_tokens: 6000, stream: false }; }
-    const raw: unknown = await (await this.request(p, path, body, signal)).json(); let text: string;
+    const response = await this.request(p, path, body, signal);
+    let raw: unknown; try { raw = await response.json(); } catch { throw new Error('服务返回的内容不是有效JSON；请核对协议和接口基础地址'); } let text: string;
     if (p.protocol === 'chat') text = z.object({ choices: z.array(z.object({ message: z.object({ content: z.string() }) })).min(1) }).parse(raw).choices[0].message.content;
     else if (p.protocol === 'anthropic') text = z.object({ content: z.array(z.object({ type: z.string(), text: z.string().optional() })) }).parse(raw).content.filter((c) => c.type === 'text').map((c) => c.text ?? '').join('');
     else text = z.object({ output: z.array(z.object({ type: z.string(), content: z.array(z.object({ type: z.string(), text: z.string().optional() })).optional() })) }).parse(raw).output.flatMap((o) => o.content ?? []).filter((c) => c.type === 'output_text').map((c) => c.text ?? '').join('');

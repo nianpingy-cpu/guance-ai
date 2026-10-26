@@ -5,6 +5,8 @@ import { existsSync } from 'node:fs';
 import { Buffer } from 'node:buffer';
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'guance', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
+app.setName('GuanceAI');
+app.setPath('userData', join(app.getPath('appData'), 'GuanceAI'));
 if (process.env.GUANCE_TEST_DATA) app.setPath('userData', resolve(process.env.GUANCE_TEST_DATA));
 const development = !app.isPackaged && process.env.GUANCE_DEV_URL;
 let mainWindow: BrowserWindow;
@@ -16,13 +18,16 @@ function request(command: string, input?: unknown): Promise<unknown> {
 }
 app.whenReady().then(async () => {
   const client = resolve(__dirname, '../dist');
-  protocol.handle('guance', (request) => {
+  protocol.handle('guance', async (request) => {
     const url = new URL(request.url);
     if (url.host !== 'app') return new Response('Forbidden', { status: 403 });
     let target = resolve(client, '.' + decodeURIComponent(url.pathname));
     if (!target.startsWith(client + sep)) target = join(client, 'index.html');
     if (!existsSync(target) || !target.includes('.')) target = join(client, 'index.html');
-    return net.fetch(pathToFileURL(target).href);
+    const response = await net.fetch(pathToFileURL(target).href);
+    const headers = new Headers(response.headers);
+    headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'");
+    return new Response(response.body, { status: response.status, headers });
   });
   worker = utilityProcess.fork(join(__dirname, 'worker.cjs'));
   worker.on('message', async (message: { id: number; result?: unknown; error?: string; secureId?: number; method?: string; value?: string }) => {
@@ -39,6 +44,7 @@ app.whenReady().then(async () => {
     if (message.error) listener.reject(new Error(message.error)); else listener.resolve(message.result);
   });
   worker.on('error', (error) => { for (const p of pending.values()) p.reject(new Error(String(error))); pending.clear(); });
+  worker.on('exit', () => { for (const p of pending.values()) p.reject(new Error('本地服务已停止，请重新启动应用')); pending.clear(); });
   await request('initialize');
   ipcMain.handle('guance:request', async (event, message: { command: string; input: unknown }) => {
     const url = event.senderFrame?.url ?? '';

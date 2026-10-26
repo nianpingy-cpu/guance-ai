@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-26T10:47:23.595Z",
+  "platform": "win32",
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13620H",
+  "logicalCpus": 16,
+  "ramGiB": 16,
+  "records": 10000,
+  "saveMs": 5719,
+  "filterMs": 63,
+  "referenceTargetMs": 500,
+  "meetsFilterTarget": true,
+  "note": "合成短文本记录；当前机器实测，不替代4核8GB基准机；未做长正文压力或多任务并行性能验收"
+}

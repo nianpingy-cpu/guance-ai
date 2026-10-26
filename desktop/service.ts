@@ -4,9 +4,11 @@ import { LocalDatabase } from './database';
 import { ModelService, providerSchema } from './models';
 import type { Vault } from './models';
 import { CollectionService, collectionSchema, platformSchema } from './collect';
+import { SyncService, syncConfigSchema } from './sync';
 
 const id = z.string().min(1).max(200);
 export const commands = {
+  'sync.status': z.undefined(), 'sync.configure': syncConfigSchema, 'sync.test': z.undefined(), 'sync.run': z.undefined(), 'sync.disconnect': z.undefined(), 'sync.resolve': z.object({ id, choice: z.enum(['local', 'remote']) }).strict(),
   'collect.start': collectionSchema, 'collect.retry': z.object({ id }).strict(),
   'connections.list': z.undefined(), 'connections.save': platformSchema, 'connections.remove': z.object({ platform: z.enum(['wechat', 'xiaohongshu', 'douyin']) }).strict(),
   'models.list': z.undefined(), 'models.save': providerSchema, 'models.remove': z.object({ id }).strict(), 'models.default': z.object({ id }).strict(), 'models.discover': z.object({ id }).strict(), 'models.test': z.object({ id }).strict(),
@@ -23,12 +25,19 @@ export const commands = {
 export class DesktopService {
   readonly models: ModelService;
   readonly collect: CollectionService;
-  constructor(readonly database: LocalDatabase, vault: Vault) { this.models = new ModelService(database, vault); this.collect = new CollectionService(database, this.models.jobs, vault); }
+  readonly sync: SyncService;
+  constructor(readonly database: LocalDatabase, vault: Vault) { this.models = new ModelService(database, vault); this.collect = new CollectionService(database, this.models.jobs, vault); this.sync = new SyncService(database, vault); }
   async execute(command: string, input: unknown): Promise<unknown> {
     if (!Object.hasOwn(commands, command)) throw new Error('不支持的操作');
     const name = command as Command;
     const value = commands[name].parse(input);
     switch (name) {
+      case 'sync.status': return this.sync.status();
+      case 'sync.configure': return this.sync.configure(value);
+      case 'sync.test': return this.sync.test();
+      case 'sync.run': return this.sync.run();
+      case 'sync.disconnect': return this.sync.disconnect();
+      case 'sync.resolve': { const p = commands[name].parse(value); return this.sync.resolve(p.id, p.choice); }
       case 'collect.start': return this.collect.start(commands[name].parse(value));
       case 'collect.retry': return this.collect.retry(commands[name].parse(value).id);
       case 'connections.list': return this.collect.connections();

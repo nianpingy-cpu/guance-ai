@@ -55,6 +55,7 @@ const statusTone = (status: SignalStatus) =>
         : 'neutral';
 
 export function SignalsPage() {
+  const [page, setPage] = useState(1);
   const data = useAppStore((state) => state);
   const openImport = useUiStore((state) => state.openImportModal);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -88,6 +89,7 @@ export function SignalsPage() {
   }, [dateParam]);
 
   const setFilter = <K extends keyof SignalFilters>(key: K, value: SignalFilters[K]) => {
+    setPage(1);
     setFilters((current) => ({ ...current, [key]: value }));
   };
 
@@ -99,6 +101,7 @@ export function SignalsPage() {
   };
 
   const resetFilters = () => {
+    setPage(1);
     setFilters(defaultFilters);
     const next = new URLSearchParams(searchParams);
     next.delete('date');
@@ -315,11 +318,12 @@ export function SignalsPage() {
               />
             </div>
           ) : (
-            filtered.map((signal) => (
+            filtered.slice((Math.min(page, Math.max(1, Math.ceil(filtered.length / 50))) - 1) * 50, Math.min(page, Math.max(1, Math.ceil(filtered.length / 50))) * 50).map((signal) => (
               <SignalRow key={signal.id} signal={signal} onOpen={openSignal} />
             ))
           )}
         </div>
+        {filtered.length > 50 && <div className="flex items-center justify-between gap-3 border-t border-line p-4 text-xs text-muted"><span>第 {Math.min(page, Math.ceil(filtered.length / 50))} / {Math.ceil(filtered.length / 50)} 页 · 每页50条</span><div className="flex gap-2"><Button size="sm" disabled={page <= 1} onClick={() => setPage(Math.max(1, Math.min(page, Math.ceil(filtered.length / 50)) - 1))}>上一页</Button><Button size="sm" disabled={page >= Math.ceil(filtered.length / 50)} onClick={() => setPage(Math.min(page, Math.ceil(filtered.length / 50)) + 1)}>下一页</Button></div></div>}
       </Card>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border border-line bg-white/60 px-4 py-3">

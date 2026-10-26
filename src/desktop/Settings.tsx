@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from '@/components/ui/Overlay';
 import { Button } from '@/components/ui/Button';
 import { Field, InfoBanner } from '@/components/ui/Form';
@@ -7,6 +7,7 @@ import { applyProject, flushDesktop, refreshProjects, switchProject, useDesktopS
 import { isAppData } from '@/data/repository';
 import { ModelSettings } from './ModelSettings';
 import { ConnectionSettings } from './ConnectionSettings';
+import { SyncSettings } from './SyncSettings';
 
 export function Settings() {
   const open = useUiStore((s) => s.settingsOpen);
@@ -18,11 +19,13 @@ export function Settings() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [imported, setImported] = useState<{ name: string; data: unknown; summary: string }>();
+  useEffect(() => { if (open) void refreshProjects().catch((e: unknown) => setMessage(String(e))); }, [open]);
   const run = async (operation: () => Promise<void>) => { setBusy(true); setMessage(''); try { await operation(); } catch (e) { setMessage(e instanceof Error ? e.message : '操作失败'); } finally { setBusy(false); } };
   return <Modal open={open} onClose={close} size="lg" title="设置" description="业务数据保存到本机。演示项目与真实项目独立管理。">
-    <div className="mb-5 flex flex-wrap gap-2 border-b border-line pb-3">{['项目与备份', '模型连接', '来源连接'].map((t) => <Button key={t} onClick={() => setTab(t)} variant={tab === t ? 'primary' : 'secondary'}>{t}</Button>)}</div>
+    <div className="mb-5 flex flex-wrap gap-2 border-b border-line pb-3">{['项目与备份', '模型连接', '来源连接', '数据同步'].map((t) => <Button key={t} onClick={() => setTab(t)} variant={tab === t ? 'primary' : 'secondary'}>{t}</Button>)}</div>
     {tab === '模型连接' && <ModelSettings />}
     {tab === '来源连接' && <ConnectionSettings />}
+    {tab === '数据同步' && <SyncSettings />}
     {(message || saveError) && <InfoBanner className="mb-4" tone="warning">{message || saveError}</InfoBanner>}
     {tab === '项目与备份' && <div className="space-y-5">
       <Field label="当前项目" htmlFor="current-project"><select id="current-project" className="input" value={current?.id ?? ''} disabled={busy} onChange={(e) => void run(() => switchProject(e.target.value))}>{projects.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.mode === 'demo' ? '演示' : '业务'}</option>)}</select></Field>

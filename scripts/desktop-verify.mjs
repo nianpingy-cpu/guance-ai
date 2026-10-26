@@ -1,6 +1,6 @@
 import { _electron as electron } from 'playwright';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createServer } from 'node:http';
@@ -9,7 +9,7 @@ const results = [];
 await mkdir('docs/desktop', { recursive: true });
 let app;
 async function launch() {
-  const instance = await electron.launch({ args: ['.'], env: { ...process.env, GUANCE_TEST_DATA: data }, timeout: 30000 });
+  const instance = await electron.launch({ ...(process.env.GUANCE_EXECUTABLE ? { executablePath: process.env.GUANCE_EXECUTABLE, args: [] } : { args: ['.'] }), env: { ...process.env, GUANCE_TEST_DATA: data }, timeout: 30000 });
   instance.on('console', (m) => { if (m.type() === 'error') console.error(m.text()); });
   const page = await instance.firstWindow(); await page.getByRole('button', { name: '设置', exact: true }).waitFor();
   return [instance, page];
@@ -31,7 +31,9 @@ try {
     await page.waitForFunction(async (id) => (await window.guance.invoke('jobs.list', { projectId: id })).every((j) => j.status !== 'running'), sample.id);
     const jobs = await page.evaluate((id) => window.guance.invoke('jobs.list', { projectId: id }), sample.id); assert.equal(jobs[0].status, 'completed', JSON.stringify(jobs));
     const generated = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), sample.id); assert.equal(generated.data.analyses.length, 1);
-    results.push('Windows系统加密实际保存测试凭据；本机HTTP协议端到端生成与引用审计（非真实模型）');
+    assert.ok(!JSON.stringify(generated.data).includes('LOCAL_FIXTURE_ONLY'));
+    for (const filename of ['guance.sqlite', 'guance.sqlite-wal']) { const bytes = await readFile(join(data, 'data', filename)).catch(() => null); if (bytes) assert.ok(!bytes.includes('LOCAL_FIXTURE_ONLY')); }
+    results.push(`${process.platform}系统加密实际保存测试凭据；本机HTTP协议端到端生成与引用审计（非真实模型）`);
   } finally { fixture.closeAllConnections(); await new Promise((r) => fixture.close(r)); }
   await assert.rejects(page.evaluate(() => window.guance.invoke('arbitrary.execute', { cmd: 'noop' })), /不支持/);
   results.push('IPC白名单拒绝未声明命令');
@@ -57,6 +59,10 @@ try {
   const restored = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), real.id);
   assert.equal(restored.data.company.budgetCents, 654321);
   results.push('真实SQLite关闭重开保留金额与项目；四页无横向溢出');
+  await app.evaluate(({ app }) => app.exit(12)).catch(() => undefined); app = undefined;
+  [app, page] = await launch();
+  assert.equal((await page.evaluate((id) => window.guance.invoke('projects.load', { id }), real.id)).data.company.budgetCents, 654321);
+  results.push('直接退出进程后已提交数据仍可恢复');
   console.log(results.join('\n'));
 } finally {
   if (app) await app.close();

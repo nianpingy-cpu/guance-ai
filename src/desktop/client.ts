@@ -58,4 +58,6 @@ export async function initializeDesktop() {
   window.addEventListener('guance:reset', () => {
     void (async () => { await flushDesktop(); const current = useDesktopState.getState().current; if (!current || !window.guance) return; applyProject(await window.guance.invoke('projects.resetDemo', { id: current.id })); })().catch((e: unknown) => toast('未恢复数据', e instanceof Error ? e.message : '操作失败', 'warning'));
   });
+  let polling = false;
+  window.setInterval(() => { if (polling || pending || activeSave) return; polling = true; void (async () => { const current = useDesktopState.getState().current; if (!current) return; const latest = await window.guance!.invoke('projects.load', { id: current.id }); if (!pending && !activeSave && useDesktopState.getState().current?.id === current.id && useDesktopState.getState().current?.revision === current.revision && latest.revision !== current.revision) { applyProject(latest); await refreshProjects(); } })().catch((e: unknown) => useDesktopState.setState({ error: String(e) })).finally(() => { polling = false; }); }, 2000);
 }

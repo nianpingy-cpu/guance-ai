@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { afterEach, expect, it } from 'vitest';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
+import { DatabaseSync } from 'node:sqlite';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { LocalDatabase } from './database';
@@ -37,4 +38,17 @@ it('rejects duplicate channel identities at the storage boundary', () => {
   const db = database(); const p = db.create('演示', 'demo');
   p.data.plans[0].channels.push(p.data.plans[0].channels[0]);
   expect(() => db.save(p.id, p.revision, p.data)).toThrow('渠道');
+});
+it('旧Web导出可导入、修改并重开；数据库升级前保留可读备份', () => {
+  const db = database(); const demo = db.create('旧数据', 'demo'); delete demo.data.mode;
+  const imported = db.import('迁移', demo.data); const value = structuredClone(imported.data); value.company.budgetCents = 666600;
+  expect(db.save(imported.id, imported.revision, value).data.mode).toBe('demo');
+  db.db.exec('ALTER TABLE changes DROP COLUMN resolves; PRAGMA user_version=1');
+  const upgraded = new LocalDatabase(db.directory);
+  expect(upgraded.db.prepare('PRAGMA user_version').get()?.user_version).toBe(2);
+  const files = readdirSync(join(db.directory, 'backups')).filter((p) => p.endsWith('.sqlite'));
+  expect(files.length).toBeGreaterThan(0);
+  const backup = new DatabaseSync(join(db.directory, 'backups', files.at(-1)!), { readOnly: true });
+  expect(backup.prepare('SELECT count(*) AS n FROM projects').get()?.n).toBeGreaterThan(0);
+  backup.close(); upgraded.close();
 });

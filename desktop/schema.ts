@@ -34,6 +34,7 @@ export const dataSchema = z.object({
 
 export function parseData(value: unknown): AppData {
   const data = dataSchema.parse(value);
+  data.mode ??= 'demo';
   for (const list of [data.sources, data.signals, data.themes, data.plans, data.approvals, data.reviews, data.feedbackTasks]) {
     if (new Set(list.map((x) => x.id)).size !== list.length) throw new Error('记录编号重复');
   }
@@ -48,3 +49,6 @@ export function parseData(value: unknown): AppData {
   if (data.plans.some((p) => new Set(p.channels.map((c) => c.channel)).size !== p.channels.length)) throw new Error('方案渠道不能重复');
   return data;
 }
+export const projectSchema = z.object({ id, name: str.min(1).max(200), mode: z.enum(['demo', 'real']), revision: id, updatedAt: str, data: dataSchema });
+export const changeSchema = z.object({ id: z.string().uuid(), projectId: id, parentRevision: z.string().max(200), revision: id, project: projectSchema, createdAt: str, resolves: z.array(id).max(1000).default([]) });
+export type Change = z.infer<typeof changeSchema>;

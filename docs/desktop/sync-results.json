@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-26T10:40:29.780Z",
+  "platform": "win32",
+  "server": "local protocol fixture; external WebDAV not tested",
+  "results": [
+    "两个原生Electron进程、不同用户数据目录、本机WebDAV协议服务器：加密业务同步成功；不含凭据",
+    "双端并发修改保留冲突；人工采用远端后两端一致；未选版本保留为独立项目"
+  ]
+}

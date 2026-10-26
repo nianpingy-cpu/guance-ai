@@ -1,74 +1,56 @@
-# 观策AI Web MVP v0.5
+# 观策AI 桌面试用版 v0.6
 
-纯前端的企业营销情报与决策演示工具。沿用 v0.4 的 M1—M5 与 M5→M2 闭环，前台保留工作台、市场情报、洞察与策略、效果复盘四个入口。
+本机营销情报与决策工具：采集/导入 → 核实情报 → 模型分析 → 人工编辑审批 → 效果复盘 → 下一轮任务。前台保留四个入口；项目、模型、来源与同步位于设置。
 
-企业、平台摘录、消费者主题、候选方案及投放结果均为模拟。洞察为预设分析；用户可编辑和录入数据，输入仅保存在浏览器。没有后端、数据库、真实 AI、爬虫或广告接口。
+React/Vite由Electron 45承载；独立utility process运行SQLite、模型、采集和同步。初次启动是模拟项目，可创建独立真实业务项目。数据先保存本机；用户自配模型和可选WebDAV。凭据系统加密保存，不进入业务导出或同步。
 
-![工作台](docs/screenshots/desktop-dashboard.png)
+当前是未签名的内部试用预览，发布门槛尚未全部满足。真实模型、外部WebDAV、社交平台与各系统安装状态请看[发布记录](docs/RELEASE-v0.6.md)，不要将协议测试等同于接通证明。手机端不在本轮范围。
 
-## 启动
+## 启动与验证
 
-要求 Node.js 22+、npm。首次安装需要联网，安装后核心演示流程无需外部服务，也不加载在线字体。
+要求Node >=24.13、npm；首次安装需联网。
 
-```bash
+```powershell
 npm ci
-npm run dev -- --host 127.0.0.1 --port 5174
+npm run desktop:start
 ```
 
-打开终端显示的本地地址。若端口被占用，Vite 会选择下一个端口。
+Web预览：`npm run dev -- --host 127.0.0.1 --port 5174`。浏览器是localStorage演示模式，桌面设置和真实任务只在桌面提供。
 
-```bash
+```powershell
 npm run lint
 npm run typecheck
+npm run typecheck:desktop
 npm test
-npm run build
-npm run preview -- --host 127.0.0.1
+npm run desktop:build
+npm run desktop:test
+node scripts/desktop-sync-verify.mjs
+node scripts/desktop-visual.mjs
+node scripts/desktop-performance.mjs
+npm run desktop:pack
 ```
 
-静态部署需将所有页面路径回退到 index.html。浏览器持久化受 origin（主机、端口）隔离，旧端口的数据不会自动迁移。
+输出release目录。Windows生成x64 NSIS；macOS在macOS构建机生成arm64/x64 DMG。GitHub Desktop Trial工作流分别验证系统。未签名包不等同于正式发行版。
 
-## 本轮变化
+Web操作回归：启动预览，设置BASE_URL后运行`npm run ui:verify`和`npm run ui:visual`；后者覆盖6视口×3档CSS近似缩放×4页。桌面视觉脚本使用原生Electron缩放，覆盖4桌面尺寸×3档缩放×4页及4设置页，共96状态。结果与截图存入docs对应目录。
 
-- 工作台合并重复预算/审批/方案信息：一条指标带、一个趋势图、三条重点记录和本轮进展。
-- 情报清单优先，移除四张 KPI 卡，将时间与来源分布按需展开；保留全部筛选、证据详情、备注、重要性和状态修改、CSV/JSON 导入及反馈任务。
-- 策略页直接展示 A/B 比较和编辑，消费者主题、证据质量及竞品机会按需展开。保留方案编辑、预算阻断、按比例调整、人工理由和不可变审批快照。
-- 复盘保留四项主要结果、渠道输入和下一轮任务，补充对比图按需展开；所有指标由录入数据重算。
-- 统一冷白灰/海军蓝、字体、细线和间距，去除指标渐变及重复顶栏按钮。放大图表标签；小屏图表在自身区域横向滚动。
-- 修复零花费成本显示、同一毫秒审批 ID 冲突、无效复盘渠道误报成功。
+## 数据、权限与同步
 
-## 演示操作
+- Windows数据：`%APPDATA%/GuanceAI/data/guance.sqlite`；macOS：`~/Library/Application Support/GuanceAI/data/guance.sqlite`。卸载默认保留；升级迁移、导入和演示重置前备份到data/backups。
+- 旧Web迁移：原端口导出JSON→桌面设置→项目与备份→预览校验后导入。重复数据不重复建项目。
+- 金额整数分。数据库事务再次检查预算、依据版本和审批快照；普通保存不能改历史审批。依据变化触发复审。
+- 密钥使用系统加密，系统安全存储不可用时拒绝保存。模型只发送所选情报和企业资料；不自动重复提交请求；取消仍可能计费。
+- 采集支持公开网页、RSS/Atom、CSV/JSON。原文和模型推断需人工核实，来源和任务编号可查。应用关闭期间不执行任务。
+- 公众号、小红书、抖音均待开通：本版管理凭据和能力清单，尚未验收官方数据适配器，禁止启动对应任务。
+- WebDAV以AES-256-GCM、PBKDF2-SHA256独立口令加密业务版本记录；不同步SQLite文件和凭据。整项目并发修改保留冲突，未选版本另存项目。
+- 支持手动及运行期间每分钟同步；离线可编辑。首版同步未做历史归档，最多2万条远端记录；口令不能原地轮换。适合小规模试用。
 
-1. 工作台修改企业预算，策略页上限与审批状态同步；超过预算时不能确认。
-2. 情报页使用筛选，打开记录查看模拟原文，修改优先级/核实状态及人工备注。
-3. 策略页选择 A/B，编辑方案与渠道预算。填写理由并确认；快照保留当时方案、预算及证据状态。后续方案、预算、关联证据状态变化会触发复审。
-4. 展开消费者主题分析，点击主题及证据返回情报详情。
-5. 复盘页录入真实可操作的数值，重新计算 CTR、CPC、咨询成本等。缺失值与零值区分，分母为零时不计算成本。
-6. 将下一轮建议加入任务，再前往情报页完成或重开待办。
-7. 侧栏导出完整 JSON；恢复演示数据需二次确认。原有 localStorage key 保留为 `guancha-ai-mvp-v04`。
+## 文档
 
-## 复现浏览器验收
+- [安装与手动教程](docs/DESKTOP-GUIDE.md)
+- [完整测试方案](docs/TEST-PLAN-v0.6.md)
+- [发布门槛与限制](docs/RELEASE-v0.6.md)
+- [UI修复](docs/QA-v0.6-ui.md)、[数据库](docs/QA-v0.6-local.md)、[模型](docs/QA-v0.6-models.md)、[采集](docs/QA-v0.6-collection.md)
+- [协作要求](CONTRIBUTING.md)、[第三方许可](THIRD_PARTY_NOTICES.md)
 
-先启动本地站点，再运行：
-
-```bash
-npm run ui:verify
-# 自定义站点：设置 BASE_URL 环境变量后运行
-```
-
-脚本使用本机 Chrome。无 Chrome 时：`npx playwright install chromium`，设置 `CI=1` 后运行，使用 Playwright Chromium。检查四页 1440×1000、768×1024、390×844，完成关键操作并保存 `docs/ui-verification.json` 与 `docs/screenshots/`。CI 安装 Chromium 后也会执行浏览器验收。
-
-- [分阶段计划](docs/PLAN-v0.5.md)
-- [本轮验收记录](docs/QA-v0.5.md)
-- [协作规则](CONTRIBUTING.md)
-- [第三方许可](THIRD_PARTY_NOTICES.md)
-- [v0.2 审计](docs/AUDIT-v0.2.md)
-
-`docs/demo/` 中视频及 `docs/DEMO-GUIDE.md` 属于原 v0.4 基线，不代表本轮界面；本轮交付以 desktop/tablet/mobile 截图及验收记录为准。
-
-## 开发方式与边界
-
-私有仓库：nianpingy-cpu/guance-ai。首次提交原样导入 v0.4；后续采用 Issue → 分支 → 测试 → PR → 独立审查 → CI → 合并，不直接修改 main。
-
-React 18、TypeScript、Vite、Zustand、Tailwind；数据源为 `src/data/demo.ts` 的统一确定性 mock 对象，纯 JSON 可序列化；计算集中在 `src/lib/calculations.ts`。SVG 图表独立实现，参考 Lieflat 的 Lupi/Glance/Basics，不将参考仓库当作 React 包安装。
-
-localStorage 可由浏览器用户修改，不是可信审计系统；没有真实成效验证或模型运行。全页面监控是本轮实际执行的有限验收，不含后台持续监控。
+私有仓库nianpingy-cpu/guance-ai。遵循Issue→分支→RED/GREEN→PR→独立审查→CI；审查完成前保持Draft、不合并main。历史v0.2/v0.5与旧视频仅供追溯；当前证据以v0.6运行记录为准。验收属于本轮有限检查，不代表持续监控。
