@@ -56,6 +56,7 @@ try {
     await page.goto(`guance://app/${path}`); await page.getByRole('button', { name: '设置', exact: true }).waitFor();
     assert.equal(await page.getByRole('button', { name: '编辑当前企业资料', exact: true }).textContent(), '桌面持久化验收');
     await page.evaluate(() => document.fonts.ready);
+    assert.equal(await page.evaluate(() => [...document.fonts].some((font) => font.status === 'loaded' && font.family.includes('Noto Sans SC Variable'))), true, '离线内置字体应在原生及打包应用中加载');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
     await page.screenshot({ path: `docs/desktop/${path}.png`, fullPage: true });
   }
