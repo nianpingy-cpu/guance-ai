@@ -10,6 +10,7 @@ const dirs: string[] = []; const dbs: LocalDatabase[] = [];
 afterEach(() => { dbs.forEach((d) => d.close()); dbs.length = 0; dirs.splice(0).forEach((p) => rmSync(p, { recursive: true, force: true })); });
 function setup() { const dir = mkdtempSync(join(tmpdir(), 'guance-model-')); dirs.push(dir); const db = new LocalDatabase(dir); dbs.push(db); return db; }
 describe('模型边界', () => {
+  it('主题数量由实际关联情报计算，不使用模型编造的提及数', () => { const db = setup(); const p = db.create('demo', 'demo'); const theme = { ...p.data.themes[0], evidenceSignalIds: ['S-01', 'S-01'], mentionCount: 9999 }; const plans = p.data.plans.map((plan) => ({ ...plan, evidenceThemeIds: [theme.id] })); const result = validateAnalysis({ themes: [theme], plans }, p.data, ['S-01']); expect(result.themes[0].mentionCount).toBe(1); expect(result.themes[0].evidenceSignalIds).toEqual(['S-01']); });
   it('三种协议发出实际HTTP请求，解析结果；401不重复提交；取消中止请求', async () => {
     const requests: Array<{ path: string; key: string; body: string }> = [];
     const server = createServer(async (req, res) => { let body = ''; for await (const chunk of req) body += chunk; requests.push({ path: req.url!, key: String(req.headers.authorization ?? req.headers['x-api-key']), body });

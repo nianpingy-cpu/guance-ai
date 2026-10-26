@@ -13,6 +13,7 @@ const analysisSchema = z.object({ themes: z.array(themeSchema).min(1).max(12), p
 export function validateAnalysis(value: unknown, data: AppData, selected: string[]) {
   const result = analysisSchema.parse(value); const ids = new Set(selected);
   if (result.themes.some((t) => !t.evidenceSignalIds.length || t.evidenceSignalIds.some((id) => !ids.has(id)))) throw new Error('模型引用不存在或不在所选情报中');
+  for (const theme of result.themes) { theme.evidenceSignalIds = [...new Set(theme.evidenceSignalIds)]; theme.mentionCount = theme.evidenceSignalIds.length; }
   if (new Set(result.themes.map((t) => t.id)).size !== result.themes.length || new Set(result.plans.map((p) => p.code)).size !== 2) throw new Error('模型结果编号或方案A/B重复');
   const themes = new Set(result.themes.map((t) => t.id));
   if (result.plans.some((p) => !p.evidenceThemeIds.length || p.evidenceThemeIds.some((t) => !themes.has(t)))) throw new Error('方案缺少有效主题引用');
@@ -72,7 +73,7 @@ export class ModelService {
       result.plans = result.plans.map((p) => ({ ...p, id: project.data.plans.find((old) => old.code === p.code)?.id ?? p.id, analysisId: id, updatedAt: date }));
       const current = this.db.load(projectId);
       if (current.revision !== project.revision) throw new Error('生成期间项目依据已变化，结果未覆盖现有数据，请重新选择情报');
-      const data = { ...current.data, themes: result.themes, plans: result.plans, analyses: [...(current.data.analyses ?? []), { id, provider: provider.name, model: provider.model, promptVersion: 'guance-analysis-1', evidenceSignalIds: selected.map((s) => s.id), evidenceDigest: digest, createdAt: date, result }] };
+      const data = { ...current.data, themes: result.themes, plans: result.plans, opportunities: [], analyses: [...(current.data.analyses ?? []), { id, provider: provider.name, model: provider.model, promptVersion: 'guance-analysis-1', evidenceSignalIds: selected.map((s) => s.id), evidenceDigest: digest, createdAt: date, result }] };
       this.db.save(projectId, current.revision, data); return `已生成${result.themes.length}个主题与A/B两套方案；需人工核实并审批`;
     });
   }
