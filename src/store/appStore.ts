@@ -281,6 +281,7 @@ export const useAppStore = create<AppStore>()(
         if (!reason.trim()) return { ok: false, message: '请填写确认理由，审批快照需要记录依据' };
 
         const evidenceIds = planEvidenceIds(plan, state);
+        if (plan.analysisId && (!evidenceIds.length || evidenceIds.some((id) => !state.signals.some((s) => s.id === id && s.status !== 'disputed' && s.status !== 'duplicate')))) return { ok: false, message: '模型方案缺少有效引用，请先核实情报' };
         const evidence = snapshotEvidence(state.signals, evidenceIds);
         const approval: ApprovalSnapshot = {
           id: `APR-${crypto.randomUUID()}`,
@@ -391,6 +392,7 @@ export const useAppStore = create<AppStore>()(
         sources: state.sources,
         signals: state.signals,
         themes: state.themes,
+        analyses: state.analyses,
         opportunities: state.opportunities,
         plans: state.plans,
         approvals: state.approvals,

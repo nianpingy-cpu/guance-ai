@@ -101,6 +101,6 @@
       "category": "public.app-category.business",
       "identity": null
     },
-    "artifactName": "GuanceAI---."
+    "artifactName": "GuanceAI-${os}-${arch}-${version}.${ext}"
   }
 }

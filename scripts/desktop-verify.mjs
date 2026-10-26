@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createServer } from 'node:http';
 const data = await mkdtemp(join(tmpdir(), 'guance-desktop-'));
 const results = [];
 await mkdir('docs/desktop', { recursive: true });
@@ -19,6 +20,19 @@ try {
   results.push('渲染页面无Node权限');
   const demo = await page.evaluate(() => window.guance.invoke('projects.list', undefined));
   assert.equal(demo.length, 1);
+  const sample = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), demo[0].id);
+  const fixture = createServer(async (req, res) => { for await (const chunk of req) { void chunk; } res.setHeader('content-type', 'application/json'); res.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ themes: sample.data.themes, plans: sample.data.plans }) } }] })); });
+  await new Promise((r) => fixture.listen(0, '127.0.0.1', r)); const port = fixture.address().port;
+  try {
+    const provider = await page.evaluate((port) => window.guance.invoke('models.save', { name: '本机协议测试', baseUrl: `http://127.0.0.1:${port}`, protocol: 'chat', apiKey: 'LOCAL_FIXTURE_ONLY', models: ['fixture'], model: 'fixture' }), port);
+    assert.equal(provider.hasKey, true); assert.ok(!JSON.stringify(provider).includes('LOCAL_FIXTURE_ONLY'));
+    await page.evaluate((id) => window.guance.invoke('models.default', { id }), provider.id);
+    await page.evaluate((p) => window.guance.invoke('models.analyze', { projectId: p.id, signalIds: p.data.signals.map((s) => s.id) }), sample);
+    await page.waitForFunction(async (id) => (await window.guance.invoke('jobs.list', { projectId: id })).every((j) => j.status !== 'running'), sample.id);
+    const jobs = await page.evaluate((id) => window.guance.invoke('jobs.list', { projectId: id }), sample.id); assert.equal(jobs[0].status, 'completed', JSON.stringify(jobs));
+    const generated = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), sample.id); assert.equal(generated.data.analyses.length, 1);
+    results.push('Windows系统加密实际保存测试凭据；本机HTTP协议端到端生成与引用审计（非真实模型）');
+  } finally { fixture.closeAllConnections(); await new Promise((r) => fixture.close(r)); }
   await assert.rejects(page.evaluate(() => window.guance.invoke('arbitrary.execute', { cmd: 'noop' })), /不支持/);
   results.push('IPC白名单拒绝未声明命令');
   await page.getByRole('button', { name: '设置', exact: true }).click();

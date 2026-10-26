@@ -16,6 +16,7 @@ import { ToastViewport } from '@/components/ui/ToastViewport';
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import { Settings } from '@/desktop/Settings';
 import { flushDesktop } from '@/desktop/client';
+import { AnalysisPanel } from '@/desktop/AnalysisPanel';
 
 function download(content: string, filename: string, type: string) {
   const url = URL.createObjectURL(new Blob([content], { type }));
@@ -31,6 +32,7 @@ function snapshotOfState(): AppData {
   return {
     schemaVersion: state.schemaVersion,
     mode: state.mode,
+    analyses: state.analyses,
     company: state.company,
     sources: state.sources,
     signals: state.signals,
@@ -72,6 +74,7 @@ export function AppShell() {
         <main key={location.pathname} className="page-enter">
           <ErrorBoundary>
             <Outlet />
+            {window.guance && location.pathname === '/strategy' && <AnalysisPanel />}
           </ErrorBoundary>
         </main>
       </div>

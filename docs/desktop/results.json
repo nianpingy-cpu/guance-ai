@@ -1,9 +1,10 @@
 {
-  "at": "2026-10-26T10:13:14.167Z",
+  "at": "2026-10-26T10:20:15.701Z",
   "platform": "win32",
-  "data": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-desktop-8GG20O",
+  "data": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-desktop-rf5oWx",
   "results": [
     "渲染页面无Node权限",
+    "Windows系统加密实际保存测试凭据；本机HTTP协议端到端生成与引用审计（非真实模型）",
     "IPC白名单拒绝未声明命令",
     "多项目隔离与真实项目重置保护",
     "真实SQLite关闭重开保留金额与项目；四页无横向溢出"

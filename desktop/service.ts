@@ -1,9 +1,14 @@
 import { z } from 'zod';
 import type { Command } from '../src/types/desktop';
 import { LocalDatabase } from './database';
+import { ModelService, providerSchema } from './models';
+import type { Vault } from './models';
 
 const id = z.string().min(1).max(200);
 export const commands = {
+  'models.list': z.undefined(), 'models.save': providerSchema, 'models.remove': z.object({ id }).strict(), 'models.default': z.object({ id }).strict(), 'models.discover': z.object({ id }).strict(), 'models.test': z.object({ id }).strict(),
+  'models.analyze': z.object({ projectId: id, signalIds: z.array(id).min(1).max(100) }).strict(),
+  'jobs.list': z.object({ projectId: id }).strict(), 'jobs.cancel': z.object({ id }).strict(),
   'projects.list': z.undefined(),
   'projects.create': z.object({ name: id, mode: z.enum(['demo', 'real']) }).strict(),
   'projects.load': z.object({ id }).strict(),
@@ -13,12 +18,22 @@ export const commands = {
   'projects.resetDemo': z.object({ id }).strict(),
 };
 export class DesktopService {
-  constructor(readonly database: LocalDatabase) {}
+  readonly models: ModelService;
+  constructor(readonly database: LocalDatabase, vault: Vault) { this.models = new ModelService(database, vault); }
   async execute(command: string, input: unknown): Promise<unknown> {
     if (!Object.hasOwn(commands, command)) throw new Error('不支持的操作');
     const name = command as Command;
     const value = commands[name].parse(input);
     switch (name) {
+      case 'models.list': return this.models.list();
+      case 'models.save': return this.models.save(value);
+      case 'models.remove': return this.models.remove(commands[name].parse(value).id);
+      case 'models.default': return this.models.setDefault(commands[name].parse(value).id);
+      case 'models.discover': return this.models.discover(commands[name].parse(value).id);
+      case 'models.test': return this.models.test(commands[name].parse(value).id);
+      case 'models.analyze': { const p = commands[name].parse(value); return this.models.analyze(p.projectId, p.signalIds); }
+      case 'jobs.list': return this.models.jobs.list(commands[name].parse(value).projectId);
+      case 'jobs.cancel': return this.models.jobs.cancel(commands[name].parse(value).id);
       case 'projects.list': return this.database.list();
       case 'projects.create': { const p = commands[name].parse(value); return this.database.create(p.name, p.mode); }
       case 'projects.load': return this.database.load(commands[name].parse(value).id);

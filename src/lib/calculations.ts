@@ -169,6 +169,7 @@ export function planEvidenceIds(plan: Plan, data: Pick<AppData, 'themes'>): stri
 }
 
 export interface EvidenceState {
+  content?: string;
   id: string;
   priority: SignalPriority;
   status: Signal['status'];
@@ -183,6 +184,7 @@ export function snapshotEvidence(signals: Signal[], evidenceIds: string[]): Evid
       priority: signal.priority,
       status: signal.status,
       relevance: signal.relevance,
+      content: JSON.stringify([signal.title, signal.summary, signal.quote, signal.sourceId, signal.impact]),
     }))
     .sort((a, b) => a.id.localeCompare(b.id));
 }

@@ -85,6 +85,7 @@ export interface PlanChannel {
 }
 
 export interface Plan {
+  analysisId?: string;
   id: string;
   code: PlanCode;
   name: string;
@@ -118,6 +119,7 @@ export interface ApprovalSnapshot {
     priority: SignalPriority;
     status: SignalStatus;
     relevance: number;
+    content?: string;
   }>;
   note: string;
 }
@@ -168,6 +170,7 @@ export interface DecisionState {
 }
 
 export interface AppData {
+  analyses?: Array<{ id: string; provider: string; model: string; promptVersion: string; evidenceSignalIds: string[]; evidenceDigest: string; createdAt: string; result: { themes: InsightTheme[]; plans: Plan[] } }>;
   mode?: 'demo' | 'real';
   schemaVersion: number;
   company: Company;

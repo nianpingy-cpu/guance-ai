@@ -71,6 +71,7 @@ export class LocalDatabase {
         const plan = data.plans.find((p) => p.id === approval.planId);
         if (!plan || !checkPlanBudget(plan, data.company.budgetCents).ok || !approval.reason.trim()) throw new Error('审批预算或理由无效');
         const ids = planEvidenceIds(plan, data);
+        if (plan.analysisId && (!ids.length || !data.analyses?.some((a) => a.id === plan.analysisId) || ids.some((id) => !data.signals.some((s) => s.id === id && s.status !== 'disputed' && s.status !== 'duplicate')))) throw new Error('模型方案缺少有效引用，不能审批');
         const evidence = snapshotEvidence(data.signals, ids);
         if (JSON.stringify(approval.plan) !== JSON.stringify(plan) || approval.companyBudgetCents !== data.company.budgetCents || approval.fingerprint !== buildPlanFingerprint(plan, data.company.budgetCents, evidence) || JSON.stringify(approval.evidence) !== JSON.stringify(evidence) || JSON.stringify(approval.evidenceSignalIds) !== JSON.stringify(ids)) throw new Error('审批依据与当前版本不一致');
       }

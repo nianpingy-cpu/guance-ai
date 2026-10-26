@@ -10,17 +10,20 @@ const priority = z.enum(['high', 'medium', 'low']);
 const status = z.enum(['verified', 'pending', 'disputed', 'duplicate']);
 const channel = z.object({ channel: id, budgetCents: amount, role: str });
 export const planSchema = z.object({
+  analysisId: id.optional(),
   id, code: z.enum(['A', 'B']), name: str, shortName: str, positioning: str, audience: str,
   platforms: strings, formats: strings, timing: str, coreMessage: str, rationale: str,
   constraints: strings, uncertainties: strings, channels: z.array(channel).min(1).max(30), evidenceThemeIds: strings, updatedAt: str,
 });
-const evidence = z.object({ id, priority, status, relevance: z.number().int().min(1).max(5) });
+const evidence = z.object({ id, priority, status, relevance: z.number().int().min(1).max(5), content: str.optional() });
+export const themeSchema = z.object({ id, rank: amount, title: str, summary: str, mentionCount: amount, direction: str, confidence: priority, claimType: z.enum(['观测事实', '分析推断']), evidenceSignalIds: strings, opportunity: str, caveat: str });
 export const dataSchema = z.object({
+  analyses: z.array(z.object({ id, provider: str, model: str, promptVersion: str, evidenceSignalIds: strings, evidenceDigest: str, createdAt: str, result: z.object({ themes: z.array(themeSchema), plans: z.array(planSchema) }) })).optional(),
   schemaVersion: z.literal(4), mode: z.enum(['demo', 'real']).optional(),
   company: z.object({ id, name: str.min(1), brand: str, industry: str, region: str, stage: str, product: str, productSpec: str, goal: str, budgetCents: amount.positive(), campaignStart: str, campaignEnd: str, updatedAt: str }),
   sources: z.array(z.object({ id, name: str, platform: str, kind: category, publishedAt: str, url: str.optional(), note: str, simulated: z.boolean(), collectedAt: str.optional(), taskId: str.optional(), contentHash: str.optional() })).max(100_000),
   signals: z.array(z.object({ id, title: str, summary: str, quote: str, sourceId: id, platform: str, category, priority, status, relevance: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]), impact: str, tags: strings, capturedAt: str, note: str, duplicateOf: str.optional(), conflictGroup: str.optional(), verifiedAt: str.optional() })).max(100_000),
-  themes: z.array(z.object({ id, rank: amount, title: str, summary: str, mentionCount: amount, direction: str, confidence: priority, claimType: z.enum(['观测事实', '分析推断']), evidenceSignalIds: strings, opportunity: str, caveat: str })),
+  themes: z.array(themeSchema),
   opportunities: z.array(z.object({ id, title: str, fact: str, opportunity: str, verify: str, evidenceSignalIds: strings, tone: z.enum(['positive', 'neutral', 'caution']) })),
   plans: z.array(planSchema).max(20),
   approvals: z.array(z.object({ id, planId: id, planCode: z.enum(['A', 'B']), approvedAt: str, reason: str.min(1), plan: planSchema, companyBudgetCents: amount.positive(), fingerprint: str, evidenceSignalIds: strings, evidence: z.array(evidence), note: str })),

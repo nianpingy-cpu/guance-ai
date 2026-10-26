@@ -11,7 +11,7 @@ let activeSave: Promise<void> | undefined;
 export function applyProject(project: Project) {
   applying = true;
   useDesktopState.setState({ current: project, error: '' });
-  useAppStore.setState(project.data);
+  useAppStore.setState({ analyses: [], mode: 'demo', ...project.data });
   applying = false;
 }
 export async function refreshProjects() {

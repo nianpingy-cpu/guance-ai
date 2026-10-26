@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, protocol, net, shell, safeStorage, utility
 import { join, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { existsSync } from 'node:fs';
+import { Buffer } from 'node:buffer';
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'guance', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
 if (process.env.GUANCE_TEST_DATA) app.setPath('userData', resolve(process.env.GUANCE_TEST_DATA));
@@ -24,7 +25,16 @@ app.whenReady().then(async () => {
     return net.fetch(pathToFileURL(target).href);
   });
   worker = utilityProcess.fork(join(__dirname, 'worker.cjs'));
-  worker.on('message', (message: { id: number; result?: unknown; error?: string }) => {
+  worker.on('message', async (message: { id: number; result?: unknown; error?: string; secureId?: number; method?: string; value?: string }) => {
+    if (message.secureId) {
+      try {
+        if (!await safeStorage.isAsyncEncryptionAvailable()) throw new Error('系统安全存储不可用，不能保存密钥');
+        if (typeof message.value !== 'string') throw new Error('凭据格式无效');
+        const value = message.method === 'encrypt' ? (await safeStorage.encryptStringAsync(message.value)).toString('base64') : (await safeStorage.decryptStringAsync(Buffer.from(message.value, 'base64'))).result;
+        worker.postMessage({ secureId: message.secureId, value });
+      } catch { worker.postMessage({ secureId: message.secureId, error: '系统密钥存储不可用或凭据无法解密，请在本机重新配置' }); }
+      return;
+    }
     const listener = pending.get(message.id); if (!listener) return; pending.delete(message.id);
     if (message.error) listener.reject(new Error(message.error)); else listener.resolve(message.result);
   });

@@ -2,7 +2,20 @@ import type { AppData } from './domain';
 
 export interface ProjectSummary { id: string; name: string; revision: string; mode: 'demo' | 'real'; updatedAt: string }
 export interface Project extends ProjectSummary { data: AppData }
+export type ModelProtocol = 'chat' | 'responses' | 'anthropic';
+export interface Provider { id: string; name: string; baseUrl: string; protocol: ModelProtocol; models: string[]; model: string; hasKey: boolean }
+export type ProviderInput = Omit<Provider, 'id' | 'hasKey'> & { id?: string; apiKey?: string };
+export interface Job { id: string; projectId: string; kind: 'analysis' | 'collect'; status: 'running' | 'completed' | 'failed' | 'cancelled' | 'interrupted'; progress: string; createdAt: string; error?: string; result?: string }
 export interface DesktopCommands {
+  'models.list': { input: undefined; output: { providers: Provider[]; defaultId: string } };
+  'models.save': { input: ProviderInput; output: Provider };
+  'models.remove': { input: { id: string }; output: void };
+  'models.default': { input: { id: string }; output: void };
+  'models.discover': { input: { id: string }; output: string[] };
+  'models.test': { input: { id: string }; output: string };
+  'models.analyze': { input: { projectId: string; signalIds: string[] }; output: Job };
+  'jobs.list': { input: { projectId: string }; output: Job[] };
+  'jobs.cancel': { input: { id: string }; output: void };
   'projects.list': { input: undefined; output: ProjectSummary[] };
   'projects.create': { input: { name: string; mode: 'demo' | 'real' }; output: Project };
   'projects.load': { input: { id: string }; output: Project };
