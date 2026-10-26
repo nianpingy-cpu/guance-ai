@@ -14,6 +14,7 @@ async function launch() {
   const instance = await electron.launch({ ...(process.env.GUANCE_EXECUTABLE ? { executablePath: process.env.GUANCE_EXECUTABLE, args: [] } : { args: ['.'] }), env: { ...process.env, GUANCE_TEST_DATA: data }, timeout: 30000 });
   instance.on('console', (m) => { if (m.type() === 'error') console.error(m.text()); });
   const page = await instance.firstWindow(); await page.getByRole('button', { name: '设置', exact: true }).waitFor();
+  if (process.env.GUANCE_NATIVE_NARROW) await page.setViewportSize({ width: 1000, height: 768 });
   return [instance, page];
 }
 try {
@@ -64,7 +65,9 @@ try {
   assert.equal(imported.data.signals.length, 1); assert.equal(imported.data.sources[0].origin, 'manual');
   const exportedPath = join(data, 'project-export.json');
   await app.evaluate(({ BrowserWindow }, filename) => BrowserWindow.getAllWindows()[0].webContents.session.once('will-download', (_event, item) => item.setSavePath(filename)), exportedPath);
-  await page.getByRole('button', { name: '导出当前任务 JSON', exact: true }).click();
+  const exportButton = page.getByRole('button', { name: '导出当前任务 JSON', exact: true });
+  if (!await exportButton.isVisible()) await page.getByRole('button', { name: '打开导航', exact: true }).click();
+  await exportButton.click();
   let exported; for (let i = 0; i < 100; i++) { try { exported = JSON.parse(await readFile(exportedPath, 'utf8')); break; } catch { await delay(100); } }
   assert.equal(exported.data.signals.length, 1); assert.equal(exported.data.company.budgetCents, 654321); assert.ok(!JSON.stringify(exported).includes('LOCAL_FIXTURE_ONLY'));
   results.push('桌面CSV人工导入与实际JSON下载；自定义协议/CSP下导出正常，业务导出无凭据');
