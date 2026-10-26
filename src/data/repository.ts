@@ -46,6 +46,7 @@ export const localRepository = {
   },
 
   save(data: AppData): void {
+    if (window.guance) { window.dispatchEvent(new CustomEvent('guance:save', { detail: data })); return; }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   },
 
@@ -67,9 +68,9 @@ export function initialAppData(): AppData {
 export function exportSnapshot(data: AppData): string {
   return JSON.stringify(
     {
-      product: '观策AI Web MVP v0.4',
+      product: '观策AI v0.6',
       exportedAt: new Date().toISOString(),
-      disclaimer: '演示数据为虚构或模拟，不代表真实企业、平台或广告效果。',
+      disclaimer: data.mode === 'real' ? '用户业务数据；每条来源及模型生成结果分别标记，非自动投放记录。' : '演示数据为虚构或模拟，不代表真实企业、平台或广告效果。',
       data,
     },
     null,

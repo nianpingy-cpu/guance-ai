@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 
 interface UiState {
+  settingsOpen: boolean;
+  setSettingsOpen: (open: boolean) => void;
   companyDrawerOpen: boolean;
   importModalOpen: boolean;
   mobileNavOpen: boolean;
@@ -13,6 +15,8 @@ interface UiState {
 }
 
 export const useUiStore = create<UiState>((set) => ({
+  settingsOpen: false,
+  setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
   companyDrawerOpen: false,
   importModalOpen: false,
   mobileNavOpen: false,

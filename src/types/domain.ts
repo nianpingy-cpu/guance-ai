@@ -28,7 +28,10 @@ export interface Source {
   publishedAt: string;
   url?: string;
   note: string;
-  simulated: true;
+  simulated: boolean;
+  collectedAt?: string;
+  taskId?: string;
+  contentHash?: string;
 }
 
 export interface Signal {
@@ -131,7 +134,7 @@ export interface Review {
   id: string;
   approvalId: string;
   planId?: string;
-  dataKind: 'simulated';
+  dataKind: 'simulated' | 'manual';
   note: string;
   observations: string;
   possibleReasons: string;
@@ -165,6 +168,7 @@ export interface DecisionState {
 }
 
 export interface AppData {
+  mode?: 'demo' | 'real';
   schemaVersion: number;
   company: Company;
   sources: Source[];

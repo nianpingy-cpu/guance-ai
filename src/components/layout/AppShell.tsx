@@ -14,6 +14,8 @@ import { Button } from '@/components/ui/Button';
 import { InfoBanner } from '@/components/ui/Form';
 import { ToastViewport } from '@/components/ui/ToastViewport';
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
+import { Settings } from '@/desktop/Settings';
+import { flushDesktop } from '@/desktop/client';
 
 function download(content: string, filename: string, type: string) {
   const url = URL.createObjectURL(new Blob([content], { type }));
@@ -28,6 +30,7 @@ function snapshotOfState(): AppData {
   const state = useAppStore.getState();
   return {
     schemaVersion: state.schemaVersion,
+    mode: state.mode,
     company: state.company,
     sources: state.sources,
     signals: state.signals,
@@ -52,7 +55,8 @@ export function AppShell() {
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, [location.pathname]);
 
-  const handleExport = () => {
+  const handleExport = async () => {
+    await flushDesktop();
     const payload = exportSnapshot(snapshotOfState());
     download(payload, '观策AI-当前任务与结果.json', 'application/json;charset=utf-8');
     toast('已导出当前任务与结果', '文件包含企业、情报、方案、审批快照与复盘数据。', 'success');
@@ -74,6 +78,7 @@ export function AppShell() {
 
       <CompanyDrawer />
       <ImportModal />
+      {window.guance && <Settings />}
       <ToastViewport />
 
       <Modal

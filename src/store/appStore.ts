@@ -67,6 +67,7 @@ export type AppStore = AppData & AppActions;
 
 const storage: PersistStorage<AppData> = {
   getItem: (name) => {
+    if (window.guance) return null;
     try {
       const raw = localStorage.getItem(name);
       if (!raw) return null;
@@ -92,7 +93,7 @@ const storage: PersistStorage<AppData> = {
 function now(): string {
   // The demo campaign happens after the wall-clock date used while building it.
   // Clamp the visible demo clock so newly approved snapshots sort after seed data.
-  return new Date(Math.max(Date.now(), Date.parse(DEMO_NOW))).toISOString();
+  return new Date(useAppStore.getState().mode === 'real' ? Date.now() : Math.max(Date.now(), Date.parse(DEMO_NOW))).toISOString();
 }
 
 function createReviewFor(approval: ApprovalSnapshot): Review {
@@ -100,7 +101,7 @@ function createReviewFor(approval: ApprovalSnapshot): Review {
     id: `REV-${crypto.randomUUID()}`,
     approvalId: approval.id,
     planId: approval.planId,
-    dataKind: 'simulated',
+    dataKind: useAppStore.getState().mode === 'real' ? 'manual' : 'simulated',
     note: '本轮数据为演示输入；没有真实投放接口。',
     observations: '',
     possibleReasons: '',
@@ -373,6 +374,7 @@ export const useAppStore = create<AppStore>()(
       },
 
       resetDemo: () => {
+        if (window.guance) { window.dispatchEvent(new Event('guance:reset')); return; }
         const fresh = createDemoData();
         localRepository.save(fresh);
         set(fresh);
@@ -383,6 +385,7 @@ export const useAppStore = create<AppStore>()(
       version: 4,
       storage,
       partialize: (state): AppData => ({
+        mode: state.mode,
         schemaVersion: state.schemaVersion,
         company: state.company,
         sources: state.sources,

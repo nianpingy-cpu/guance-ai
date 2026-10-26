@@ -1,7 +1,7 @@
 {
   "name": "guancha-ai-web-mvp",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,22 +14,31 @@
     "demo:record": "node scripts/record-demo.mjs",
     "lint": "eslint .",
     "ui:verify": "node scripts/ui-verify.mjs",
-    "ui:visual": "node scripts/visual-verify.mjs"
+    "ui:visual": "node scripts/visual-verify.mjs",
+    "typecheck:desktop": "tsc -p tsconfig.desktop.json",
+    "desktop:build": "npm run build && node scripts/build-desktop.mjs",
+    "desktop:start": "npm run desktop:build && electron .",
+    "desktop:test": "node scripts/desktop-verify.mjs",
+    "desktop:pack": "npm run desktop:build && electron-builder --publish never"
   },
   "dependencies": {
     "lucide-react": "^0.454.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.18.4",
+    "zod": "^4.6.7",
     "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^22.9.0",
+    "@types/node": "^24.19.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^6.1.2",
     "autoprefixer": "^10.4.20",
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.28.2",
     "eslint": "^10.13.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "jsdom": "^25.0.1",
@@ -46,5 +55,52 @@
   },
   "engines": {
     "node": ">=24.13.0"
+  },
+  "description": "观策AI本地营销决策桌面试用版",
+  "author": "Nianping",
+  "main": "desktop-dist/main.cjs",
+  "build": {
+    "appId": "com.guanceai.desktop",
+    "productName": "观策AI",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "desktop-dist/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "category": "public.app-category.business",
+      "identity": null
+    },
+    "artifactName": "GuanceAI---."
   }
 }

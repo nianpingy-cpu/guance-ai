@@ -6,3 +6,5 @@ dist/
 docs/demo/*.webm
 .playwright-cli/
 test-results/
+desktop-dist/
+release/

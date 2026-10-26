@@ -7,7 +7,7 @@
 - 提交使用 Conventional Commits，不混入无关重构。
 - lint、typecheck、test、build 全通过；不删弱测试，不掩盖失败，不以 any 绕过边界。
 - 独立审查阅读需求、diff、测试与 CI，记录 BLOCKING/NON-BLOCKING 和 APPROVE/REQUEST CHANGES；审查通过前不合并。
-- 保持四个入口与纯前端边界；所有模拟数据和预设分析可辨认；行为变更同步文档。
+- 保持四个入口；桌面数据与任务仅通过校验的 IPC 接口进入独立本地进程；所有模拟数据和预设分析可辨认；行为变更同步文档。
 - 浏览器验收保存四页三个视口截图和关键操作结果；不把旧截图、预设结果或未来监控当作本轮证据。
 
-本项目没有 FocusLoop 的 Electron/IPC/扩展权限等组件，其专属检查不适用。
+桌面改动须检查 contextIsolation、sandbox、导航限制、IPC 白名单、密钥隔离、本地数据迁移及升级备份。PR 独立审查完成前保持 Draft，不自动合并。
