@@ -102,6 +102,7 @@ export class LocalDatabase {
     if (c.projectId !== c.project.id || c.revision !== c.project.revision || c.revision !== revision(c.project.data) || c.project.mode !== (c.project.data.mode ?? 'demo')) throw new Error('同步记录摘要或项目标识无效');
     if (this.db.prepare('SELECT id FROM applied WHERE id=?').get(c.id)) return 'applied';
     const row = this.db.prepare('SELECT * FROM projects WHERE id=?').get(c.projectId); const current = row ? parseProject(row) : undefined;
+    if (current && current.mode !== c.project.mode) throw new Error('同步不能改变项目数据模式');
     if (c.parentRevision && !this.changes().some((h) => h.projectId === c.projectId && h.revision === c.parentRevision) && current?.revision !== c.parentRevision && !c.resolves.includes(current?.revision ?? '')) return 'pending';
     this.db.exec('BEGIN IMMEDIATE');
     try {
@@ -118,10 +119,11 @@ export class LocalDatabase {
   resolveConflict(id: string, choice: 'local' | 'remote') {
     const conflict = this.conflicts().find((c) => c.id === id); if (!conflict) throw new Error('冲突不存在');
     const current = this.load(conflict.projectId); this.backup();
-    const losing = choice === 'remote' ? current : conflict.project;
-    this.insert(`${losing.name.slice(0, 160)} · 冲突保留`, losing.data);
     const chosen = choice === 'remote' ? conflict.project : current;
-    const resolved = this.conflicts().filter((c) => c.projectId === current.id); const resolves = [...new Set([current.revision, ...resolved.map((c) => c.revision)])];
+    const resolved = this.conflicts().filter((c) => c.projectId === current.id);
+    const versions = new Map([current, ...resolved.map((c) => c.project)].map((p) => [p.revision, p]));
+    for (const losing of versions.values()) if (losing.revision !== chosen.revision) this.insert(`${losing.name.slice(0, 160)} · 冲突保留 ${losing.revision.slice(0, 8)}`, losing.data);
+    const resolves = [...versions.keys()];
     this.db.exec('BEGIN IMMEDIATE');
     try { const next = { ...chosen, id: current.id, updatedAt: new Date().toISOString() }; this.db.prepare('UPDATE projects SET name=?,mode=?,revision=?,body=?,updated_at=? WHERE id=?').run(next.name, next.mode, next.revision, JSON.stringify(next.data), next.updatedAt, next.id); this.record(next, current.revision, resolves); this.db.prepare('DELETE FROM conflicts WHERE project_id=?').run(current.id); this.db.exec('COMMIT'); }
     catch (error) { this.db.exec('ROLLBACK'); throw error; }

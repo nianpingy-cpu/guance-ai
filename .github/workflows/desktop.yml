@@ -11,8 +11,16 @@ jobs:
         include:
           - os: windows-latest
             platform: windows
+            pack: npm run desktop:pack
+            executable: release/win-unpacked/观策AI.exe
           - os: macos-14
-            platform: macos
+            platform: macos-arm64
+            pack: npm run desktop:pack -- --mac --arm64
+            executable: release/mac-arm64/观策AI.app/Contents/MacOS/观策AI
+          - os: macos-15-intel
+            platform: macos-x64
+            pack: npm run desktop:pack -- --mac --x64
+            executable: release/mac/观策AI.app/Contents/MacOS/观策AI
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     permissions:
@@ -32,9 +40,13 @@ jobs:
       - run: npm run desktop:test
       - run: node scripts/desktop-sync-verify.mjs
       - run: node scripts/desktop-visual.mjs
-      - run: npm run desktop:pack
+      - run: ${{ matrix.pack }}
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: Verify packaged app
+        run: npm run desktop:test
+        env:
+          GUANCE_EXECUTABLE: ${{ matrix.executable }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:

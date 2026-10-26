@@ -70,7 +70,9 @@
     "files": [
       "dist/**/*",
       "desktop-dist/**/*",
-      "package.json"
+      "package.json",
+      "THIRD_PARTY_NOTICES.md",
+      "THIRD_PARTY_LICENSES.txt"
     ],
     "asar": true,
     "npmRebuild": false,
@@ -93,15 +95,7 @@
       "installerIcon": "build/icon.ico"
     },
     "mac": {
-      "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "arm64",
-            "x64"
-          ]
-        }
-      ],
+      "target": ["dmg"],
       "category": "public.app-category.business",
       "icon": "public/icon.png",
       "identity": null

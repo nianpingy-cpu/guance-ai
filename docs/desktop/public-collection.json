@@ -1,16 +1,16 @@
 {
-  "at": "2026-10-26T10:58:34.319Z",
+  "at": "2026-10-26T10:59:41.649Z",
   "source": "https://blog.rust-lang.org/feed.xml",
   "job": {
-    "id": "d8f24b65-3ed6-4eee-a510-33cf44130e59",
-    "projectId": "eb58a23c-fc85-4e5c-bfde-27cf7b775519",
+    "id": "3810286f-bd15-4a5e-8241-91216fa12ceb",
+    "projectId": "1e0c7c51-c9d5-43c3-aa38-74d97057c194",
     "kind": "collect",
-    "status": "failed",
-    "progress": "任务已结束",
-    "createdAt": "2026-10-26T10:58:33.290Z",
-    "error": "不能采集本机或私有网络地址"
+    "status": "completed",
+    "progress": "已完成",
+    "createdAt": "2026-10-26T10:59:40.595Z",
+    "result": "读取10条，新增10条；其余重复或缺少标题/正文。每次最多处理100条订阅内容。"
   },
-  "added": 0,
+  "added": 10,
   "hasProvenance": true,
   "note": "独立临时项目；真实公开RSS读取，非社交平台授权证明"
 }

@@ -9,6 +9,14 @@ import { SyncService } from './sync';
 import { encrypt, decrypt } from './sync';
 import { randomBytes } from 'node:crypto';
 it('密文被篡改或放到另一个变更编号下，认证校验拒绝', () => { const key = randomBytes(32); const value = encrypt({ a: 'business' }, key, 'op:1'); expect(decrypt(value, key, 'op:1')).toEqual({ a: 'business' }); expect(() => decrypt(value, key, 'op:2')).toThrow(/密文/); expect(() => decrypt({ ...value, tag: randomBytes(16).toString('base64') }, key, 'op:1')).toThrow(/密文/); });
+it('三个并发版本处理后，每个未选版本都保留为独立项目', () => {
+  const dirs = Array.from({ length: 3 }, () => mkdtempSync(join(tmpdir(), 'guance-forks-'))); const [a, b, c] = dirs.map((d) => new LocalDatabase(d));
+  try { const p = a.create('三端项目', 'real'); const root = a.changes()[0]; b.applyRemote(root); c.applyRemote(root);
+    for (const [db, budget] of [[a, 111100], [b, 222200], [c, 333300]] as const) { const project = db.load(p.id); project.data.company.budgetCents = budget; db.save(p.id, project.revision, project.data); }
+    a.applyRemote(b.changes().find((x) => x.parentRevision)!); a.applyRemote(c.changes().find((x) => x.parentRevision)!); expect(a.conflicts()).toHaveLength(2);
+    a.resolveConflict(a.conflicts()[0].id, 'remote'); expect(a.conflicts()).toHaveLength(0); expect(a.list()).toHaveLength(3); expect(a.list().map((p) => a.load(p.id).data.company.budgetCents).sort()).toEqual([111100, 222200, 333300]);
+  } finally { for (const db of [a, b, c]) db.close(); dirs.forEach((d) => rmSync(d, { recursive: true, force: true })); }
+});
 it('两个独立SQLite实例通过WebDAV加密同步、重复同步幂等、并发保留冲突、错误口令拒绝', async () => {
   const files = new Map<string, string>(); let online = true;
   const server = createServer(async (req, res) => {

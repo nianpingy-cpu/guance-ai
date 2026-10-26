@@ -8,6 +8,7 @@ import { SyncService, syncConfigSchema } from './sync';
 
 const id = z.string().min(1).max(200);
 export const commands = {
+  'sync.preview': z.object({ id }).strict(),
   'sync.status': z.undefined(), 'sync.configure': syncConfigSchema, 'sync.test': z.undefined(), 'sync.run': z.undefined(), 'sync.disconnect': z.undefined(), 'sync.resolve': z.object({ id, choice: z.enum(['local', 'remote']) }).strict(),
   'collect.start': collectionSchema, 'collect.retry': z.object({ id }).strict(),
   'connections.list': z.undefined(), 'connections.save': platformSchema, 'connections.remove': z.object({ platform: z.enum(['wechat', 'xiaohongshu', 'douyin']) }).strict(),
@@ -32,6 +33,7 @@ export class DesktopService {
     const name = command as Command;
     const value = commands[name].parse(input);
     switch (name) {
+      case 'sync.preview': { const c = this.database.conflicts().find((c) => c.id === commands[name].parse(value).id); if (!c) throw new Error('冲突不存在'); return { local: this.database.load(c.projectId), remote: c.project }; }
       case 'sync.status': return this.sync.status();
       case 'sync.configure': return this.sync.configure(value);
       case 'sync.test': return this.sync.test();

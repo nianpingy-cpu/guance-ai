@@ -1,6 +1,6 @@
 # 第三方依赖与许可说明
 
-本项目为比赛/课程展示用的非商业前端 MVP。所有第三方依赖遵循其各自许可证；本项目不包含任何真实企业数据、真实平台数据或第三方爬虫。
+本项目当前为内部桌面试用构建。演示项目使用虚构数据，真实项目可由用户导入或采集公开内容。第三方依赖遵循各自许可证，运行时依赖许可证文本收录于THIRD_PARTY_LICENSES.txt；Electron发行包另附其Chromium许可证。
 
 ## 视觉与图表参考
 
@@ -28,6 +28,22 @@
 | Playwright | 截图 / 录屏脚本 | Apache-2.0 |
 
 ## 字体
+
+## v0.6新增运行时与交互参考
+
+| 依赖/参考 | 用途 | 许可证 |
+|---|---|---|
+| Electron 45 | 桌面运行时、系统加密、独立进程 | MIT；Chromium等另附许可证 |
+| Zod | 服务与导入边界校验 | MIT |
+| Cheerio | 公开HTML正文提取 | MIT |
+| fast-xml-parser | RSS/Atom、WebDAV XML解析 | MIT |
+| Node.js内置SQLite | 本机持久化 | Node.js与SQLite自身许可，随Electron运行时分发 |
+| electron-builder / esbuild | 开发期打包工具 | MIT |
+| DeepSeek Harness | 仅参考服务商/模型配置的交互组织；未复制组件或截图资产 | MIT |
+
+DeepSeek Harness参考：https://github.com/deepseek-ai/deepseek-harness 。v0.6应用图标为本项目SVG绘制，与侧栏品牌一致。模型、平台和WebDAV服务由用户选择，服务数据使用范围按其授权。
+
+新增MIT许可证来自本机安装包LICENSE核查；下方v0.4/v0.5的Lieflat许可与色板来源说明作为历史记录保留。当前试用构建没有解除Lieflat原始非商业许可约束；若推进商业分发，应先完成相关参考素材与配色来源的许可处理。
 
 v0.5 使用本机 Segoe UI / Microsoft YaHei / PingFang SC / 系统无衬线字体回退。不打包字体文件，不再请求 Google Fonts。
 
