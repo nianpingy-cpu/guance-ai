@@ -22,9 +22,8 @@ import {
   signalTrend,
   statusLabel,
 } from '@/lib/calculations';
-import { formatDate, formatNumber } from '@/lib/format';
+import { formatDate } from '@/lib/format';
 import { PageHeader, DemoBadge, MetaItem } from '@/components/layout/PageHeader';
-import { MetricCard } from '@/components/ui/MetricCard';
 import { Button } from '@/components/ui/Button';
 import { Card, SectionHeader } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
@@ -62,7 +61,7 @@ export function SignalsPage() {
   const focusId = searchParams.get('focus');
   const dateParam = searchParams.get('date');
   const [filters, setFilters] = useState<SignalFilters>(() => ({ ...defaultFilters, date: dateParam ?? undefined }));
-  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [taskModalOpen, setTaskModalOpen] = useState(searchParams.get('tasks') === 'open');
 
   const selectedSignal = focusId ? data.signals.find((signal) => signal.id === focusId) : undefined;
   const filtered = useMemo(() => filterSignals(data.signals, filters), [data.signals, filters]);
@@ -121,12 +120,10 @@ export function SignalsPage() {
   return (
     <div className="page-wrap">
       <PageHeader
-        eyebrow="减少信息差 · 让资料变成可追溯的情报"
         title="市场情报"
-        description="把消费者评论、竞品动作与行业变化整理成可核实、可引用、可跟踪的信号。事实、判断与待核实信息在这里分开呈现。"
+        description="核实市场变化，为每一项营销判断保留依据。"
         meta={
           <>
-            <MetaItem label="全部情报" value={`${allStats.total} 条`} />
             <MetaItem label="来源" value={`${allStats.platforms.length} 个平台`} />
             <MetaItem label="最近更新" value={formatDate(allStats.latest, true)} />
             <DemoBadge />
@@ -137,7 +134,7 @@ export function SignalsPage() {
             <Button variant="ghost" onClick={() => setTaskModalOpen(true)} icon={<CircleDashed size={14} />}>
               下一轮任务
               {openTasks.length > 0 ? (
-                <span className="ml-0.5 rounded-full bg-[#fdf5e6] px-1.5 py-0.5 text-[9px] font-bold text-[#8a5a12]">
+                <span className="ml-0.5 rounded-full bg-[#fdf5e6] px-1.5 py-0.5 text-[11px] font-bold text-[#8a5a12]">
                   {openTasks.length}
                 </span>
               ) : null}
@@ -149,60 +146,12 @@ export function SignalsPage() {
         }
       />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          label="当前结果情报量"
-          value={formatNumber(stats.total)}
-          unit="条"
-          tone="navy"
-          badge={<Tag tone="outline">全部 {allStats.total}</Tag>}
-          note={
-            activeFilterCount > 0
-              ? `正在使用 ${activeFilterCount} 个筛选条件`
-              : '当前展示全部模拟情报'
-          }
-          footer={
-            <div className="mt-2 flex gap-1">
-              {[0, 1, 2, 3, 4].map((index) => (
-                <span
-                  key={index}
-                  className="h-1.5 flex-1 rounded-full"
-                  style={{
-                    background:
-                      index < Math.round((stats.total / Math.max(1, allStats.total)) * 5)
-                        ? 'var(--data-primary)'
-                        : 'var(--border-subtle)',
-                  }}
-                />
-              ))}
-            </div>
-          }
-        />
-        <MetricCard
-          label="重点情报"
-          value={formatNumber(stats.high)}
-          unit="条"
-          tone="terracotta"
-          badge={<Tag tone="hero">高优先级</Tag>}
-          note={`占当前结果 ${stats.total ? Math.round((stats.high / stats.total) * 100) : 0}%`}
-        />
-        <MetricCard
-          label="待核实记录"
-          value={formatNumber(stats.pending)}
-          unit="条"
-          tone="mint"
-          badge={<Tag tone="warning">需人工核查</Tag>}
-          note={`有争议 ${stats.disputed} 条 · 重复 ${stats.duplicate} 条`}
-        />
-        <MetricCard
-          label="当前结果最近更新"
-          value={stats.latest ? formatDate(stats.latest) : '—'}
-          unit=""
-          badge={<Tag tone="brand">{stats.platforms.length} 来源</Tag>}
-          note={stats.latest ? `数据截至 ${formatDate(stats.latest, true)}` : '当前筛选没有结果'}
-        />
+      <div className="signal-summary" aria-label="筛选结果概览">
+        <span><strong>{stats.total}</strong> 条结果</span><span>{stats.high} 条重点</span><span>{stats.pending} 条待核实</span>
+        <span className="ml-auto">{activeFilterCount ? `${activeFilterCount} 个筛选条件` : '全部模拟情报'}</span>
       </div>
-
+      <details className="disclosure mb-5">
+        <summary>查看情报分布与来源</summary>
       <div className="mt-4 grid gap-4 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <SignalTrendChart
@@ -234,49 +183,8 @@ export function SignalsPage() {
         </div>
       </div>
 
-      {openTasks.length > 0 ? (
-        <div className="mt-4 rounded-[16px] border border-[#e9dcc4] bg-[#fdfaf3] p-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="eyebrow !text-[#996a1d]">下一轮待补情报</span>
-                <Tag tone="warning">{openTasks.length} 项待办</Tag>
-              </div>
-              <p className="mt-1 text-[12px] text-[#7b5718]">
-                这些任务来自上一轮复盘或导入校验，点击可定位关联记录。
-              </p>
-            </div>
-            <button
-              type="button"
-              className="text-[11px] font-semibold text-[#8a5a12] underline-offset-2 hover:underline"
-              onClick={() => setTaskModalOpen(true)}
-            >
-              查看全部任务
-            </button>
-          </div>
-          <div className="mt-3 grid gap-2 md:grid-cols-2">
-            {openTasks.slice(0, 2).map((task) => (
-              <button
-                key={task.id}
-                type="button"
-                onClick={() => {
-                  const first = task.linkedSignalIds[0];
-                  if (first) openSignal(first);
-                  else setTaskModalOpen(true);
-                }}
-                className="group flex items-start gap-2.5 rounded-[11px] border border-[#ecdfc9] bg-white/70 px-3 py-2.5 text-left transition-colors hover:bg-white"
-              >
-                <CircleDashed size={14} className="mt-0.5 shrink-0 text-[#b7791f]" />
-                <span className="min-w-0">
-                  <span className="block text-[12px] font-semibold leading-5 text-ink">{task.title}</span>
-                  <span className="mt-0.5 line-clamp-1 block text-[10px] text-muted">{task.trigger}</span>
-                </span>
-                <ArrowRight size={13} className="ml-auto mt-1 shrink-0 text-[#b7791f]" />
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
+      </details>
+      {openTasks.length > 0 ? <button type="button" className="task-strip" onClick={() => setTaskModalOpen(true)}><span>下一轮采集与核对 · {openTasks.length} 项待办</span><span>查看任务 →</span></button> : null}
 
       <Card className="mt-4" padded={false}>
         <div className="border-b border-line p-4 sm:p-5">
@@ -284,7 +192,7 @@ export function SignalsPage() {
             <div>
               <SectionHeader
                 title="情报清单"
-                description="按优先级与时间排序；点击任意记录打开详情、修改状态或添加备注。"
+                description="点击记录查看原始证据、修改重要性与核实状态。"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -376,7 +284,7 @@ export function SignalsPage() {
 
           {filters.date ? (
             <div className="mt-2.5 flex items-center gap-2">
-              <span className="text-[10px] text-faint">日期筛选</span>
+              <span className="text-[12px] text-faint">日期筛选</span>
               <button
                 type="button"
                 onClick={clearDate}
@@ -415,11 +323,11 @@ export function SignalsPage() {
       </Card>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border border-line bg-white/60 px-4 py-3">
-        <p className="text-[10px] leading-5 text-muted">
+        <p className="text-[12px] leading-5 text-muted">
           <span className="font-semibold text-ink">来源边界：</span>
           情报来源为团队编写的模拟平台摘录，不包含真实爬虫、平台授权数据或真实用户个人信息。
         </p>
-        <span className="text-[10px] text-faint">事实 · 判断 · 待核实信息分开展示</span>
+        <span className="text-[12px] text-faint">事实 · 判断 · 待核实信息分开展示</span>
       </div>
 
       <SignalDrawer signal={selectedSignal} onClose={closeSignal} onOpenSignal={openSignal} />
@@ -454,7 +362,7 @@ export function SignalsPage() {
                   >
                     <p className="text-[12px] font-semibold text-ink">{task.title}</p>
                     <p className="mt-0.5 text-[11px] leading-5 text-muted">{task.detail}</p>
-                    <p className="mt-1 text-[10px] text-faint">
+                    <p className="mt-1 text-[12px] text-faint">
                       {task.trigger} · 创建于 {formatDate(task.createdAt, true)}
                     </p>
                   </button>
@@ -485,7 +393,7 @@ export function SignalsPage() {
                       <p className="text-[11px] font-medium text-muted line-through">{task.title}</p>
                       <button
                         type="button"
-                        className="text-[10px] font-semibold text-brand hover:underline"
+                        className="text-[12px] font-semibold text-brand hover:underline"
                         onClick={() => data.toggleFeedbackTask(task.id)}
                       >
                         重新打开
@@ -524,7 +432,7 @@ function SignalRow({ signal, onOpen }: { signal: Signal; onOpen: (id: string) =>
             <Tag tone="outline">{categoryLabel[signal.category]}</Tag>
             <Tag tone={statusTone(signal.status)}>{statusLabel[signal.status]}</Tag>
             {signal.conflictGroup ? <Tag tone="outline">关联冲突组</Tag> : null}
-            <span className="tabular text-[9px] text-faint">{signal.id}</span>
+            <span className="tabular text-[11px] text-faint">{signal.id}</span>
           </div>
           <p className="mt-1.5 text-[13px] font-semibold leading-5 text-ink group-hover:text-brand">
             {signal.title}
@@ -532,7 +440,7 @@ function SignalRow({ signal, onOpen }: { signal: Signal; onOpen: (id: string) =>
           <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-muted">{signal.summary}</p>
         </div>
       </div>
-      <div className="flex flex-wrap items-end justify-between gap-2 pl-6 text-[10px] text-faint lg:col-span-4 lg:pl-0">
+      <div className="flex flex-wrap items-end justify-between gap-2 pl-6 text-[12px] text-faint lg:col-span-4 lg:pl-0">
         <div>
           <p className="font-medium text-muted">{source?.platform ?? signal.platform}</p>
           <p className="mt-0.5">{formatDate(signal.capturedAt, true)}</p>
@@ -609,7 +517,7 @@ function SignalDrawer({
       title={signal.title}
       footer={
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-[10px] text-faint">修改会立即影响工作台统计，并可能触发方案重新确认。</p>
+          <p className="text-[12px] text-faint">修改会立即影响工作台统计，并可能触发方案重新确认。</p>
           <div className="flex gap-2">
             <Button onClick={onClose}>关闭</Button>
             <Button
@@ -632,13 +540,13 @@ function SignalDrawer({
             {statusLabel[status]}
           </Tag>
           <Tag tone="outline">{categoryLabel[signal.category]}</Tag>
-          <span className="text-[10px] text-faint">相关性 {signal.relevance}/5</span>
+          <span className="text-[12px] text-faint">相关性 {signal.relevance}/5</span>
         </div>
 
         <div className="rounded-[14px] border border-line bg-[#fbfcfd] p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-faint">原始来源片段</p>
+              <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-faint">原始来源片段</p>
               <p className="mt-1.5 text-[13px] leading-6 text-ink">“{signal.quote}”</p>
             </div>
             <Tag tone="outline">模拟文本</Tag>
@@ -708,7 +616,7 @@ function SignalDrawer({
             </div>
             {related.length > 0 ? (
               <div className="mt-2 flex flex-wrap gap-1.5">
-                <span className="text-[10px] text-faint">同冲突组：</span>
+                <span className="text-[12px] text-faint">同冲突组：</span>
                 {related.map((item) => (
                   <button
                     key={item.id}
@@ -726,7 +634,7 @@ function SignalDrawer({
 
         <div className="rounded-[13px] border border-line p-4">
           <p className="text-[12px] font-bold text-ink">调整重要性</p>
-          <p className="mt-0.5 text-[10px] text-muted">修改后工作台重点信号数量即时变化。</p>
+          <p className="mt-0.5 text-[12px] text-muted">修改后工作台重点信号数量即时变化。</p>
           <div className="mt-2.5">
             <Segmented
               value={priority}
@@ -743,7 +651,7 @@ function SignalDrawer({
 
         <div className="rounded-[13px] border border-line p-4">
           <p className="text-[12px] font-bold text-ink">处理状态</p>
-          <p className="mt-0.5 text-[10px] text-muted">已核实 / 待核实 / 有争议会同步到筛选和审批依据。</p>
+          <p className="mt-0.5 text-[12px] text-muted">已核实 / 待核实 / 有争议会同步到筛选和审批依据。</p>
           <div className="mt-2.5">
             <Segmented
               value={status}

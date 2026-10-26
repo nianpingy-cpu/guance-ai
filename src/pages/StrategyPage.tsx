@@ -27,7 +27,7 @@ import {
 import { formatCny, formatDate, formatDateTime, parseYuanToCents } from '@/lib/format';
 import { PageHeader, DemoBadge, MetaItem } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/Button';
-import { Card, SectionHeader } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { Field, InfoBanner } from '@/components/ui/Form';
 import { Drawer, Modal } from '@/components/ui/Overlay';
@@ -67,7 +67,6 @@ export function StrategyPage() {
         : undefined;
   const evidenceIds = activePlan ? planEvidenceIds(activePlan, data) : [];
   const evidenceSignals = data.signals.filter((signal) => evidenceIds.includes(signal.id));
-  const topTheme = [...data.themes].sort((a, b) => a.rank - b.rank)[0];
   const evidencePeriod = (() => {
     const dates = data.signals.map((signal) => signal.capturedAt).sort();
     return dates.length ? `${formatDate(dates[0], true)} — ${formatDate(dates[dates.length - 1], true)}` : '暂无';
@@ -91,7 +90,6 @@ export function StrategyPage() {
       setReason(health.approval.reason);
     }
     // Only reset when the approval identity/state changes, never while typing.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [approvalKey]);
 
   useEffect(() => {
@@ -163,9 +161,8 @@ export function StrategyPage() {
   return (
     <div className="page-wrap">
       <PageHeader
-        eyebrow="从市场信号到具体行动"
         title="洞察与策略"
-        description="先看清消费者关注点与竞品机会，再比较两套实质不同的营销方案。预算、依据和不确定性都必须在确认前被看见。"
+        description="比较两套测试计划，核对依据后完成人工确认。"
         meta={
           <>
             <MetaItem label="证据总量" value={`${data.signals.length} 条`} />
@@ -200,178 +197,10 @@ export function StrategyPage() {
         }
       />
 
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className="eyebrow">市场洞察</span>
-        <span className="h-px flex-1 bg-line" />
-        <span className="text-[10px] text-faint">
-          洞察为预设模拟分析，不是真实大模型实时生成
-        </span>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-12">
-        <div className="space-y-4 lg:col-span-7">
-          <ThemeRankChart
-            themes={data.themes}
-            selectedThemeId={selectedThemeId}
-            onSelectTheme={setSelectedThemeId}
-            periodLabel={evidencePeriod}
-          />
-          <EvidenceQualityChart
-            themes={data.themes}
-            signals={data.signals}
-            selectedThemeId={selectedThemeId}
-            onSelectTheme={setSelectedThemeId}
-            periodLabel={evidencePeriod}
-          />
-        </div>
-        <div className="space-y-4 lg:col-span-5">
-        <Card>
-          {selectedTheme ? (
-            <>
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <div className="eyebrow mb-1">主题 {selectedTheme.rank}</div>
-                  <h2 className="section-title">{selectedTheme.title}</h2>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <Tag tone={selectedTheme.confidence === 'high' ? 'mint' : selectedTheme.confidence === 'medium' ? 'warning' : 'neutral'}>
-                    置信度{selectedTheme.confidence === 'high' ? '较高' : selectedTheme.confidence === 'medium' ? '中等' : '较低'}
-                  </Tag>
-                  <span className="text-[9px] text-faint">{selectedTheme.claimType}</span>
-                </div>
-              </div>
-              <p className="mt-3 text-[12px] leading-6 text-muted">{selectedTheme.summary}</p>
-
-              <div className="mt-4 rounded-[12px] border border-[#dce6f3] bg-[#f7faff] px-3.5 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6b82a0]">营销机会推断</p>
-                <p className="mt-1 text-[12px] leading-6 text-[#2b4b72]">{selectedTheme.opportunity}</p>
-              </div>
-
-              <div className="mt-3 rounded-[12px] border border-[#f0dfbd] bg-[#fdfaf2] px-3.5 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#99701d]">不确定性</p>
-                <p className="mt-1 text-[11px] leading-5 text-[#7b5718]">{selectedTheme.caveat}</p>
-              </div>
-
-              <div className="mt-4">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-[11px] font-bold text-ink">对应证据</p>
-                  <span className="tabular text-[10px] text-faint">{selectedThemeSignals.length} 条</span>
-                </div>
-                <div className="mt-2 space-y-1.5">
-                  {selectedThemeSignals.map((signal) => (
-                    <button
-                      key={signal.id}
-                      type="button"
-                      onClick={() => navigate(`/signals?focus=${signal.id}`)}
-                      className="group flex w-full items-start gap-2 rounded-[10px] border border-line px-3 py-2 text-left transition-colors hover:border-[#c9d4e1] hover:bg-[#fbfcfd]"
-                    >
-                      <span className="tabular mt-0.5 shrink-0 text-[9px] text-faint">{signal.id}</span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-[11px] font-semibold leading-5 text-ink group-hover:text-brand">
-                          {signal.title}
-                        </span>
-                        <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[9px] text-faint">
-                          <span>{signal.platform}</span>
-                          <span>·</span>
-                          <span>{priorityLabel[signal.priority]}优先级</span>
-                          <span>·</span>
-                          <span>{statusLabel[signal.status]}</span>
-                        </span>
-                      </span>
-                      <ChevronRight size={12} className="mt-1 shrink-0 text-faint" />
-                    </button>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  className="mt-2 text-[10px] font-semibold text-brand hover:underline"
-                  onClick={() => navigate('/signals')}
-                >
-                  在情报页查看全部记录 →
-                </button>
-              </div>
-            </>
-          ) : null}
-        </Card>
-        <Card>
-            <SectionHeader
-              eyebrow="关键机会总结"
-              title="优先验证“送礼体面感”，而不是直接讲茶文化"
-              description="这是基于当前模拟证据的机会推断，不是模型预测；需要用内容测试与咨询反馈继续验证。"
-              action={<Tag tone="hero">当前建议</Tag>}
-            />
-            <div className="mt-4 rounded-[14px] border border-[#ead8d3] bg-[#fcf7f5] p-4">
-              <p className="text-[12px] leading-6 text-ink">
-                {topTheme?.opportunity ??
-                  '近期消费者对礼盒包装的关注较高，建议优先测试强调送礼场景的内容。'}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {topTheme?.evidenceSignalIds.slice(0, 5).map((id) => (
-                  <button
-                    key={id}
-                    type="button"
-                    className="tag tag-outline transition-colors hover:border-[#d7b6ae] hover:text-hero"
-                    onClick={() => navigate(`/signals?focus=${id}`)}
-                  >
-                    依据 {id}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="mt-3 space-y-1.5">
-              <p className="text-[10px] font-semibold text-faint">为什么不直接给出一份“营销策划书”</p>
-              <p className="text-[11px] leading-5 text-muted">
-                当前系统只整理证据与机会，不预测真实点击率或 ROAS。方案中的预算分配是人工可编辑的测试计划，确认后才进入执行与复盘。
-              </p>
-            </div>
-          </Card>
-        </div>
-      </div>
-
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
-        {data.opportunities.map((opportunity) => (
-          <Card key={opportunity.id} className="flex flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <Tag tone={opportunity.tone === 'positive' ? 'mint' : opportunity.tone === 'caution' ? 'warning' : 'neutral'}>
-                {opportunity.tone === 'caution' ? '需谨慎验证' : '机会'}
-              </Tag>
-              <span className="tabular text-[9px] text-faint">{opportunity.id}</span>
-            </div>
-            <h3 className="mt-2 text-[14px] font-bold leading-5 text-ink">{opportunity.title}</h3>
-            <div className="mt-3 space-y-2.5">
-              <div>
-                <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-faint">观测事实</p>
-                <p className="mt-0.5 text-[11px] leading-5 text-muted">{opportunity.fact}</p>
-              </div>
-              <div>
-                <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-[#2e7d5b]">营销机会推断</p>
-                <p className="mt-0.5 text-[11px] leading-5 text-ink">{opportunity.opportunity}</p>
-              </div>
-              <div>
-                <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-[#99701d]">需要进一步核实</p>
-                <p className="mt-0.5 text-[11px] leading-5 text-[#7b5718]">{opportunity.verify}</p>
-              </div>
-            </div>
-            <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
-              {opportunity.evidenceSignalIds.map((id) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => navigate(`/signals?focus=${id}`)}
-                  className="tag tag-outline !px-2 !py-0.5 !text-[9px] transition-colors hover:text-brand"
-                >
-                  {id}
-                </button>
-              ))}
-            </div>
-          </Card>
-        ))}
-      </div>
-
       <div className="mb-3 mt-7 flex flex-wrap items-center gap-2">
         <span className="eyebrow">营销策略决策</span>
         <span className="h-px flex-1 bg-line" />
-        <span className="text-[10px] text-faint">人工编辑 · 人工确认 · 快照可追溯</span>
+        <span className="text-[12px] text-faint">人工编辑 · 人工确认 · 快照可追溯</span>
       </div>
 
       {health.state === 'needs-reconfirm' ? (
@@ -469,7 +298,7 @@ export function StrategyPage() {
               <div key={channel.channel} className="grid grid-cols-[1fr_124px] items-center gap-3">
                 <div className="min-w-0">
                   <p className="text-[12px] font-semibold text-ink">{channel.channel}</p>
-                  <p className="truncate text-[10px] text-faint">{channel.role}</p>
+                  <p className="truncate text-[12px] text-faint">{channel.role}</p>
                 </div>
                 <div className="relative">
                   <input
@@ -479,7 +308,7 @@ export function StrategyPage() {
                     value={budgetInputs[channel.channel] ?? ''}
                     onChange={(event) => changeBudget(channel.channel, event.target.value)}
                   />
-                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-faint">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[12px] text-faint">
                     元
                   </span>
                 </div>
@@ -499,7 +328,7 @@ export function StrategyPage() {
             <div className="mt-2">
               <ProgressBar value={Math.min(100, (localTotal / Math.max(1, cap)) * 100)} tone={overBy > 0 ? 'hero' : 'data'} label="预算使用比例" />
             </div>
-            <div className="mt-1.5 flex items-center justify-between text-[10px] text-faint">
+            <div className="mt-1.5 flex items-center justify-between text-[12px] text-faint">
               <span>企业上限 {formatCny(cap)}</span>
               <span>{overBy > 0 ? `超出 ${formatCny(overBy)}` : `剩余 ${formatCny(cap - localTotal)}`}</span>
             </div>
@@ -564,7 +393,7 @@ export function StrategyPage() {
             </Button>
           </div>
           {!canConfirm ? (
-            <p className="mt-2 text-[10px] text-faint">
+            <p className="mt-2 text-[12px] text-faint">
               确认按钮不可用：请先满足预算上限、填写确认理由，并避免在本轮暂不投放状态下确认。
             </p>
           ) : null}
@@ -572,12 +401,144 @@ export function StrategyPage() {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border border-line bg-white/60 px-4 py-3">
-        <p className="text-[10px] leading-5 text-muted">
+        <p className="text-[12px] leading-5 text-muted">
           <span className="font-semibold text-ink">决策边界：</span>
           方案中的“推荐”是基于模拟证据的人工判断；不包含真实模型预测、增量效果估计或自动投放。
         </p>
-        <span className="text-[10px] text-faint">确认后保存不可变快照，后续变更会提示重新确认</span>
+        <span className="text-[12px] text-faint">确认后保存不可变快照，后续变更会提示重新确认</span>
       </div>
+
+      <details className="disclosure mt-6"><summary>消费者主题、证据与竞品机会 · 预设模拟分析</summary><div className="pt-5">
+      <div className="grid gap-4 lg:grid-cols-12">
+        <div className="space-y-4 lg:col-span-7">
+          <ThemeRankChart
+            themes={data.themes}
+            selectedThemeId={selectedThemeId}
+            onSelectTheme={setSelectedThemeId}
+            periodLabel={evidencePeriod}
+          />
+          <details className="disclosure"><summary>查看证据质量结构</summary><EvidenceQualityChart
+            themes={data.themes}
+            signals={data.signals}
+            selectedThemeId={selectedThemeId}
+            onSelectTheme={setSelectedThemeId}
+            periodLabel={evidencePeriod}
+          /></details>
+        </div>
+        <div className="space-y-4 lg:col-span-5">
+        <Card>
+          {selectedTheme ? (
+            <>
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <div className="eyebrow mb-1">主题 {selectedTheme.rank}</div>
+                  <h2 className="section-title">{selectedTheme.title}</h2>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <Tag tone={selectedTheme.confidence === 'high' ? 'mint' : selectedTheme.confidence === 'medium' ? 'warning' : 'neutral'}>
+                    置信度{selectedTheme.confidence === 'high' ? '较高' : selectedTheme.confidence === 'medium' ? '中等' : '较低'}
+                  </Tag>
+                  <span className="text-[11px] text-faint">{selectedTheme.claimType}</span>
+                </div>
+              </div>
+              <p className="mt-3 text-[12px] leading-6 text-muted">{selectedTheme.summary}</p>
+
+              <div className="mt-4 rounded-[12px] border border-[#dce6f3] bg-[#f7faff] px-3.5 py-3">
+                <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-[#6b82a0]">营销机会推断</p>
+                <p className="mt-1 text-[12px] leading-6 text-[#2b4b72]">{selectedTheme.opportunity}</p>
+              </div>
+
+              <div className="mt-3 rounded-[12px] border border-[#f0dfbd] bg-[#fdfaf2] px-3.5 py-3">
+                <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-[#99701d]">不确定性</p>
+                <p className="mt-1 text-[11px] leading-5 text-[#7b5718]">{selectedTheme.caveat}</p>
+              </div>
+
+              <div className="mt-4">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[11px] font-bold text-ink">对应证据</p>
+                  <span className="tabular text-[12px] text-faint">{selectedThemeSignals.length} 条</span>
+                </div>
+                <div className="mt-2 space-y-1.5">
+                  {selectedThemeSignals.map((signal) => (
+                    <button
+                      key={signal.id}
+                      type="button"
+                      onClick={() => navigate(`/signals?focus=${signal.id}`)}
+                      className="group flex w-full items-start gap-2 rounded-[10px] border border-line px-3 py-2 text-left transition-colors hover:border-[#c9d4e1] hover:bg-[#fbfcfd]"
+                    >
+                      <span className="tabular mt-0.5 shrink-0 text-[11px] text-faint">{signal.id}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[11px] font-semibold leading-5 text-ink group-hover:text-brand">
+                          {signal.title}
+                        </span>
+                        <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-faint">
+                          <span>{signal.platform}</span>
+                          <span>·</span>
+                          <span>{priorityLabel[signal.priority]}优先级</span>
+                          <span>·</span>
+                          <span>{statusLabel[signal.status]}</span>
+                        </span>
+                      </span>
+                      <ChevronRight size={12} className="mt-1 shrink-0 text-faint" />
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="mt-2 text-[12px] font-semibold text-brand hover:underline"
+                  onClick={() => navigate('/signals')}
+                >
+                  在情报页查看全部记录 →
+                </button>
+              </div>
+            </>
+          ) : null}
+        </Card>
+
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        {data.opportunities.map((opportunity) => (
+          <Card key={opportunity.id} className="flex flex-col">
+            <div className="flex items-center justify-between gap-2">
+              <Tag tone={opportunity.tone === 'positive' ? 'mint' : opportunity.tone === 'caution' ? 'warning' : 'neutral'}>
+                {opportunity.tone === 'caution' ? '需谨慎验证' : '机会'}
+              </Tag>
+              <span className="tabular text-[11px] text-faint">{opportunity.id}</span>
+            </div>
+            <h3 className="mt-2 text-[14px] font-bold leading-5 text-ink">{opportunity.title}</h3>
+            <div className="mt-3 space-y-2.5">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-faint">观测事实</p>
+                <p className="mt-0.5 text-[11px] leading-5 text-muted">{opportunity.fact}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#2e7d5b]">营销机会推断</p>
+                <p className="mt-0.5 text-[11px] leading-5 text-ink">{opportunity.opportunity}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#99701d]">需要进一步核实</p>
+                <p className="mt-0.5 text-[11px] leading-5 text-[#7b5718]">{opportunity.verify}</p>
+              </div>
+            </div>
+            <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
+              {opportunity.evidenceSignalIds.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => navigate(`/signals?focus=${id}`)}
+                  className="tag tag-outline !px-2 !py-0.5 !text-[11px] transition-colors hover:text-brand"
+                >
+                  {id}
+                </button>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
+
+</div></details>
 
       <PlanEditDrawer
         plan={editingPlanId ? data.plans.find((plan) => plan.id === editingPlanId) : undefined}
@@ -613,8 +574,8 @@ export function StrategyPage() {
                   <Tag tone={signal.status === 'verified' ? 'mint' : signal.status === 'pending' ? 'warning' : 'danger'}>
                     {statusLabel[signal.status]}
                   </Tag>
-                  <span className="tabular text-[9px] text-faint">{signal.id}</span>
-                  <span className="ml-auto text-[9px] text-faint">{signal.platform}</span>
+                  <span className="tabular text-[11px] text-faint">{signal.id}</span>
+                  <span className="ml-auto text-[11px] text-faint">{signal.platform}</span>
                 </div>
                 <button
                   type="button"
@@ -623,7 +584,7 @@ export function StrategyPage() {
                 >
                   {signal.title}
                 </button>
-                <p className="mt-0.5 text-[10px] leading-5 text-muted">{signal.impact}</p>
+                <p className="mt-0.5 text-[12px] leading-5 text-muted">{signal.impact}</p>
               </div>
             ))}
           </div>
@@ -670,7 +631,7 @@ export function StrategyPage() {
           <div className="rounded-[13px] border border-line bg-[#fbfcfd] p-4">
             <div className="flex items-center justify-between gap-2">
               <div>
-                <p className="text-[10px] text-faint">方案</p>
+                <p className="text-[12px] text-faint">方案</p>
                 <p className="mt-0.5 text-[14px] font-bold text-ink">
                   {activePlan.code} · {activePlan.name}
                 </p>
@@ -687,16 +648,16 @@ export function StrategyPage() {
             </div>
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-faint">确认理由</p>
+            <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-faint">确认理由</p>
             <p className="mt-1 rounded-[10px] bg-[#f8fafb] px-3 py-2 text-[12px] leading-5 text-ink">{reason || '未填写'}</p>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="rounded-[11px] border border-line px-3 py-2">
-              <p className="text-[10px] text-faint">关联证据</p>
+              <p className="text-[12px] text-faint">关联证据</p>
               <p className="tabular mt-0.5 text-[15px] font-bold text-ink">{evidenceSignals.length} 条</p>
             </div>
             <div className="rounded-[11px] border border-line px-3 py-2">
-              <p className="text-[10px] text-faint">预算校验</p>
+              <p className="text-[12px] text-faint">预算校验</p>
               <p className="mt-0.5 text-[12px] font-semibold text-success">未超过 {formatCny(cap)}</p>
             </div>
           </div>
@@ -833,11 +794,11 @@ function PlanCard({
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <div>
-          <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-faint">目标消费者</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-faint">目标消费者</p>
           <p className="mt-0.5 text-[11px] leading-5 text-ink">{plan.audience}</p>
         </div>
         <div>
-          <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-faint">核心信息</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-faint">核心信息</p>
           <p className="mt-0.5 text-[11px] font-medium leading-5 text-ink">“{plan.coreMessage}”</p>
         </div>
       </div>
@@ -852,7 +813,7 @@ function PlanCard({
 
       <div className="mt-3 rounded-[11px] border border-line bg-[#fbfcfd] p-3">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[10px] text-faint">渠道预算</span>
+          <span className="text-[12px] text-faint">渠道预算</span>
           <span className="tabular text-[12px] font-bold text-ink">{formatCny(total)}</span>
         </div>
         <div className="mt-2 flex gap-1">
@@ -867,14 +828,14 @@ function PlanCard({
         </div>
         <div className="mt-1.5 flex flex-wrap gap-x-2 gap-y-0.5">
           {plan.channels.map((channel) => (
-            <span key={channel.channel} className="text-[9px] text-faint">
+            <span key={channel.channel} className="text-[11px] text-faint">
               {channel.channel} {formatCny(channel.budgetCents)}
             </span>
           ))}
         </div>
       </div>
 
-      <div className="mt-3 grid gap-2 text-[10px] leading-5 sm:grid-cols-2">
+<details className="disclosure mt-3"><summary>约束、不确定性与关联主题</summary>      <div className="mt-3 grid gap-2 text-[12px] leading-5 sm:grid-cols-2">
         <div>
           <p className="font-semibold text-[#7b5718]">关键约束</p>
           <ul className="mt-0.5 list-inside list-disc text-muted">
@@ -901,6 +862,7 @@ function PlanCard({
         ))}
       </div>
 
+</details>
       <div className="mt-4 flex flex-wrap gap-2 border-t border-line pt-3">
         <Button size="sm" variant={active ? 'primary' : 'secondary'} onClick={onSelect}>
           {active ? '正在编辑' : '选择并编辑'}
@@ -961,7 +923,7 @@ function PlanEditDrawer({ plan, onClose }: { plan?: Plan; onClose: () => void })
       title="编辑营销方案"
       footer={
         <div className="flex items-center justify-between gap-3">
-          <p className="text-[10px] text-faint">修改会改变方案内容并影响审批依据。</p>
+          <p className="text-[12px] text-faint">修改会改变方案内容并影响审批依据。</p>
           <div className="flex gap-2">
             <Button onClick={onClose}>取消</Button>
             <Button
@@ -1068,20 +1030,20 @@ function ApprovalSnapshotModal({
         <div className="space-y-4">
           <div className="grid gap-2 sm:grid-cols-3">
             <div className="rounded-[11px] border border-line px-3 py-2">
-              <p className="text-[10px] text-faint">快照 ID</p>
+              <p className="text-[12px] text-faint">快照 ID</p>
               <p className="tabular mt-0.5 text-[12px] font-bold text-ink">{approval.id}</p>
             </div>
             <div className="rounded-[11px] border border-line px-3 py-2">
-              <p className="text-[10px] text-faint">确认时间</p>
+              <p className="text-[12px] text-faint">确认时间</p>
               <p className="mt-0.5 text-[12px] font-semibold text-ink">{formatDateTime(approval.approvedAt)}</p>
             </div>
             <div className="rounded-[11px] border border-line px-3 py-2">
-              <p className="text-[10px] text-faint">预算上限</p>
+              <p className="text-[12px] text-faint">预算上限</p>
               <p className="tabular mt-0.5 text-[12px] font-bold text-ink">{formatCny(approval.companyBudgetCents)}</p>
             </div>
           </div>
           <div className="rounded-[12px] border border-line bg-[#fbfcfd] p-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-faint">方案内容</p>
+            <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-faint">方案内容</p>
             <p className="mt-1 text-[13px] font-bold text-ink">
               方案 {approval.planCode} · {approval.plan.name}
             </p>
@@ -1089,25 +1051,25 @@ function ApprovalSnapshotModal({
             <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
               {approval.plan.channels.map((channel) => (
                 <div key={channel.channel} className="flex items-center justify-between rounded-[8px] bg-white px-2.5 py-1.5">
-                  <span className="text-[10px] text-muted">{channel.channel}</span>
+                  <span className="text-[12px] text-muted">{channel.channel}</span>
                   <span className="tabular text-[11px] font-semibold text-ink">{formatCny(channel.budgetCents)}</span>
                 </div>
               ))}
             </div>
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-faint">确认理由</p>
+            <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-faint">确认理由</p>
             <p className="mt-1 rounded-[10px] bg-[#f8fafb] px-3 py-2 text-[12px] leading-5 text-ink">{approval.reason}</p>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="rounded-[11px] border border-line px-3 py-2">
-              <p className="text-[10px] text-faint">关联证据</p>
+              <p className="text-[12px] text-faint">关联证据</p>
               <p className="tabular mt-0.5 text-[13px] font-bold text-ink">{approval.evidenceSignalIds.length} 条</p>
-              <p className="mt-1 text-[9px] leading-4 text-faint">{approval.evidenceSignalIds.join('、')}</p>
+              <p className="mt-1 text-[11px] leading-4 text-faint">{approval.evidenceSignalIds.join('、')}</p>
             </div>
             <div className="rounded-[11px] border border-line px-3 py-2">
-              <p className="text-[10px] text-faint">输入指纹</p>
-              <p className="tabular mt-0.5 break-all text-[10px] font-semibold text-ink">{approval.fingerprint}</p>
+              <p className="text-[12px] text-faint">输入指纹</p>
+              <p className="tabular mt-0.5 break-all text-[12px] font-semibold text-ink">{approval.fingerprint}</p>
             </div>
           </div>
           <InfoBanner tone="neutral">{approval.note}</InfoBanner>

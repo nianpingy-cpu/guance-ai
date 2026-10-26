@@ -97,7 +97,7 @@ function now(): string {
 
 function createReviewFor(approval: ApprovalSnapshot): Review {
   return {
-    id: `REV-${Date.now()}`,
+    id: `REV-${crypto.randomUUID()}`,
     approvalId: approval.id,
     planId: approval.planId,
     dataKind: 'simulated',
@@ -174,7 +174,7 @@ export const useAppStore = create<AppStore>()(
           sources: [...result.sources, ...state.sources],
           feedbackTasks: [
             {
-              id: `FT-${Date.now()}`,
+              id: `FT-${crypto.randomUUID()}`,
               title: `核对导入文件：${filename}`,
               detail: `已导入 ${result.successCount} 条情报，请人工核实来源与重复记录。`,
               trigger: '情报导入',
@@ -197,7 +197,7 @@ export const useAppStore = create<AppStore>()(
           feedbackTasks: [
             {
               ...task,
-              id: `FT-${Date.now()}`,
+              id: `FT-${crypto.randomUUID()}`,
               title: task.title.trim(),
               status: 'open',
               createdAt: now(),
@@ -282,7 +282,7 @@ export const useAppStore = create<AppStore>()(
         const evidenceIds = planEvidenceIds(plan, state);
         const evidence = snapshotEvidence(state.signals, evidenceIds);
         const approval: ApprovalSnapshot = {
-          id: `APR-${Date.now()}`,
+          id: `APR-${crypto.randomUUID()}`,
           planId: plan.id,
           planCode: plan.code,
           approvedAt: now(),
@@ -333,6 +333,9 @@ export const useAppStore = create<AppStore>()(
         const state = get();
         const approval = state.approvals.find((item) => item.id === approvalId);
         if (!approval) return { ok: false, message: '审批快照不存在' };
+        if (!approval.plan.channels.some((item) => item.channel === channel)) {
+          return { ok: false, message: '该渠道不属于当前审批方案' };
+        }
         for (const [key, value] of Object.entries(patch)) {
           if (key === 'channel' || value === undefined) continue;
           if (!validNumber(value as number | null)) {

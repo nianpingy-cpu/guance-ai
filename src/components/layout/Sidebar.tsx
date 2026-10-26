@@ -1,8 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import {
-  ChevronRight,
   ClipboardCheck,
-  Database,
   Download,
   LayoutDashboard,
   Lightbulb,
@@ -43,7 +41,7 @@ export function SidebarContent({
           </span>
           <span>
             <span className="block text-[16px] font-bold leading-5 tracking-[-0.03em] text-ink">观策 AI</span>
-            <span className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-faint">
+            <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">
               Decision workspace
             </span>
           </span>
@@ -56,7 +54,7 @@ export function SidebarContent({
       </div>
 
       <div className="px-3">
-        <p className="px-3 pb-2 text-[9px] font-bold uppercase tracking-[0.16em] text-faint">工作区</p>
+        <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-faint">工作区</p>
         <nav aria-label="主导航" className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -79,36 +77,15 @@ export function SidebarContent({
                     <Icon size={17} strokeWidth={isActive ? 2.1 : 1.8} className="shrink-0" />
                     <span className="min-w-0 flex-1">
                       <span className="block text-[13px] font-semibold leading-5">{item.label}</span>
-                      <span
-                        className={cn(
-                          'block truncate text-[10px] leading-4',
-                          isActive ? 'text-white/60' : 'text-faint',
-                        )}
-                      >
-                        {item.hint}
-                      </span>
+
                     </span>
-                    <ChevronRight
-                      size={13}
-                      className={cn('shrink-0', isActive ? 'text-white/50' : 'text-transparent group-hover:text-faint')}
-                    />
+
                   </>
                 )}
               </NavLink>
             );
           })}
         </nav>
-      </div>
-
-      <div className="mx-4 mt-5 rounded-[13px] border border-line bg-[#f8fafb] p-3.5">
-        <div className="flex items-center gap-2">
-          <Database size={14} className="text-data" />
-          <p className="text-[11px] font-bold text-ink">本地演示数据</p>
-          <span className="tag tag-mint ml-auto !px-1.5 !py-0.5 !text-[9px]">模拟</span>
-        </div>
-        <p className="mt-1.5 text-[10px] leading-4 text-muted">
-          无后端、无真实模型调用。所有企业、竞品与投放结果均为虚构演示，操作保存在本机浏览器。
-        </p>
       </div>
 
       <div className="mt-auto space-y-1 px-3 pb-4 pt-4">
@@ -129,7 +106,7 @@ export function SidebarContent({
           恢复演示数据
         </button>
         <div className="mt-2 flex items-center justify-between border-t border-line px-3 pt-3">
-          <span className="text-[9px] font-medium uppercase tracking-[0.1em] text-faint">v0.4 · Web MVP</span>
+          <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-faint">v0.5 · Web MVP</span>
           <span className="h-1.5 w-1.5 rounded-full bg-mint" title="前端演示环境" />
         </div>
       </div>
@@ -148,6 +125,7 @@ export function DesktopSidebar({ onExport, onReset }: { onExport: () => void; on
 export function MobileSidebar({ onExport, onReset }: { onExport: () => void; onReset: () => void }) {
   const open = useUiStore((state) => state.mobileNavOpen);
   const close = useUiStore((state) => state.closeMobileNav);
+  if (!open) return null;
   return (
     <div className={cn('fixed inset-0 z-50 lg:hidden', !open && 'pointer-events-none')} aria-hidden={!open}>
       <div

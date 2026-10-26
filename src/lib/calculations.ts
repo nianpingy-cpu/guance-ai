@@ -100,11 +100,11 @@ export function computeReviewMetrics(
 
   const ctr = impressions !== null && impressions > 0 && clicks !== null ? clicks / impressions : null;
   const cpcCents =
-    actualSpendCents !== null && actualSpendCents > 0 && clicks !== null && clicks > 0
+    actualSpendCents !== null && clicks !== null && clicks > 0
       ? actualSpendCents / clicks
       : null;
   const costPerLeadCents =
-    actualSpendCents !== null && actualSpendCents > 0 && leads !== null && leads > 0
+    actualSpendCents !== null && leads !== null && leads > 0
       ? actualSpendCents / leads
       : null;
   const clickToLeadRate = clicks !== null && clicks > 0 && leads !== null ? leads / clicks : null;
@@ -139,9 +139,9 @@ export function computeChannelMetrics(
     clicks,
     leads,
     ctr: impressions !== null && impressions > 0 && clicks !== null ? clicks / impressions : null,
-    cpcCents: spend !== null && spend > 0 && clicks !== null && clicks > 0 ? spend / clicks : null,
+    cpcCents: spend !== null && clicks !== null && clicks > 0 ? spend / clicks : null,
     costPerLeadCents:
-      spend !== null && spend > 0 && leads !== null && leads > 0 ? spend / leads : null,
+      spend !== null && leads !== null && leads > 0 ? spend / leads : null,
   };
 }
 

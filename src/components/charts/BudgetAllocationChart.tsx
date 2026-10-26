@@ -69,7 +69,7 @@ export function BudgetAllocationChart({
               x={left + plotW - 6}
               y={16}
               textAnchor="end"
-              fontSize="9"
+              fontSize="14"
               fontWeight="700"
               fill={chartColors.hero}
             >
@@ -99,16 +99,16 @@ export function BudgetAllocationChart({
                   {active ? (
                     <rect x={0} y={y - 14} width={W} height={rowH - 4} rx={10} fill="rgba(36,62,99,.05)" />
                   ) : null}
-                  <text x={14} y={y + 4} fontSize="11" fontWeight="800" fill={chartColors.ink}>
+                  <text x={14} y={y + 4} fontSize="14" fontWeight="800" fill={chartColors.ink}>
                     方案 {plan.code}
                   </text>
-                  <text x={14} y={y + 20} fontSize="9.5" fill={chartColors.muted}>
+                  <text x={14} y={y + 20} fontSize="14" fill={chartColors.muted}>
                     {plan.shortName}
                   </text>
                   <text
                     x={14}
                     y={y + 39}
-                    fontSize="12"
+                    fontSize="14"
                     fontWeight="800"
                     fill={active ? chartColors.ink : chartColors.muted}
                     className="tabular"
@@ -159,17 +159,17 @@ export function BudgetAllocationChart({
                     return segment;
                   })}
                   {total > safeCap ? (
-                    <text x={left + plotW + 4} y={y + 15} fontSize="9" fontWeight="700" fill={chartColors.hero}>
+                    <text x={left + plotW + 4} y={y + 15} fontSize="14" fontWeight="700" fill={chartColors.hero}>
                       超限
                     </text>
                   ) : null}
-                  <text x={W - 4} y={y + 44} textAnchor="end" fontSize="9" fill={chartColors.faint}>
+                  <text x={W - 4} y={y + 44} textAnchor="end" fontSize="14" fill={chartColors.faint}>
                     使用上限的 {formatPercent(total / safeCap, 0)}
                   </text>
                 </g>
               );
             })}
-            <text x={left} y={H - 10} fontSize="8.5" fill={chartColors.faint}>
+            <text x={left} y={H - 10} fontSize="14" fill={chartColors.faint}>
               每段为一个渠道预算；总长度不超过虚线即满足约束
             </text>
           </svg>

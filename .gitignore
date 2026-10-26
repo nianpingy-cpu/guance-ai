@@ -4,3 +4,5 @@ dist/
 *.tsbuildinfo
 .DS_Store
 docs/demo/*.webm
+.playwright-cli/
+test-results/

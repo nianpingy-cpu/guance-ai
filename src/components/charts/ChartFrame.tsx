@@ -63,9 +63,10 @@ export function ChartFrame({
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
       {legend ? <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">{legend}</div> : null}
-      <div className="mt-3 min-w-0 flex-1">{children}</div>
+      <p className="mt-2 text-xs text-muted sm:hidden">左右滑动查看图表，点击数据查看依据。</p>
+      <div className="chart-scroll mt-3 min-w-0 flex-1" tabIndex={0} aria-label={`${title}，可横向滚动查看`}>{children}</div>
       {note ? <div className="mt-2 text-[11px] leading-5 text-muted">{note}</div> : null}
-      <p className="mt-3 border-t border-line pt-2.5 text-[9px] font-medium uppercase tracking-[0.11em] text-faint">
+      <p className="mt-3 border-t border-line pt-2.5 text-[11px] font-medium uppercase tracking-[0.11em] text-faint">
         {source}
       </p>
     </figure>
@@ -82,7 +83,7 @@ export function LegendDot({
   shape?: 'dot' | 'pill' | 'line';
 }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-muted">
+    <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-muted">
       <span
         aria-hidden="true"
         className={cn(

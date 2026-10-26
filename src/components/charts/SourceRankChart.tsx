@@ -93,7 +93,7 @@ export function SourceRankChart({
                     x={left - 10}
                     y={y + 13}
                     textAnchor="end"
-                    fontSize="11"
+                    fontSize="14"
                     fontWeight={active ? 700 : 500}
                     fill={active ? chartColors.ink : chartColors.muted}
                   >
@@ -121,7 +121,7 @@ export function SourceRankChart({
                   <text
                     x={W - right + 8}
                     y={y + 13}
-                    fontSize="12"
+                    fontSize="14"
                     fontWeight="800"
                     fill={chartColors.ink}
                     className="tabular"
@@ -132,7 +132,7 @@ export function SourceRankChart({
                     x={W - 5}
                     y={y + 13}
                     textAnchor="end"
-                    fontSize="8.5"
+                    fontSize="14"
                     fill={chartColors.faint}
                     className="tabular"
                   >

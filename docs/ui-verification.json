@@ -1,0 +1,96 @@
+{
+  "status": "PASS",
+  "base": "http://127.0.0.1:5174",
+  "runAt": "2026-10-26T07:18:03.396Z",
+  "checks": [
+    {
+      "name": "desktop dashboard: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "desktop signals: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "desktop strategy: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "desktop review: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "tablet dashboard: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "tablet signals: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "tablet strategy: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "tablet review: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "mobile dashboard: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "mobile signals: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "mobile strategy: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "mobile review: heading, overflow, screenshot",
+      "result": "PASS"
+    },
+    {
+      "name": "mobile navigation opens, follows route, closes",
+      "result": "PASS"
+    },
+    {
+      "name": "mobile company drawer and evidence details fit viewport",
+      "result": "PASS"
+    },
+    {
+      "name": "A/B selection and manual plan edit survive navigation",
+      "result": "PASS"
+    },
+    {
+      "name": "budget changes persist and trigger review across pages",
+      "result": "PASS"
+    },
+    {
+      "name": "over budget blocked, proportional adjustment and approval snapshot",
+      "result": "PASS"
+    },
+    {
+      "name": "signal empty state, filters, evidence and importance update",
+      "result": "PASS"
+    },
+    {
+      "name": "consumer theme links to its original signal",
+      "result": "PASS"
+    },
+    {
+      "name": "review input recomputes metrics and persists",
+      "result": "PASS"
+    },
+    {
+      "name": "feedback task created once and visible on signals",
+      "result": "PASS"
+    },
+    {
+      "name": "export includes edited state; reset restores demo",
+      "result": "PASS"
+    }
+  ],
+  "errors": []
+}

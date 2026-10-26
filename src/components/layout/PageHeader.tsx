@@ -42,7 +42,7 @@ export function MetaItem({ label, value }: { label: string; value: ReactNode }) 
 
 export function DemoBadge() {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e7d9c2] bg-[#fdf8ee] px-2.5 py-1 text-[10px] font-semibold text-[#8a5a12]">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e7d9c2] bg-[#fdf8ee] px-2.5 py-1 text-[12px] font-semibold text-[#8a5a12]">
       <span className="h-1.5 w-1.5 rounded-full bg-[#b7791f]" />
       演示数据 · 非真实投放
     </span>

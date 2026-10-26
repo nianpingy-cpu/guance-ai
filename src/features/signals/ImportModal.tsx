@@ -136,10 +136,10 @@ export function ImportModal() {
               <Tag tone="outline">数组</Tag>
             </div>
             <p className="mt-1.5 text-[11px] leading-5 text-muted">
-              可直接传数组，或使用 <code className="rounded bg-white px-1 text-[10px]">{'{ "signals": [...] }'}</code>。
+              可直接传数组，或使用 <code className="rounded bg-white px-1 text-[12px]">{'{ "signals": [...] }'}</code>。
               字段名支持中文（标题 / 来源平台 / 类别 / 优先级 / 状态）。
             </p>
-            <p className="mt-3 text-[10px] text-faint">导入后会自动记录一条“核对导入文件”的任务。</p>
+            <p className="mt-3 text-[12px] text-faint">导入后会自动记录一条“核对导入文件”的任务。</p>
           </div>
         </div>
 
@@ -169,7 +169,7 @@ export function ImportModal() {
           <label htmlFor="signal-import" className="btn btn-secondary btn-sm mt-3 cursor-pointer">
             浏览本地文件
           </label>
-          {filename ? <p className="mt-2 text-[10px] text-faint">已选择：{filename}</p> : null}
+          {filename ? <p className="mt-2 text-[12px] text-faint">已选择：{filename}</p> : null}
         </div>
 
         {parseState.status === 'error' ? <InfoBanner tone="danger">{parseState.message}</InfoBanner> : null}
@@ -196,7 +196,7 @@ export function ImportModal() {
                   ))}
                 </ul>
                 {parseState.issues.length > 12 ? (
-                  <p className="mt-1 text-[10px] text-[#7b5718]">另有 {parseState.issues.length - 12} 条问题未显示。</p>
+                  <p className="mt-1 text-[12px] text-[#7b5718]">另有 {parseState.issues.length - 12} 条问题未显示。</p>
                 ) : null}
               </div>
             ) : null}
@@ -204,7 +204,7 @@ export function ImportModal() {
         ) : null}
 
         <div className="rounded-[12px] bg-[#f8fafb] px-3.5 py-2.5">
-          <p className="text-[10px] leading-5 text-muted">
+          <p className="text-[12px] leading-5 text-muted">
             导入数据默认标记为演示来源，不会伪装为真实平台统计。真实采集、授权与去重策略不在本版本范围内。
           </p>
         </div>

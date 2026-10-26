@@ -94,7 +94,7 @@ export function ChannelEfficiencyChart({
       unit="见各栏"
       source="BASICS · 小型多图 · 复盘实际数据"
       legend={
-        <span className="text-[10px] text-faint">
+        <span className="text-[12px] text-faint">
           {selectedChannel ? `已聚焦：${selectedChannel}` : '点击任一渠道行可在下方表格中聚焦'}
         </span>
       }
@@ -112,17 +112,17 @@ export function ChannelEfficiencyChart({
             aria-label="渠道 CTR、CPC 与有效咨询成本分项对比"
             onPointerLeave={hideTip}
           >
-            <text x={left} y={20} fontSize="9" fontWeight="700" fill={chartColors.faint}>
+            <text x={left} y={20} fontSize="14" fontWeight="700" fill={chartColors.faint}>
               渠道
             </text>
             {metrics.map((metric, metricIndex) => {
               const x = left + metricIndex * (panelW + panelGap);
               return (
                 <g key={metric.key}>
-                  <text x={x} y={16} fontSize="9.5" fontWeight="800" fill={chartColors.ink}>
+                  <text x={x} y={16} fontSize="14" fontWeight="800" fill={chartColors.ink}>
                     {metric.label}
                   </text>
-                  <text x={x} y={30} fontSize="8.5" fill={chartColors.faint}>
+                  <text x={x} y={30} fontSize="14" fill={chartColors.faint}>
                     {metric.unit} · {metric.note}
                   </text>
                   <line
@@ -160,7 +160,7 @@ export function ChannelEfficiencyChart({
                   <text
                     x={12}
                     y={y + 16}
-                    fontSize="10.5"
+                    fontSize="14"
                     fontWeight={active ? 700 : 600}
                     fill={active ? chartColors.ink : chartColors.muted}
                   >
@@ -185,7 +185,7 @@ export function ChannelEfficiencyChart({
                           <text
                             x={x + 4}
                             y={y + 11}
-                            fontSize="9"
+                            fontSize="14"
                             fill={chartColors.neutral}
                             onPointerMove={(event) =>
                               showTip(
@@ -229,7 +229,7 @@ export function ChannelEfficiencyChart({
                             <text
                               x={x + trackW + 4}
                               y={y + 11.5}
-                              fontSize="9"
+                              fontSize="14"
                               fontWeight="800"
                               fill={chartColors.ink}
                               className="tabular"

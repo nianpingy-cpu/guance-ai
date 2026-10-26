@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { exportSnapshot } from '@/data/repository';
@@ -44,6 +44,7 @@ function snapshotOfState(): AppData {
 
 export function AppShell() {
   const location = useLocation();
+  const navigate = useNavigate();
   const resetDemo = useAppStore((state) => state.resetDemo);
   const [resetOpen, setResetOpen] = useState(false);
 
@@ -89,6 +90,7 @@ export function AppShell() {
               onClick={() => {
                 resetDemo();
                 setResetOpen(false);
+                navigate('/dashboard');
                 toast('演示数据已恢复', '企业、情报、审批与复盘已回到初始演示状态。', 'success');
               }}
             >

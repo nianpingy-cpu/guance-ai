@@ -110,7 +110,7 @@ export function SourceLine({ children, className }: { children: ReactNode; class
   return (
     <p
       className={cn(
-        'text-[10px] font-medium uppercase tracking-[0.12em] text-faint',
+        'text-[12px] font-medium uppercase tracking-[0.12em] text-faint',
         className,
       )}
     >

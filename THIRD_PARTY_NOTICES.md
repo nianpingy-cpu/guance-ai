@@ -29,10 +29,7 @@
 
 ## 字体
 
-- **Inter**：SIL Open Font License 1.1
-- **Noto Sans SC**：SIL Open Font License 1.1
-
-通过 Google Fonts 链接加载；页面提供 `PingFang SC`、`Microsoft YaHei`、系统字体回退。若离线运行，字体自动回退，不影响功能。
+v0.5 使用本机 Segoe UI / Microsoft YaHei / PingFang SC / 系统无衬线字体回退。不打包字体文件，不再请求 Google Fonts。
 
 ## 未引入的库
 
@@ -43,3 +40,12 @@
 - 演示企业“齐鲁茶研”、竞品名称、消费者评论、平台来源、投放结果均为虚构或模拟。
 - 未使用真实企业 Logo、真实平台截图、真实个人信息或受版权保护的商业素材。
 - 界面图标来自 Lucide（ISC），品牌图形为项目自行绘制的简单 SVG。
+
+## v0.5 核实记录（2026-10-26）
+
+两仓库的 README、SKILL.md、LICENSE 已重新读取。它们是面向代理的可视化 Skill 与 HTML/SVG 模板集合，没有本项目可直接安装的 React 组件接口；继续采用现有独立 SVG 实现。v0.5 按用户指定的海军蓝建立项目颜色角色，未复制模板源代码。
+
+- [Lieflat Charts](https://github.com/larashero3-dotcom/lieflat-charts)：LICENSE 为 PolyForm Noncommercial License 1.0.0。
+- [Lieflat Charts Custom](https://github.com/komakizhu/lieflat-charts-custom)：LICENSE 为 PolyForm Noncommercial License 1.0.0。
+
+Lupi 用于逐日记录，Glance 用于可比较的主题排序，Basics 用于预算和计划/实际比较。图表共用一套项目色彩角色；状态另外用文字标注。原 v0.4 的色板来源说明保留用于基线追溯。

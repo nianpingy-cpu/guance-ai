@@ -66,8 +66,7 @@ export function ReviewPage() {
     return (
       <div className="page-wrap">
         <PageHeader
-          eyebrow="执行之后 · 回到信息更新"
-          title="效果复盘"
+            title="效果复盘"
           description="本轮尚未投放，因此没有可录入的实际数据。"
           actions={
             <Button variant="primary" onClick={() => navigate('/strategy')}>
@@ -100,8 +99,7 @@ export function ReviewPage() {
     return (
       <div className="page-wrap">
         <PageHeader
-          eyebrow="执行之后 · 回到信息更新"
-          title="效果复盘"
+            title="效果复盘"
           description="确认一套营销方案并保存审批快照后，才能录入实际数据并形成下一轮任务。"
           actions={
             <Button variant="primary" icon={<ArrowRight size={14} />} onClick={() => navigate('/strategy')}>
@@ -182,7 +180,6 @@ export function ReviewPage() {
   return (
     <div className="page-wrap">
       <PageHeader
-        eyebrow="执行之后 · 回到信息更新"
         title="效果复盘"
         description="对比计划与实际，记录观察、差异和无法确认的判断，并把下一轮需要补充的信息变成真实任务。所有结果均为演示数据。"
         meta={
@@ -224,15 +221,7 @@ export function ReviewPage() {
         </InfoBanner>
       )}
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-6">
-        <MetricCard
-          label="已确认方案"
-          value={approval.planCode}
-          unit={plan.shortName}
-          tone="navy"
-          note={plan.name}
-        />
-        <MetricCard label="计划预算" value={formatCny(metrics.plannedCents).replace('¥', '')} unit="元" note="来自审批快照" />
+      <div className="metric-strip review-metrics">
         <MetricCard
           label="实际花费"
           value={metrics.actualSpendCents === null ? <span className="text-[20px] font-semibold">暂无数据</span> : formatCny(metrics.actualSpendCents).replace('¥', '')}
@@ -282,53 +271,6 @@ export function ReviewPage() {
         />
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-8">
-          <PlanVsActualChart
-            plan={plan}
-            review={review}
-            metric={metric}
-            onMetricChange={setMetric}
-            periodLabel={`${data.company.campaignStart} — ${data.company.campaignEnd}`}
-          />
-        </div>
-        <Card className="lg:col-span-4">
-          <SectionHeader
-            eyebrow="本轮快照"
-            title={`方案 ${approval.planCode} · ${plan.shortName}`}
-            description={plan.positioning}
-            action={<Tag tone="mint" dot>已确认</Tag>}
-          />
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <div className="rounded-[10px] border border-line px-3 py-2">
-              <p className="text-[10px] text-faint">计划预算</p>
-              <p className="tabular mt-0.5 text-[15px] font-bold text-ink">{formatCny(totalPlanCents(plan))}</p>
-            </div>
-            <div className="rounded-[10px] border border-line px-3 py-2">
-              <p className="text-[10px] text-faint">实际花费</p>
-              <p className="tabular mt-0.5 text-[15px] font-bold text-ink">{formatCny(metrics.actualSpendCents)}</p>
-            </div>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            {plan.channels.map((channel) => (
-              <div key={channel.channel} className="flex items-center justify-between gap-2 text-[10px]">
-                <span className="text-muted">{channel.channel}</span>
-                <span className="tabular text-ink">{formatCny(channel.budgetCents)}</span>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 rounded-[11px] bg-[#f8fafb] px-3.5 py-3">
-            <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-faint">数据性质</p>
-            <p className="mt-1 text-[11px] leading-5 text-muted">
-              本轮为模拟投放结果，无真实平台接口。没有转化、成交或退款数据，因此不计算 ROAS。
-            </p>
-          </div>
-          <Button className="mt-3 w-full" icon={<FileText size={13} />} onClick={() => setSnapshotOpen(true)}>
-            查看原始方案快照
-          </Button>
-        </Card>
-      </div>
-
       <Card className="mt-4" padded={false}>
         <div className="border-b border-line p-5">
           <SectionHeader
@@ -371,7 +313,7 @@ export function ReviewPage() {
                     >
                       {planned.channel}
                     </button>
-                    <p className="mt-0.5 max-w-[150px] text-[9px] leading-4 text-faint">{planned.role}</p>
+                    <p className="mt-0.5 max-w-[150px] text-[11px] leading-4 text-faint">{planned.role}</p>
                   </td>
                   <td className="tabular text-[11px] text-muted">{formatCny(planned.budgetCents)}</td>
                   <td>
@@ -425,22 +367,12 @@ export function ReviewPage() {
           </table>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-5 py-3">
-          <p className="text-[10px] text-muted">
+          <p className="text-[12px] text-muted">
             没有提供的数据显示为“暂无数据”；有花费但咨询为 0 时不计算咨询成本。
           </p>
           <Tag tone="outline">数据保存在本机浏览器</Tag>
         </div>
       </Card>
-
-      <div className="mt-4">
-        <ChannelEfficiencyChart
-          plan={plan}
-          review={review}
-          selectedChannel={selectedChannel}
-          onSelectChannel={setSelectedChannel}
-          periodLabel={`${data.company.campaignStart} — ${data.company.campaignEnd}`}
-        />
-      </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-12">
         <Card className="lg:col-span-8">
@@ -506,7 +438,7 @@ export function ReviewPage() {
             </EditorialBlock>
 
             {review?.note ? (
-              <p className="border-t border-line pt-3 text-[10px] leading-5 text-faint">复盘备注：{review.note}</p>
+              <p className="border-t border-line pt-3 text-[12px] leading-5 text-faint">复盘备注：{review.note}</p>
             ) : null}
           </div>
         </Card>
@@ -522,7 +454,7 @@ export function ReviewPage() {
             <QualityRow label="归因方式" value="未建模，仅描述" />
           </div>
           <div className="mt-4 rounded-[11px] border border-[#f0dfbd] bg-[#fdfaf2] px-3.5 py-3">
-            <p className="text-[10px] font-bold text-[#7b5718]">解释边界</p>
+            <p className="text-[12px] font-bold text-[#7b5718]">解释边界</p>
             <p className="mt-1 text-[11px] leading-5 text-[#7b5718]">
               不能根据本轮差异判断“某个内容导致咨询增加”。需要下一轮控制变量、补充咨询质量与成本数据。
             </p>
@@ -551,11 +483,11 @@ export function ReviewPage() {
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="tabular text-[9px] font-bold text-faint">0{index + 1}</span>
+                      <span className="tabular text-[11px] font-bold text-faint">0{index + 1}</span>
                       <p className="text-[12px] font-semibold text-ink">{suggestion.title}</p>
                     </div>
                     <p className="mt-1 text-[11px] leading-5 text-muted">{suggestion.detail}</p>
-                    <p className="mt-1 text-[9px] text-faint">关联：{suggestion.linkedSignalIds.join('、')}</p>
+                    <p className="mt-1 text-[11px] text-faint">关联：{suggestion.linkedSignalIds.join('、')}</p>
                   </div>
                   <Button
                     size="sm"
@@ -591,11 +523,11 @@ export function ReviewPage() {
           <SectionHeader eyebrow="闭环" title="从复盘回到情报" />
           <div className="mt-4 space-y-3">
             <div className="rounded-[11px] border border-line bg-[#fbfcfd] p-3">
-              <p className="text-[10px] font-bold text-ink">当前待办</p>
+              <p className="text-[12px] font-bold text-ink">当前待办</p>
               <p className="tabular mt-1 text-[22px] font-bold text-ink">
                 {data.feedbackTasks.filter((task) => task.status === 'open').length}
               </p>
-              <p className="text-[10px] text-muted">项未完成情报任务</p>
+              <p className="text-[12px] text-muted">项未完成情报任务</p>
             </div>
             <p className="text-[11px] leading-5 text-muted">
               下一轮任务会保留来源与关联情报，不会自动生成“新结论”。补充信息后，仍需要人工核实与重新确认方案。
@@ -610,12 +542,34 @@ export function ReviewPage() {
         </Card>
       </div>
 
+<details className="disclosure mt-6"><summary>查看计划对比与渠道效率</summary><div className="pt-4">      <div className="mt-4 grid gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-12">
+          <PlanVsActualChart
+            plan={plan}
+            review={review}
+            metric={metric}
+            onMetricChange={setMetric}
+            periodLabel={`${data.company.campaignStart} — ${data.company.campaignEnd}`}
+          />
+        </div>
+      </div>
+      <div className="mt-4">
+        <ChannelEfficiencyChart
+          plan={plan}
+          review={review}
+          selectedChannel={selectedChannel}
+          onSelectChannel={setSelectedChannel}
+          periodLabel={`${data.company.campaignStart} — ${data.company.campaignEnd}`}
+        />
+      </div>
+
+</div></details>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border border-line bg-white/60 px-4 py-3">
-        <p className="text-[10px] leading-5 text-muted">
+        <p className="text-[12px] leading-5 text-muted">
           <span className="font-semibold text-ink">复盘边界：</span>
           所有实际数据为演示输入；无真实投放接口、无归因模型、无成交或退款数据，因此不计算 ROAS，也不将差异解释为因果。
         </p>
-        <span className="text-[10px] text-faint">数据保存于本机 · 可打印为 PDF</span>
+        <span className="text-[12px] text-faint">数据保存于本机 · 可打印为 PDF</span>
       </div>
 
       <ReviewEditModal
@@ -633,9 +587,9 @@ export function ReviewPage() {
 function DerivedMetric({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold text-faint">{label}</p>
+      <p className="text-[12px] font-semibold text-faint">{label}</p>
       <p className="tabular mt-0.5 text-[15px] font-bold text-ink">{value}</p>
-      <p className="text-[9px] text-faint">{hint}</p>
+      <p className="text-[11px] text-faint">{hint}</p>
     </div>
   );
 }
@@ -651,7 +605,7 @@ function EditorialBlock({
 }) {
   return (
     <section>
-      <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-faint">{label}</p>
+      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">{label}</p>
       <div
         className={
           tone === 'inference'
@@ -744,7 +698,7 @@ function MoneyCell({
           }
         }}
       />
-      {error ? <p className="mt-0.5 text-[9px] text-danger">{error}</p> : null}
+      {error ? <p className="mt-0.5 text-[11px] text-danger">{error}</p> : null}
     </div>
   );
 }
@@ -801,7 +755,7 @@ function CountCell({
           }
         }}
       />
-      {error ? <p className="mt-0.5 text-[9px] text-danger">{error}</p> : null}
+      {error ? <p className="mt-0.5 text-[11px] text-danger">{error}</p> : null}
     </div>
   );
 }
@@ -931,15 +885,15 @@ function SnapshotModal({
       <div className="space-y-4">
         <div className="grid gap-2 sm:grid-cols-3">
           <div className="rounded-[11px] border border-line px-3 py-2">
-            <p className="text-[10px] text-faint">快照 ID</p>
+            <p className="text-[12px] text-faint">快照 ID</p>
             <p className="tabular mt-0.5 text-[12px] font-bold text-ink">{approval.id}</p>
           </div>
           <div className="rounded-[11px] border border-line px-3 py-2">
-            <p className="text-[10px] text-faint">确认时间</p>
+            <p className="text-[12px] text-faint">确认时间</p>
             <p className="mt-0.5 text-[11px] font-semibold text-ink">{formatDateTime(approval.approvedAt)}</p>
           </div>
           <div className="rounded-[11px] border border-line px-3 py-2">
-            <p className="text-[10px] text-faint">预算上限</p>
+            <p className="text-[12px] text-faint">预算上限</p>
             <p className="tabular mt-0.5 text-[12px] font-bold text-ink">{formatCny(approval.companyBudgetCents)}</p>
           </div>
         </div>
@@ -951,25 +905,25 @@ function SnapshotModal({
           <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
             {approval.plan.channels.map((channel) => (
               <div key={channel.channel} className="flex items-center justify-between rounded-[8px] bg-white px-2.5 py-1.5">
-                <span className="text-[10px] text-muted">{channel.channel}</span>
+                <span className="text-[12px] text-muted">{channel.channel}</span>
                 <span className="tabular text-[11px] font-semibold text-ink">{formatCny(channel.budgetCents)}</span>
               </div>
             ))}
           </div>
         </div>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-faint">确认理由</p>
+          <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-faint">确认理由</p>
           <p className="mt-1 rounded-[10px] bg-[#f8fafb] px-3 py-2 text-[12px] leading-5 text-ink">{approval.reason}</p>
         </div>
         <div className="grid gap-2 sm:grid-cols-2">
           <div className="rounded-[11px] border border-line px-3 py-2">
-            <p className="text-[10px] text-faint">关联证据</p>
+            <p className="text-[12px] text-faint">关联证据</p>
             <p className="tabular mt-0.5 text-[13px] font-bold text-ink">{approval.evidenceSignalIds.length} 条</p>
-            <p className="mt-1 text-[9px] leading-4 text-faint">{approval.evidenceSignalIds.join('、')}</p>
+            <p className="mt-1 text-[11px] leading-4 text-faint">{approval.evidenceSignalIds.join('、')}</p>
           </div>
           <div className="rounded-[11px] border border-line px-3 py-2">
-            <p className="text-[10px] text-faint">输入指纹</p>
-            <p className="tabular mt-0.5 break-all text-[10px] font-semibold text-ink">{approval.fingerprint}</p>
+            <p className="text-[12px] text-faint">输入指纹</p>
+            <p className="tabular mt-0.5 break-all text-[12px] font-semibold text-ink">{approval.fingerprint}</p>
           </div>
         </div>
         <InfoBanner tone="neutral">

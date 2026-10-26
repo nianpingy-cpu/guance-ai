@@ -119,7 +119,7 @@ export function CompanyDrawer() {
       title="编辑企业资料"
       footer={
         <div className="flex items-center justify-between gap-3">
-          <p className="text-[10px] text-faint">保存后立即写入本地浏览器，并影响预算校验与审批状态。</p>
+          <p className="text-[12px] text-faint">保存后立即写入本地浏览器，并影响预算校验与审批状态。</p>
           <div className="flex shrink-0 gap-2">
             <Button onClick={close}>取消</Button>
             <Button variant="primary" icon={<Save size={14} />} onClick={save}>

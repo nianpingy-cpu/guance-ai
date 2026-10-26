@@ -152,7 +152,7 @@ export function parseSignalImport({
   const sources = [...existingSources];
   const seen = new Set(existingSignals.map((signal) => `${signal.title}__${signal.platform}`));
 
-  let rows: RawRow[] = [];
+  let rows: RawRow[];
   try {
     rows = filename.toLowerCase().endsWith('.json') ? rowsFromJson(content) : rowsFromCsv(content);
     if (rows.length === 0) throw new Error('没有可导入的数据行');

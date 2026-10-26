@@ -162,7 +162,7 @@ export function PlanVsActualChart({
                   x={left - 9}
                   y={y(tick) + 3.5}
                   textAnchor="end"
-                  fontSize="9"
+                  fontSize="14"
                   fill={chartColors.faint}
                   className="tabular"
                 >
@@ -229,7 +229,7 @@ export function PlanVsActualChart({
                         x={metric === 'spend' ? actualX + barW / 2 : groupCenter}
                         y={top + plotH - 13}
                         textAnchor="middle"
-                        fontSize="8"
+                        fontSize="14"
                         fill={chartColors.faint}
                       >
                         暂无
@@ -269,7 +269,7 @@ export function PlanVsActualChart({
                       x={metric === 'spend' ? actualX + barW / 2 : groupCenter}
                       y={top + plotH - actualHeight - 7}
                       textAnchor="middle"
-                      fontSize="9.5"
+                      fontSize="14"
                       fontWeight="800"
                       fill={chartColors.ink}
                       className="tabular"
@@ -283,7 +283,7 @@ export function PlanVsActualChart({
                     x={groupCenter}
                     y={H - 34}
                     textAnchor="middle"
-                    fontSize="10"
+                    fontSize="14"
                     fontWeight="600"
                     fill={chartColors.muted}
                   >
@@ -294,7 +294,7 @@ export function PlanVsActualChart({
                       x={groupCenter}
                       y={H - 19}
                       textAnchor="middle"
-                      fontSize="8"
+                      fontSize="14"
                       fill={chartColors.faint}
                     >
                       计划 {formatCompact(planned)}
@@ -304,7 +304,7 @@ export function PlanVsActualChart({
                       x={groupCenter}
                       y={H - 19}
                       textAnchor="middle"
-                      fontSize="8"
+                      fontSize="14"
                       fill={chartColors.faint}
                     >
                       {metrics.ctr !== null ? `CTR ${(metrics.ctr * 100).toFixed(2)}%` : 'CTR 暂无'}

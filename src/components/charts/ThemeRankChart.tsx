@@ -32,7 +32,7 @@ export function ThemeRankChart({
       unit="条提及"
       source="GLANCE · 排序对比 · 模拟消费者信号"
       legend={
-        <span className="text-[10px] text-faint">
+        <span className="text-[12px] text-faint">
           排名与数值同时呈现；深灰绿为已选主题，陶土仅用于当前最高关注项
         </span>
       }
@@ -91,7 +91,7 @@ export function ThemeRankChart({
                   <text
                     x={18}
                     y={y + 20}
-                    fontSize="13"
+                    fontSize="14"
                     fontWeight="800"
                     fill={index === 0 ? chartColors.hero : chartColors.faint}
                     className="tabular"
@@ -101,13 +101,13 @@ export function ThemeRankChart({
                   <text
                     x={48}
                     y={y + 18}
-                    fontSize="12.5"
+                    fontSize="14"
                     fontWeight={active ? 700 : 600}
                     fill={chartColors.ink}
                   >
                     {theme.title}
                   </text>
-                  <text x={48} y={y + 34} fontSize="9.5" fill={chartColors.muted}>
+                  <text x={48} y={y + 34} fontSize="14" fill={chartColors.muted}>
                     {theme.direction} · {theme.claimType}
                   </text>
                   <rect

@@ -46,7 +46,7 @@ export function StageProgress({
             <span className="flex items-center gap-1.5 text-[12px] font-semibold text-ink">
               <span
                 className={cn(
-                  'flex h-[18px] w-[18px] items-center justify-center rounded-full text-[9px] font-bold',
+                  'flex h-[18px] w-[18px] items-center justify-center rounded-full text-[11px] font-bold',
                   stage.value >= 100
                     ? 'bg-brand text-white'
                     : stage.value > 0

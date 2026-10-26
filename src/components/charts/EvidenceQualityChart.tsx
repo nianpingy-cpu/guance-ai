@@ -100,13 +100,13 @@ export function EvidenceQualityChart({
                   <text
                     x={14}
                     y={y + 20}
-                    fontSize="11.5"
+                    fontSize="14"
                     fontWeight={active ? 700 : 600}
                     fill={active ? chartColors.ink : chartColors.muted}
                   >
                     {row.theme.rank}. {row.theme.title}
                   </text>
-                  <text x={14} y={y + 34} fontSize="9" fill={chartColors.faint}>
+                  <text x={14} y={y + 34} fontSize="14" fill={chartColors.faint}>
                     {row.theme.confidence === 'high'
                       ? '置信度较高'
                       : row.theme.confidence === 'medium'
@@ -166,7 +166,7 @@ export function EvidenceQualityChart({
                     x={W - 8}
                     y={y + 24}
                     textAnchor="end"
-                    fontSize="13"
+                    fontSize="14"
                     fontWeight="800"
                     fill={chartColors.ink}
                     className="tabular"

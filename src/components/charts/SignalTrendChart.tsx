@@ -46,7 +46,7 @@ export function SignalTrendChart({
         <>
           <LegendDot color={chartColors.data} label="每日情报总量" shape="dot" />
           <LegendDot color={chartColors.hero} label="含高优先级情报" shape="dot" />
-          <span className="text-[10px] text-faint">点越大表示数量越多</span>
+          <span className="text-[12px] text-faint">点越大表示数量越多</span>
         </>
       }
       action={
@@ -85,7 +85,7 @@ export function SignalTrendChart({
                   x={left - 10}
                   y={y(tick) + 3.5}
                   textAnchor="end"
-                  fontSize="9.5"
+                  fontSize="14"
                   fill={chartColors.faint}
                   className="tabular"
                 >
@@ -184,7 +184,7 @@ export function SignalTrendChart({
                       x={px}
                       y={py - 12}
                       textAnchor="middle"
-                      fontSize="10"
+                      fontSize="14"
                       fontWeight="800"
                       fill={chartColors.ink}
                     >
@@ -196,7 +196,7 @@ export function SignalTrendChart({
                       x={px}
                       y={H - 16}
                       textAnchor="middle"
-                      fontSize="9.5"
+                      fontSize="14"
                       fill={chartColors.muted}
                       className="tabular"
                     >
