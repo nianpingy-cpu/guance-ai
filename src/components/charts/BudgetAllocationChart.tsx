@@ -1,3 +1,4 @@
+import { shortChartLabel } from '@/lib/format';
 import type { Plan } from '@/types/domain';
 import { formatCny, formatPercent } from '@/lib/format';
 import { totalPlanCents } from '@/lib/calculations';
@@ -103,7 +104,7 @@ export function BudgetAllocationChart({
                     方案 {plan.code}
                   </text>
                   <text x={14} y={y + 27} fontSize="14" fill={chartColors.muted}>
-                    {plan.shortName}
+                    <title>{plan.shortName}</title>{shortChartLabel(plan.shortName, 10)}
                   </text>
                   <text
                     x={14}

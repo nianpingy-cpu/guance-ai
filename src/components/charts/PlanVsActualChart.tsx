@@ -1,3 +1,4 @@
+import { shortChartLabel } from '@/lib/format';
 import type { Plan, Review } from '@/types/domain';
 import { formatCompact, formatCny, formatNumber } from '@/lib/format';
 import { computeChannelMetrics } from '@/lib/calculations';
@@ -84,7 +85,7 @@ export function PlanVsActualChart({
   });
   const numeric = values.filter((value): value is number => value !== null && Number.isFinite(value));
   const max = niceMax(Math.max(1, ...(numeric.length ? numeric : [1])), 4);
-  const W = 720;
+  const W = Math.max(720, channels.length * 170 + 72);
   const H = 300;
   const left = 52;
   const right = 20;
@@ -143,6 +144,7 @@ export function PlanVsActualChart({
           <svg
             viewBox={`0 0 ${W} ${H}`}
             className="chart-svg block w-full"
+            style={channels.length > 4 ? { minWidth: W } : undefined}
             role="img"
             aria-label={`${meta.title}，单位 ${meta.unit}`}
             onPointerLeave={hideTip}
@@ -287,7 +289,7 @@ export function PlanVsActualChart({
                     fontWeight="600"
                     fill={chartColors.muted}
                   >
-                    {channel.channel}
+                    <title>{channel.channel}</title>{shortChartLabel(channel.channel, 10)}
                   </text>
                   {metric === 'spend' ? (
                     <text

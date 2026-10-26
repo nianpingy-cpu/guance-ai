@@ -3,6 +3,7 @@ import { ChartFrame, useChartTip } from './ChartFrame';
 import { ChartTip } from './ChartTip';
 import { chartColors, niceMax } from './chartTheme';
 import { useAppStore } from '@/store/appStore';
+import { shortChartLabel } from '@/lib/format';
 
 export function ThemeRankChart({
   themes,
@@ -107,10 +108,10 @@ export function ThemeRankChart({
                     fontWeight={active ? 700 : 600}
                     fill={chartColors.ink}
                   >
-                    {theme.title}
+                    <title>{theme.title}</title>{shortChartLabel(theme.title)}
                   </text>
                   <text x={48} y={y + 43} fontSize="14" fill={chartColors.muted}>
-                    {theme.direction} · {theme.claimType}
+                    <title>{theme.direction} · {theme.claimType}</title>{shortChartLabel(`${theme.direction} · ${theme.claimType}`, 35)}
                   </text>
                   <rect
                     x={barLeft}

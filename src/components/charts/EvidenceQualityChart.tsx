@@ -1,3 +1,4 @@
+import { shortChartLabel } from '@/lib/format';
 import type { InsightTheme, Signal } from '@/types/domain';
 import { statusLabel } from '@/lib/calculations';
 import { ChartFrame, LegendDot, useChartTip } from './ChartFrame';
@@ -104,7 +105,7 @@ export function EvidenceQualityChart({
                     fontWeight={active ? 700 : 600}
                     fill={active ? chartColors.ink : chartColors.muted}
                   >
-                    {row.theme.rank}. {row.theme.title}
+                    <title>{row.theme.title}</title>{row.theme.rank}. {shortChartLabel(row.theme.title, 12)}
                   </text>
                   <text x={14} y={y + 44} fontSize="14" fill={chartColors.faint}>
                     {row.theme.confidence === 'high'

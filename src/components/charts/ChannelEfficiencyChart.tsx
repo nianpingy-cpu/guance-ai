@@ -1,5 +1,5 @@
 import type { Plan, Review } from '@/types/domain';
-import { formatCny, formatPercent } from '@/lib/format';
+import { formatCny, formatCnyCompact, formatCompact, formatPercent, shortChartLabel } from '@/lib/format';
 import { computeChannelMetrics } from '@/lib/calculations';
 import { ChartFrame, useChartTip } from './ChartFrame';
 import { ChartTip } from './ChartTip';
@@ -164,7 +164,7 @@ export function ChannelEfficiencyChart({
                     fontWeight={active ? 700 : 600}
                     fill={active ? chartColors.ink : chartColors.muted}
                   >
-                    {channel.channel}
+                    <title>{channel.channel}</title>{shortChartLabel(channel.channel, 5)}
                   </text>
                   {metrics.map((metric, metricIndex) => {
                     const x = left + metricIndex * (panelW + panelGap);
@@ -234,7 +234,7 @@ export function ChannelEfficiencyChart({
                               fill={chartColors.ink}
                               className="tabular"
                             >
-                              {metric.format(value)}
+                              <title>{metric.format(value)}</title>{metric.format(value).length > 9 ? metric.key === 'ctr' ? `${formatCompact((value ?? 0) * 100)}%` : formatCnyCompact(value) : metric.format(value)}
                             </text>
                           </g>
                         )}

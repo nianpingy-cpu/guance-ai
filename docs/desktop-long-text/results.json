@@ -1,0 +1,194 @@
+[
+  {
+    "name": "native-1440-1-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1-review",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1.25-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1.25-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1.25-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1.25-review",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1.5-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1.5-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1.5-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1440-1.5-review",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1-review",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1.25-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1.25-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1.25-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1.25-review",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1.5-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1.5-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1.5-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1366-1.5-review",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1-review",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1.25-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1.25-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1.25-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1.25-review",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1.5-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1.5-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1.5-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1280-1.5-review",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1-review",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1.25-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1.25-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1.25-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1.25-review",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1.5-dashboard",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1.5-signals",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1.5-strategy",
+    "errors": []
+  },
+  {
+    "name": "native-1024-1.5-review",
+    "errors": []
+  }
+]

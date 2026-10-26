@@ -22,6 +22,8 @@ export function formatCny(cents: number | null | undefined, decimals: 0 | 2 = 0)
 export function formatCnyCompact(cents: number | null | undefined): string {
   if (cents === null || cents === undefined || !Number.isFinite(cents)) return '—';
   const yuan = cents / 100;
+  if (Math.abs(yuan) >= 1e12) return `¥${(yuan / 1e12).toFixed(1)}万亿`;
+  if (Math.abs(yuan) >= 1e8) return `¥${(yuan / 1e8).toFixed(1)}亿`;
   if (Math.abs(yuan) >= 10000) return `¥${(yuan / 10000).toFixed(yuan >= 100000 ? 0 : 1)}万`;
   if (Math.abs(yuan) >= 1000) return `¥${(yuan / 1000).toFixed(yuan >= 10000 ? 0 : 1)}k`;
   return `¥${integer.format(yuan)}`;
@@ -34,6 +36,8 @@ export function formatNumber(value: number | null | undefined): string {
 
 export function formatCompact(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return '—';
+  if (Math.abs(value) >= 1e12) return `${(value / 1e12).toFixed(1)}万亿`;
+  if (Math.abs(value) >= 1e8) return `${(value / 1e8).toFixed(1)}亿`;
   if (Math.abs(value) >= 10000) return `${(value / 10000).toFixed(value >= 100000 ? 1 : 2)}万`;
   if (Math.abs(value) >= 1000) return `${(value / 1000).toFixed(1)}k`;
   return integer.format(value);
@@ -118,3 +122,6 @@ export function clamp(value: number, min: number, max: number): number {
 export function toIsoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
+/** SVG labels use fixed lanes; the full value remains in tooltips and accessible labels. */
+export function shortChartLabel(value: string, length = 10): string { const chars = [...value]; return chars.length > length ? chars.slice(0, Math.max(1, length - 1)).join('') + '…' : value; }
+

@@ -39,6 +39,7 @@ it('rejects duplicate channel identities at the storage boundary', () => {
   p.data.plans[0].channels.push(p.data.plans[0].channels[0]);
   expect(() => db.save(p.id, p.revision, p.data)).toThrow('渠道');
 });
+it('导入被改动的审批或未知复盘渠道会拒绝', () => { const db = database(); const p = db.create('demo', 'demo'); const changed = structuredClone(p.data); changed.approvals[0].plan.coreMessage = '被改动'; expect(() => db.import('bad', changed)).toThrow('完整性'); const review = structuredClone(p.data); review.reviews[0].channels[0].channel = '未知渠道'; expect(() => db.import('bad', review)).toThrow('复盘渠道'); });
 it('编辑期间版本被同步更新，未保存的编辑保留为可处理冲突', () => {
   const db = database(); const p = db.create('并发编辑', 'real'); const remote = structuredClone(p.data); remote.company.budgetCents = 888800; db.save(p.id, p.revision, remote);
   const editing = structuredClone(p.data); editing.company.goal = '用户未保存的长文目标';

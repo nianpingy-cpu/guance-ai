@@ -1,4 +1,4 @@
-import { formatPercent } from '@/lib/format';
+import { formatPercent, shortChartLabel } from '@/lib/format';
 import { ChartFrame, useChartTip } from './ChartFrame';
 import { ChartTip } from './ChartTip';
 import { chartColors, niceMax } from './chartTheme';
@@ -97,7 +97,7 @@ export function SourceRankChart({
                     fontWeight={active ? 700 : 500}
                     fill={active ? chartColors.ink : chartColors.muted}
                   >
-                    {row.platform}
+                    <title>{row.platform}</title>{shortChartLabel(row.platform, 5)}
                   </text>
                   <rect
                     x={left}

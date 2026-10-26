@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { AppData } from '../src/types/domain';
+import { buildPlanFingerprint, checkPlanBudget } from '../src/lib/calculations';
 
 const str = z.string().max(200_000);
 const id = z.string().min(1).max(200);
@@ -47,6 +48,10 @@ export function parseData(value: unknown): AppData {
   if (data.plans.some((p) => p.evidenceThemeIds.some((t) => !themeIds.has(t)))) throw new Error('方案引用不存在');
   if (data.reviews.some((r) => !approvalIds.has(r.approvalId))) throw new Error('复盘缺少审批快照');
   if (data.plans.some((p) => new Set(p.channels.map((c) => c.channel)).size !== p.channels.length)) throw new Error('方案渠道不能重复');
+  for (const approval of data.approvals) {
+    if (approval.planId !== approval.plan.id || approval.planCode !== approval.plan.code || !checkPlanBudget(approval.plan, approval.companyBudgetCents).ok || approval.fingerprint !== buildPlanFingerprint(approval.plan, approval.companyBudgetCents, approval.evidence)) throw new Error('审批快照完整性校验失败');
+  }
+  for (const review of data.reviews) { const approval = data.approvals.find((a) => a.id === review.approvalId)!; if (new Set(review.channels.map((c) => c.channel)).size !== review.channels.length || review.channels.some((c) => !approval.plan.channels.some((p) => p.channel === c.channel))) throw new Error('复盘渠道与审批快照不一致'); }
   return data;
 }
 export const projectSchema = z.object({ id, name: str.min(1).max(200), mode: z.enum(['demo', 'real']), revision: id, updatedAt: str, data: dataSchema });
