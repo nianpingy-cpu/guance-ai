@@ -1,0 +1,290 @@
+[
+  {
+    "name": "1440-1-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1440-1-signals",
+    "failures": []
+  },
+  {
+    "name": "1440-1-strategy",
+    "failures": []
+  },
+  {
+    "name": "1440-1-review",
+    "failures": []
+  },
+  {
+    "name": "1440-1.25-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1440-1.25-signals",
+    "failures": []
+  },
+  {
+    "name": "1440-1.25-strategy",
+    "failures": []
+  },
+  {
+    "name": "1440-1.25-review",
+    "failures": []
+  },
+  {
+    "name": "1440-1.5-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1440-1.5-signals",
+    "failures": []
+  },
+  {
+    "name": "1440-1.5-strategy",
+    "failures": []
+  },
+  {
+    "name": "1440-1.5-review",
+    "failures": []
+  },
+  {
+    "name": "1366-1-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1366-1-signals",
+    "failures": []
+  },
+  {
+    "name": "1366-1-strategy",
+    "failures": []
+  },
+  {
+    "name": "1366-1-review",
+    "failures": []
+  },
+  {
+    "name": "1366-1.25-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1366-1.25-signals",
+    "failures": []
+  },
+  {
+    "name": "1366-1.25-strategy",
+    "failures": []
+  },
+  {
+    "name": "1366-1.25-review",
+    "failures": []
+  },
+  {
+    "name": "1366-1.5-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1366-1.5-signals",
+    "failures": []
+  },
+  {
+    "name": "1366-1.5-strategy",
+    "failures": []
+  },
+  {
+    "name": "1366-1.5-review",
+    "failures": []
+  },
+  {
+    "name": "1280-1-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1280-1-signals",
+    "failures": []
+  },
+  {
+    "name": "1280-1-strategy",
+    "failures": []
+  },
+  {
+    "name": "1280-1-review",
+    "failures": []
+  },
+  {
+    "name": "1280-1.25-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1280-1.25-signals",
+    "failures": []
+  },
+  {
+    "name": "1280-1.25-strategy",
+    "failures": []
+  },
+  {
+    "name": "1280-1.25-review",
+    "failures": []
+  },
+  {
+    "name": "1280-1.5-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1280-1.5-signals",
+    "failures": []
+  },
+  {
+    "name": "1280-1.5-strategy",
+    "failures": []
+  },
+  {
+    "name": "1280-1.5-review",
+    "failures": []
+  },
+  {
+    "name": "1024-1-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1024-1-signals",
+    "failures": []
+  },
+  {
+    "name": "1024-1-strategy",
+    "failures": []
+  },
+  {
+    "name": "1024-1-review",
+    "failures": []
+  },
+  {
+    "name": "1024-1.25-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1024-1.25-signals",
+    "failures": []
+  },
+  {
+    "name": "1024-1.25-strategy",
+    "failures": []
+  },
+  {
+    "name": "1024-1.25-review",
+    "failures": []
+  },
+  {
+    "name": "1024-1.5-dashboard",
+    "failures": []
+  },
+  {
+    "name": "1024-1.5-signals",
+    "failures": []
+  },
+  {
+    "name": "1024-1.5-strategy",
+    "failures": []
+  },
+  {
+    "name": "1024-1.5-review",
+    "failures": []
+  },
+  {
+    "name": "768-1-dashboard",
+    "failures": []
+  },
+  {
+    "name": "768-1-signals",
+    "failures": []
+  },
+  {
+    "name": "768-1-strategy",
+    "failures": []
+  },
+  {
+    "name": "768-1-review",
+    "failures": []
+  },
+  {
+    "name": "768-1.25-dashboard",
+    "failures": []
+  },
+  {
+    "name": "768-1.25-signals",
+    "failures": []
+  },
+  {
+    "name": "768-1.25-strategy",
+    "failures": []
+  },
+  {
+    "name": "768-1.25-review",
+    "failures": []
+  },
+  {
+    "name": "768-1.5-dashboard",
+    "failures": []
+  },
+  {
+    "name": "768-1.5-signals",
+    "failures": []
+  },
+  {
+    "name": "768-1.5-strategy",
+    "failures": []
+  },
+  {
+    "name": "768-1.5-review",
+    "failures": []
+  },
+  {
+    "name": "390-1-dashboard",
+    "failures": []
+  },
+  {
+    "name": "390-1-signals",
+    "failures": []
+  },
+  {
+    "name": "390-1-strategy",
+    "failures": []
+  },
+  {
+    "name": "390-1-review",
+    "failures": []
+  },
+  {
+    "name": "390-1.25-dashboard",
+    "failures": []
+  },
+  {
+    "name": "390-1.25-signals",
+    "failures": []
+  },
+  {
+    "name": "390-1.25-strategy",
+    "failures": []
+  },
+  {
+    "name": "390-1.25-review",
+    "failures": []
+  },
+  {
+    "name": "390-1.5-dashboard",
+    "failures": []
+  },
+  {
+    "name": "390-1.5-signals",
+    "failures": []
+  },
+  {
+    "name": "390-1.5-strategy",
+    "failures": []
+  },
+  {
+    "name": "390-1.5-review",
+    "failures": []
+  }
+]

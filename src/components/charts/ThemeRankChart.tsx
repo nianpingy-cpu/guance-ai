@@ -17,7 +17,7 @@ export function ThemeRankChart({
   const { containerRef, tip, showTip, hideTip } = useChartTip();
   const sorted = [...themes].sort((a, b) => a.rank - b.rank);
   const W = 660;
-  const rowH = 54;
+  const rowH = 68;
   const top = 22;
   const H = top + sorted.length * rowH + 16;
   const barLeft = 226;
@@ -107,7 +107,7 @@ export function ThemeRankChart({
                   >
                     {theme.title}
                   </text>
-                  <text x={48} y={y + 34} fontSize="14" fill={chartColors.muted}>
+                  <text x={48} y={y + 43} fontSize="14" fill={chartColors.muted}>
                     {theme.direction} · {theme.claimType}
                   </text>
                   <rect

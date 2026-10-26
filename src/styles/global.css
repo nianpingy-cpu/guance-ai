@@ -386,6 +386,11 @@ p {
   text-align: right;
 }
 
+.amount-input { display: flex; align-items: center; min-width: 0; border: 1px solid var(--border-strong); border-radius: 10px; background: white; }
+.amount-input .input { min-width: 0; border: 0; box-shadow: none; padding-right: 6px; background: transparent; }
+.amount-input:focus-within { outline: 2px solid var(--brand-navy); outline-offset: 1px; }
+.amount-unit { flex: none; padding-right: 10px; color: var(--text-secondary); font-size: 12px; }
+
 .hint {
   font-size: 12px;
   color: var(--text-tertiary);

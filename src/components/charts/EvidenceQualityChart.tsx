@@ -38,10 +38,10 @@ export function EvidenceQualityChart({
     return { theme, counts, total };
   });
   const W = 660;
-  const rowH = 48;
+  const rowH = 64;
   const top = 20;
   const H = top + rows.length * rowH + 18;
-  const barLeft = 178;
+  const barLeft = 250;
   const barRight = 42;
   const plotW = W - barLeft - barRight;
   const max = niceMax(Math.max(1, ...rows.map((row) => row.total)), 4);
@@ -106,7 +106,7 @@ export function EvidenceQualityChart({
                   >
                     {row.theme.rank}. {row.theme.title}
                   </text>
-                  <text x={14} y={y + 34} fontSize="14" fill={chartColors.faint}>
+                  <text x={14} y={y + 44} fontSize="14" fill={chartColors.faint}>
                     {row.theme.confidence === 'high'
                       ? '置信度较高'
                       : row.theme.confidence === 'medium'

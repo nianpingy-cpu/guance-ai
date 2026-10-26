@@ -21,11 +21,11 @@ export function BudgetAllocationChart({
   const channelColor = (channel: string) =>
     chartColors.series[Math.max(0, channelNames.indexOf(channel)) % chartColors.series.length];
   const W = 720;
-  const H = 250;
+  const H = 280;
   const left = 92;
   const right = 26;
   const top = 34;
-  const rowH = 76;
+  const rowH = 92;
   const plotW = W - left - right;
   const safeCap = Math.max(capCents, 1);
 
@@ -102,12 +102,12 @@ export function BudgetAllocationChart({
                   <text x={14} y={y + 4} fontSize="14" fontWeight="800" fill={chartColors.ink}>
                     方案 {plan.code}
                   </text>
-                  <text x={14} y={y + 20} fontSize="14" fill={chartColors.muted}>
+                  <text x={14} y={y + 27} fontSize="14" fill={chartColors.muted}>
                     {plan.shortName}
                   </text>
                   <text
                     x={14}
-                    y={y + 39}
+                    y={y + 50}
                     fontSize="14"
                     fontWeight="800"
                     fill={active ? chartColors.ink : chartColors.muted}

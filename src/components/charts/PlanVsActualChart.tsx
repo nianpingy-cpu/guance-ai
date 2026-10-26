@@ -292,7 +292,7 @@ export function PlanVsActualChart({
                   {metric === 'spend' ? (
                     <text
                       x={groupCenter}
-                      y={H - 19}
+                      y={H - 10}
                       textAnchor="middle"
                       fontSize="14"
                       fill={chartColors.faint}
@@ -302,7 +302,7 @@ export function PlanVsActualChart({
                   ) : (
                     <text
                       x={groupCenter}
-                      y={H - 19}
+                      y={H - 10}
                       textAnchor="middle"
                       fontSize="14"
                       fill={chartColors.faint}

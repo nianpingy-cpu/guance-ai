@@ -76,9 +76,9 @@ export function ChannelEfficiencyChart({
   const left = 106;
   const panelGap = 14;
   const panelW = (W - left - panelGap * (metrics.length - 1) - 8) / metrics.length;
-  const trackW = panelW - 42;
-  const top = 48;
-  const rowH = 44;
+  const trackW = panelW - 76;
+  const top = 70;
+  const rowH = 50;
   const H = top + channels.length * rowH + 26;
   const maxima = metrics.map((metric) =>
     niceMax(Math.max(1, ...channels.map((channel) => metric.raw(channel.metrics[metric.key]) ?? 0)), 4),
@@ -112,7 +112,7 @@ export function ChannelEfficiencyChart({
             aria-label="渠道 CTR、CPC 与有效咨询成本分项对比"
             onPointerLeave={hideTip}
           >
-            <text x={left} y={20} fontSize="14" fontWeight="700" fill={chartColors.faint}>
+            <text x={12} y={18} fontSize="14" fontWeight="700" fill={chartColors.faint}>
               渠道
             </text>
             {metrics.map((metric, metricIndex) => {
@@ -122,7 +122,7 @@ export function ChannelEfficiencyChart({
                   <text x={x} y={16} fontSize="14" fontWeight="800" fill={chartColors.ink}>
                     {metric.label}
                   </text>
-                  <text x={x} y={30} fontSize="14" fill={chartColors.faint}>
+                  <text x={x} y={42} fontSize="14" fill={chartColors.faint}>
                     {metric.unit} · {metric.note}
                   </text>
                   <line

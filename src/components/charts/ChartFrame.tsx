@@ -13,11 +13,9 @@ export function useChartTip() {
   const [tip, setTip] = useState<TipState | null>(null);
 
   const showTip = useCallback((event: PointerEvent<SVGElement>, content: ReactNode) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
     setTip({
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
+      x: event.clientX,
+      y: event.clientY,
       content,
     });
   }, []);

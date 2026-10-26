@@ -300,15 +300,15 @@ export function StrategyPage() {
                   <p className="text-[12px] font-semibold text-ink">{channel.channel}</p>
                   <p className="truncate text-[12px] text-faint">{channel.role}</p>
                 </div>
-                <div className="relative">
+                <div className="amount-input">
                   <input
                     aria-label={`${channel.channel}预算（元）`}
-                    className="input input-number pr-7"
+                    className="input input-number"
                     inputMode="decimal"
                     value={budgetInputs[channel.channel] ?? ''}
                     onChange={(event) => changeBudget(channel.channel, event.target.value)}
                   />
-                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[12px] text-faint">
+                  <span className="amount-unit">
                     元
                   </span>
                 </div>

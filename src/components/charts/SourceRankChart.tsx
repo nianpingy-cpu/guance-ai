@@ -119,7 +119,7 @@ export function SourceRankChart({
                     style={{ animationDelay: `${index * 55}ms`, transformOrigin: `${left}px ${y}px` }}
                   />
                   <text
-                    x={W - right + 8}
+                    x={W - 84}
                     y={y + 13}
                     fontSize="14"
                     fontWeight="800"

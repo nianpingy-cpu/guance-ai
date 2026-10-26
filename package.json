@@ -13,7 +13,8 @@
     "screenshots": "node scripts/screenshots.mjs",
     "demo:record": "node scripts/record-demo.mjs",
     "lint": "eslint .",
-    "ui:verify": "node scripts/ui-verify.mjs"
+    "ui:verify": "node scripts/ui-verify.mjs",
+    "ui:visual": "node scripts/visual-verify.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.454.0",
