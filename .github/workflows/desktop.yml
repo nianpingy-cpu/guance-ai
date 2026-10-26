@@ -2,7 +2,7 @@ name: Desktop Trial
 on:
   workflow_dispatch:
   push:
-    branches: [feat/13-encrypted-sync-release]
+    branches: [feat/13-encrypted-sync-release, feat/15-refined-typography]
     paths: ['desktop/**', 'src/**', 'scripts/**', 'public/**', 'build/**', 'package*.json', 'tsconfig*.json', 'vite.config.ts', '.github/workflows/desktop.yml', 'THIRD_PARTY*']
 concurrency:
   group: desktop-${{ github.ref }}

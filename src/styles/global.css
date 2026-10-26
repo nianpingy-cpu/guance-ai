@@ -8,7 +8,7 @@
   --bg-card: #ffffff;
   --bg-subtle: #f8fafc;
   --bg-tint: #f1f5f4;
-  --text-primary: #172033;
+  --text-primary: #181b20;
   --text-secondary: #5f6d7e;
   --text-tertiary: #647386;
   --brand-navy: #243e63;
@@ -37,7 +37,7 @@
   --radius-panel: 12px;
   --radius-control: 7px;
   --sidebar-width: 228px;
-  --font-sans: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
+  --font-sans: 'Noto Sans SC Variable', 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
   --font-numeric: var(--font-sans);
 }
 
@@ -54,10 +54,12 @@ html {
 body {
   overflow-wrap: anywhere;
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   background: var(--bg-canvas);
   color: var(--text-primary);
   font-family: var(--font-sans);
+  font-weight: 400;
+  font-synthesis: none;
   font-size: 14px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -190,8 +192,8 @@ p {
 
 .eyebrow {
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-tertiary);
 }
@@ -199,15 +201,15 @@ p {
 .section-title {
   font-size: 18px;
   line-height: 1.35;
-  font-weight: 700;
+  font-weight: 680;
   letter-spacing: -0.02em;
 }
 
 .page-title {
-  font-size: clamp(26px, 3vw, 33px);
-  line-height: 1.2;
-  font-weight: 750;
-  letter-spacing: -0.035em;
+  font-size: clamp(26px, 3vw, 32px);
+  line-height: 1.28;
+  font-weight: 760;
+  letter-spacing: -0.045em;
 }
 
 .kpi-number {
@@ -215,8 +217,8 @@ p {
   font-variant-numeric: tabular-nums;
   font-size: clamp(32px, 3.6vw, 46px);
   line-height: 1;
-  font-weight: 750;
-  letter-spacing: -0.05em;
+  font-weight: 680;
+  letter-spacing: -0.045em;
 }
 
 .subtle-grid {

@@ -1,7 +1,7 @@
 {
   "name": "guancha-ai-web-mvp",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.6.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -22,6 +22,7 @@
     "desktop:pack": "npm run desktop:build && electron-builder --publish never"
   },
   "dependencies": {
+    "@fontsource-variable/noto-sans-sc": "^5.3.1",
     "cheerio": "^1.2.0",
     "fast-xml-parser": "^5.11.2",
     "lucide-react": "^0.454.0",
@@ -95,7 +96,9 @@
       "installerIcon": "build/icon.ico"
     },
     "mac": {
-      "target": ["dmg"],
+      "target": [
+        "dmg"
+      ],
       "category": "public.app-category.business",
       "icon": "public/icon.png",
       "identity": null

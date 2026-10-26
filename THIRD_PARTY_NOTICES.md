@@ -29,6 +29,8 @@
 
 ## 字体
 
+v0.6.1 随应用离线打包 Noto Sans SC Variable（Fontsource 包 `@fontsource-variable/noto-sans-sc` 5.3.1，SIL Open Font License 1.1）。字体版权与完整许可证收录于 THIRD_PARTY_LICENSES.txt。中英文字、图表与表单共用这一字体，数字启用等宽数字特性。仅参考用户图片中的字重、字距及层级，没有复制 FARFETCH 标志或其商业字体。
+
 ## v0.6新增运行时与交互参考
 
 | 依赖/参考 | 用途 | 许可证 |

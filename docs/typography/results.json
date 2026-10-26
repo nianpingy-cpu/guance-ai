@@ -1,0 +1,354 @@
+{
+  "at": "2026-10-26T12:51:36.811Z",
+  "localFontRequests": 21,
+  "results": [
+    {
+      "route": "dashboard",
+      "family": "\"Noto Sans SC Variable\", \"Microsoft YaHei\", \"PingFang SC\", system-ui, sans-serif",
+      "titleWeight": "760",
+      "titleSize": "32px",
+      "titleTracking": "-1.44px",
+      "bodyWeight": "400",
+      "loadedFaces": [
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        }
+      ],
+      "cjkAndLatinReady": true
+    },
+    {
+      "route": "signals",
+      "family": "\"Noto Sans SC Variable\", \"Microsoft YaHei\", \"PingFang SC\", system-ui, sans-serif",
+      "titleWeight": "760",
+      "titleSize": "32px",
+      "titleTracking": "-1.44px",
+      "bodyWeight": "400",
+      "loadedFaces": [
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        }
+      ],
+      "cjkAndLatinReady": true
+    },
+    {
+      "route": "strategy",
+      "family": "\"Noto Sans SC Variable\", \"Microsoft YaHei\", \"PingFang SC\", system-ui, sans-serif",
+      "titleWeight": "760",
+      "titleSize": "32px",
+      "titleTracking": "-1.44px",
+      "bodyWeight": "400",
+      "loadedFaces": [
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        }
+      ],
+      "cjkAndLatinReady": true
+    },
+    {
+      "route": "review",
+      "family": "\"Noto Sans SC Variable\", \"Microsoft YaHei\", \"PingFang SC\", system-ui, sans-serif",
+      "titleWeight": "760",
+      "titleSize": "32px",
+      "titleTracking": "-1.44px",
+      "bodyWeight": "400",
+      "loadedFaces": [
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        },
+        {
+          "family": "Noto Sans SC Variable",
+          "weight": "100 900"
+        }
+      ],
+      "cjkAndLatinReady": true
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# 观策AI 桌面试用版 v0.6
+# 观策AI 桌面试用版 v0.6.1
 
 本机营销情报与决策工具：采集/导入 → 核实情报 → 模型分析 → 人工编辑审批 → 效果复盘 → 下一轮任务。前台保留四个入口；项目、模型、来源与同步位于设置。
 
@@ -30,7 +30,7 @@ node scripts/desktop-performance.mjs
 npm run desktop:pack
 ```
 
-输出release目录。Windows生成x64 NSIS；macOS在macOS构建机生成arm64/x64 DMG。GitHub Desktop Trial工作流分别验证系统。未签名包不等同于正式发行版。
+输出release目录。Windows生成x64 NSIS；macOS先运行`npm run desktop:build`，再在macOS构建机运行`node scripts/package-macos.mjs arm64`或`node scripts/package-macos.mjs x64`生成DMG。GitHub Desktop Trial工作流分别验证系统。未签名包不等同于正式发行版。
 
 Web操作回归：启动预览，设置BASE_URL后运行`npm run ui:verify`和`npm run ui:visual`；后者覆盖6视口×3档CSS近似缩放×4页。桌面视觉脚本使用原生Electron缩放，覆盖4桌面尺寸×3档缩放×4页及4设置页，共96状态。结果与截图存入docs对应目录。
 
@@ -48,6 +48,7 @@ Web操作回归：启动预览，设置BASE_URL后运行`npm run ui:verify`和`n
 ## 文档
 
 - [安装与手动教程](docs/DESKTOP-GUIDE.md)
+- [v0.6.1字体设计与验证](docs/QA-v0.6.1-typography.md)
 - [完整测试方案](docs/TEST-PLAN-v0.6.md)
 - [发布门槛与限制](docs/RELEASE-v0.6.md)
 - [UI修复](docs/QA-v0.6-ui.md)、[数据库](docs/QA-v0.6-local.md)、[模型](docs/QA-v0.6-models.md)、[采集](docs/QA-v0.6-collection.md)

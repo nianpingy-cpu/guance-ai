@@ -55,6 +55,7 @@ try {
   for (const path of ['dashboard', 'signals', 'strategy', 'review']) {
     await page.goto(`guance://app/${path}`); await page.getByRole('button', { name: '设置', exact: true }).waitFor();
     assert.equal(await page.getByRole('button', { name: '编辑当前企业资料', exact: true }).textContent(), '桌面持久化验收');
+    await page.evaluate(() => document.fonts.ready);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
     await page.screenshot({ path: `docs/desktop/${path}.png`, fullPage: true });
   }

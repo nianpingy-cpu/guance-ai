@@ -10,7 +10,9 @@ for (const name of await readdir(out)) if (/^native-.*\.png$/.test(name)) await 
 const data = await mkdtemp(join(tmpdir(), 'guance-layout-'));
 const app = await electron.launch({ args: ['.'], env: { ...process.env, GUANCE_TEST_DATA: data } }); const page = await app.firstWindow(); const results = [];
 async function check(name) {
+  await page.evaluate(() => document.fonts.ready);
   const errors = await page.evaluate(() => {
+    if (![...document.fonts].some((font) => font.status === 'loaded' && font.family.includes('Noto Sans SC Variable'))) return ['应用内置字体尚未加载'];
     const errors = []; if (document.documentElement.scrollWidth > window.innerWidth + 1) { errors.push('页面横向溢出'); if (document.documentElement.scrollWidth > window.innerWidth + 10) errors.push(JSON.stringify([...document.querySelectorAll('main *')].filter((e) => { const r = e.getBoundingClientRect(); return r.right > window.innerWidth + 10 && r.width > 100; }).slice(0, 8).map((e) => ({ tag: e.tagName, class: e.className, text: e.textContent.slice(0, 60), width: e.getBoundingClientRect().width })))); }
     for (const modal of document.querySelectorAll('[role="dialog"]')) { const r = modal.getBoundingClientRect(); if (r.left < -1 || r.right > window.innerWidth + 1 || r.top < -1 || r.bottom > window.innerHeight + 1) errors.push(`弹窗超出可用区域:${r.x},${r.y},${r.width},${r.height}`); }
     for (const svg of document.querySelectorAll('svg.chart-svg')) { if (!svg.checkVisibility()) continue; const labels = [...svg.querySelectorAll('text')].map((e) => ({ text: e.textContent, r: e.getBoundingClientRect() })); labels.forEach((a, i) => labels.slice(i + 1).forEach((b) => { if (Math.min(a.r.right, b.r.right) - Math.max(a.r.left, b.r.left) > 1 && Math.min(a.r.bottom, b.r.bottom) - Math.max(a.r.top, b.r.top) > 1) errors.push(`${a.text}/${b.text}`); })); }

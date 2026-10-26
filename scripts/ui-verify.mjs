@@ -65,6 +65,7 @@ try {
       await check(`${label} ${slug}: heading, overflow, screenshot`, async () => {
         await page.goto(`${base}/${slug}`);
         await visible(page.getByRole('heading', { level: 1 }));
+        await page.evaluate(() => document.fonts.ready);
         await noOverflow();
         await page.screenshot({ path: `${out}/${label}-${slug}.png`, fullPage: true });
       });

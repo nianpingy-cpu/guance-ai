@@ -19,8 +19,8 @@ export default {
         danger: 'var(--status-danger)',
       },
       fontFamily: {
-        sans: ['Inter', '"Noto Sans SC"', '"PingFang SC"', '"Microsoft YaHei"', 'system-ui', 'sans-serif'],
-        numeric: ['Inter', '"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        sans: ['var(--font-sans)'],
+        numeric: ['var(--font-numeric)'],
       },
       boxShadow: {
         card: '0 1px 2px rgba(23,32,51,.03), 0 10px 30px -24px rgba(23,32,51,.18)',

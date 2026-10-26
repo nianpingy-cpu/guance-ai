@@ -2,7 +2,7 @@
 
 ## 安装与数据
 
-Windows使用GuanceAI-win-x64-0.6.0.exe，按向导选择目录。macOS使用对应CPU的DMG；各系统构建、签名、公证和安装状态先看RELEASE-v0.6.md。首次启动是模拟演示项目。
+Windows使用GuanceAI-win-x64-0.6.1.exe，按向导选择目录。macOS使用GuanceAI-mac-arm64-0.6.1.dmg（Apple Silicon）或GuanceAI-mac-x64-0.6.1.dmg（Intel）；各系统构建、签名、公证和安装状态先看RELEASE-v0.6.md。首次启动是模拟演示项目。
 
 Windows数据：%APPDATA%/GuanceAI/data；macOS：~/Library/Application Support/GuanceAI/data。升级保留目录，卸载默认保留数据。删除目录前导出项目JSON并复制backups。
 

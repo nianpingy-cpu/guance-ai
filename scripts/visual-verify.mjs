@@ -16,6 +16,7 @@ try {
         await page.goto(`${base}/${slug}`);
         await page.getByRole('heading', { level: 1 }).waitFor();
         await page.evaluate((scale) => { document.documentElement.style.zoom = String(scale); document.querySelectorAll('details').forEach((d) => { d.open = true; }); }, zoom);
+        await page.evaluate(() => document.fonts.ready);
         const failures = await page.evaluate(() => {
           const failures = [];
           for (const svg of document.querySelectorAll('svg.chart-svg')) {

@@ -40,8 +40,8 @@ export function SidebarContent({
             </svg>
           </span>
           <span>
-            <span className="block text-[16px] font-bold leading-5 tracking-[-0.03em] text-ink">观策 AI</span>
-            <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">
+            <span className="block text-[17px] font-extrabold leading-6 tracking-[-0.05em] text-ink">观策 AI</span>
+            <span className="block text-[10px] font-medium uppercase tracking-[0.09em] text-faint">
               Decision workspace
             </span>
           </span>
