@@ -53,7 +53,7 @@ app.whenReady().then(async () => {
     if (!message || typeof message.command !== 'string' || JSON.stringify(message).length > 20_000_000) throw new Error('请求格式无效或过大');
     return request(message.command, message.input);
   });
-  mainWindow = new BrowserWindow({ width: 1440, height: 960, minWidth: 1024, minHeight: 700, title: '观策AI', backgroundColor: '#f5f7fa', webPreferences: { preload: join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true, webSecurity: true } });
+  mainWindow = new BrowserWindow({ width: 1440, height: 960, minWidth: 1024, minHeight: 700, title: '观策AI', icon: join(client, 'icon.png'), backgroundColor: '#f5f7fa', webPreferences: { preload: join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true, webSecurity: true } });
   let closeReady = false;
   mainWindow.on('close', (event) => { if (!closeReady) { event.preventDefault(); mainWindow.webContents.send('guance:before-close'); } });
   ipcMain.on('guance:close-ready', (event) => { if (event.sender.id === mainWindow.webContents.id) { closeReady = true; mainWindow.close(); } });

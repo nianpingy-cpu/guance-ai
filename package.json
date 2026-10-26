@@ -83,12 +83,14 @@
           ]
         }
       ],
-      "signAndEditExecutable": false
+      "signExecutable": false,
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "deleteAppDataOnUninstall": false
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "build/icon.ico"
     },
     "mac": {
       "target": [
@@ -101,6 +103,7 @@
         }
       ],
       "category": "public.app-category.business",
+      "icon": "public/icon.png",
       "identity": null
     },
     "artifactName": "GuanceAI-${os}-${arch}-${version}.${ext}"

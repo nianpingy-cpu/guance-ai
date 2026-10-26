@@ -18,7 +18,13 @@ export const capabilities = [
   { id: 'douyin', name: '抖音', status: '待开通', link: 'https://open.douyin.com/platform/resource/docs/ability/search-management/video/', description: 'video.search需单独申请，仅限与自身业务相关的获批关键词，不能查通用品类或竞品词；仅最近1天。当前适配器与授权未验收，链接查询未启用。' },
 ];
 function text(html: string) { const $ = load(html); $('script,style,nav,footer,iframe,noscript').remove(); return $.text().replace(/\s+/g, ' ').trim(); }
-function privateIP(ip: string) { return /^(127\.|10\.|192\.168\.|169\.254\.|0\.|172\.(1[6-9]|2\d|3[01])\.|224\.|255\.)/.test(ip) || ip.includes(':'); }
+export function privateIP(value: string): boolean {
+  const ip = value.toLowerCase().replace(/^\[|\]$/g, '');
+  if (ip.startsWith('::ffff:') && ip.includes('.')) return privateIP(ip.slice(7));
+  if (isIP(ip) === 6) return ip === '::' || ip === '::1' || /^(fc|fd|fe[89ab]|ff)/.test(ip) || ip.startsWith('2001:db8:');
+  const [a, b] = ip.split('.').map(Number);
+  return a === 0 || a === 10 || a === 127 || a >= 224 || (a === 169 && b === 254) || (a === 192 && b === 168) || (a === 172 && b >= 16 && b <= 31) || (a === 100 && b >= 64 && b <= 127);
+}
 async function publicURL(value: string, testing: boolean): Promise<URL> {
   const u = new URL(value); if (!['http:', 'https:'].includes(u.protocol) || u.username || u.password) throw new Error('采集仅支持无凭据的公开HTTP/HTTPS地址');
   if (['mp.weixin.qq.com', 'xiaohongshu.com', 'xhslink.com', 'douyin.com', 'iesdouyin.com'].some((host) => u.hostname === host || u.hostname.endsWith('.' + host))) throw new Error('该平台仅使用官方授权接口，当前待开通');

@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import type { PointerEvent, ReactNode } from 'react';
 import { cn } from '@/lib/format';
+import { useAppStore } from '@/store/appStore';
 
 export interface TipState {
   x: number;
@@ -46,6 +47,7 @@ export function ChartFrame({
   className?: string;
   note?: ReactNode;
 }) {
+  const real = useAppStore((s) => s.mode === 'real');
   return (
     <figure className={cn('card card-pad flex min-w-0 flex-col', className)}>
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -65,7 +67,7 @@ export function ChartFrame({
       <div className="chart-scroll mt-3 min-w-0 flex-1" tabIndex={0} aria-label={`${title}，可横向滚动查看`}>{children}</div>
       {note ? <div className="mt-2 text-[11px] leading-5 text-muted">{note}</div> : null}
       <p className="mt-3 border-t border-line pt-2.5 text-[11px] font-medium uppercase tracking-[0.11em] text-faint">
-        {source}
+        {real ? source.replace('模拟情报库', '当前项目情报库').replace('模拟', '项目') : source}
       </p>
     </figure>
   );

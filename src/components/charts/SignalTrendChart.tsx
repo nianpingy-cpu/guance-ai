@@ -19,11 +19,11 @@ export function SignalTrendChart({
 }) {
   const { containerRef, tip, showTip, hideTip } = useChartTip();
   const W = 760;
-  const H = 256;
+  const H = 274;
   const left = 44;
   const right = 18;
   const top = 24;
-  const bottom = 38;
+  const bottom = 56;
   const plotW = W - left - right;
   const plotH = H - top - bottom;
   const max = niceMax(Math.max(1, ...points.map((point) => point.total)), 4);
@@ -194,7 +194,7 @@ export function SignalTrendChart({
                   {index % labelEvery === 0 || index === points.length - 1 ? (
                     <text
                       x={px}
-                      y={H - 16}
+                      y={H - 10}
                       textAnchor="middle"
                       fontSize="14"
                       fill={chartColors.muted}

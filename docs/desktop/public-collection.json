@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-26T10:58:34.319Z",
+  "source": "https://blog.rust-lang.org/feed.xml",
+  "job": {
+    "id": "d8f24b65-3ed6-4eee-a510-33cf44130e59",
+    "projectId": "eb58a23c-fc85-4e5c-bfde-27cf7b775519",
+    "kind": "collect",
+    "status": "failed",
+    "progress": "任务已结束",
+    "createdAt": "2026-10-26T10:58:33.290Z",
+    "error": "不能采集本机或私有网络地址"
+  },
+  "added": 0,
+  "hasProvenance": true,
+  "note": "独立临时项目；真实公开RSS读取，非社交平台授权证明"
+}
