@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-26T11:52:49.269Z",
+  "provider": "deepseek-flash",
+  "model": "deepseek-flash",
+  "inputKind": "5条模拟情报；真实服务商调用；独立验收项目",
+  "job": {
+    "id": "8bb5518d-f5a6-495d-a810-e194a37a4782",
+    "projectId": "b55dbdba-afff-4064-b49e-4082ace37b80",
+    "kind": "analysis",
+    "status": "completed",
+    "progress": "已完成",
+    "createdAt": "2026-10-26T11:52:42.111Z",
+    "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+  },
+  "analyses": [
+    {
+      "id": "27ca944c-bbe3-4411-8353-a552c7143acf",
+      "promptVersion": "guance-analysis-2",
+      "evidenceSignalIds": [
+        "S-01",
+        "S-02",
+        "S-03",
+        "S-04",
+        "S-05"
+      ]
+    }
+  ],
+  "themes": 5,
+  "plans": 2,
+  "countsFromEvidence": true
+}

@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-26T12:32:32.196Z",
+  "platform": "win32",
+  "server": "hacdias/webdav v5.17.2; independent server on local loopback",
+  "results": [
+    "独立WebDAV服务器实际落盘4个加密文件，无业务明文或凭据",
+    "两个原生Electron进程、不同用户数据目录、独立WebDAV服务器：业务同步成功",
+    "双端并发修改保留冲突；人工采用远端后两端一致；未选版本保留为独立项目"
+  ]
+}

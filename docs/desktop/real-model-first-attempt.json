@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-26T11:45:43.872Z",
+  "provider": "deepseek-flash",
+  "model": "deepseek-flash",
+  "inputKind": "5条模拟情报；真实服务商调用；独立验收项目",
+  "job": {
+    "id": "c6837579-676a-400b-9a5f-0586769a1838",
+    "projectId": "d813e600-c067-4acb-85cf-48ffb1c1cadf",
+    "kind": "analysis",
+    "status": "failed",
+    "progress": "任务已结束",
+    "createdAt": "2026-10-26T11:45:07.308Z",
+    "error": "模型返回的分析不是有效JSON；现有结果未覆盖，请核对模型能力和协议"
+  },
+  "themes": 5,
+  "plans": 2,
+  "countsFromEvidence": false
+}
