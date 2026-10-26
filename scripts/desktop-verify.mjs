@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, writeFile, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createServer } from 'node:http';
+import { setTimeout as delay } from 'node:timers/promises';
 const data = await mkdtemp(join(tmpdir(), 'guance-desktop-'));
 const results = [];
 await mkdir('docs/desktop', { recursive: true });
@@ -28,7 +29,7 @@ try {
     assert.equal(provider.hasKey, true); assert.ok(!JSON.stringify(provider).includes('LOCAL_FIXTURE_ONLY'));
     await page.evaluate((id) => window.guance.invoke('models.default', { id }), provider.id);
     await page.evaluate((p) => window.guance.invoke('models.analyze', { projectId: p.id, signalIds: p.data.signals.map((s) => s.id) }), sample);
-    await page.waitForFunction(async (id) => (await window.guance.invoke('jobs.list', { projectId: id })).every((j) => j.status !== 'running'), sample.id);
+    for (let i = 0; i < 300; i++) { const list = await page.evaluate((id) => window.guance.invoke('jobs.list', { projectId: id }), sample.id); if (list.length && list.every((j) => j.status !== 'running')) break; await delay(100); }
     const jobs = await page.evaluate((id) => window.guance.invoke('jobs.list', { projectId: id }), sample.id); assert.equal(jobs[0].status, 'completed', JSON.stringify(jobs));
     const generated = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), sample.id); assert.equal(generated.data.analyses.length, 1);
     assert.ok(!JSON.stringify(generated.data).includes('LOCAL_FIXTURE_ONLY'));
@@ -59,7 +60,8 @@ try {
   const restored = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), real.id);
   assert.equal(restored.data.company.budgetCents, 654321);
   results.push('真实SQLite关闭重开保留金额与项目；四页无横向溢出');
-  await app.evaluate(({ app }) => app.exit(12)).catch(() => undefined); app = undefined;
+  const exited = new Promise((resolve) => app.process().once('exit', resolve));
+  await app.evaluate(({ app }) => app.exit(12)).catch(() => undefined); await exited; app = undefined;
   [app, page] = await launch();
   assert.equal((await page.evaluate((id) => window.guance.invoke('projects.load', { id }), real.id)).data.company.budgetCents, 654321);
   results.push('直接退出进程后已提交数据仍可恢复');

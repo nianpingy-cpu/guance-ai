@@ -17,6 +17,7 @@ describe('模型边界', () => {
       res.setHeader('content-type', 'application/json');
       if (req.url?.includes('bad')) { res.writeHead(401); res.end('{"error":"secret from remote"}'); }
       else if (req.url?.includes('slow')) { req.on('close', () => res.destroy()); }
+      else if (req.url?.includes('truncated')) res.end(JSON.stringify({ choices: [{ finish_reason: 'length', message: { content: '{"broken":' } }] }));
       else if (req.url?.endsWith('models')) res.end(JSON.stringify({ data: [{ id: 'm' }] }));
       else if (req.url?.endsWith('responses')) res.end(JSON.stringify({ output: [{ type: 'message', content: [{ type: 'output_text', text: 'OK' }] }] }));
       else if (req.url?.endsWith('messages')) res.end(JSON.stringify({ content: [{ type: 'text', text: 'OK' }] }));
@@ -26,10 +27,12 @@ describe('模型边界', () => {
     const address = server.address(); if (!address || typeof address === 'string') throw new Error('no port');
     const db = setup(); const service = new ModelService(db, { encrypt: async (s) => s, decrypt: async (s) => s });
     try {
-      for (const protocol of ['chat', 'responses', 'anthropic'] as const) { const p = await service.save({ name: protocol, baseUrl: `http://127.0.0.1:${address.port}/v1`, protocol, apiKey: 'LOCAL_FIXTURE_KEY', models: ['m'], model: 'm' }); expect(await service.complete(p.id, 'sys', 'input')).toBe('OK'); expect(await service.discover(p.id)).toEqual(['m']); }
+      for (const protocol of ['chat', 'responses', 'anthropic'] as const) { const p = await service.save({ name: protocol, baseUrl: `http://127.0.0.1:${address.port}/v1`, protocol, apiKey: 'LOCAL_FIXTURE_KEY', models: ['m'], model: 'm' }); expect(await service.complete(p.id, 'sys', 'input', undefined, protocol === 'chat')).toBe('OK'); expect(await service.discover(p.id)).toEqual(['m']); }
+      expect(JSON.parse(requests[0].body).response_format).toEqual({ type: 'json_object' });
       expect(requests[0].key).toBe('Bearer LOCAL_FIXTURE_KEY'); expect(requests[4].key).toBe('LOCAL_FIXTURE_KEY');
       const p = await service.save({ name: 'bad', baseUrl: `http://127.0.0.1:${address.port}/bad`, protocol: 'chat', apiKey: 'k', models: ['m'], model: 'm' });
       const count = requests.length; await expect(service.complete(p.id, '', '')).rejects.toThrow(/HTTP 401/); expect(requests.length).toBe(count + 1);
+      const truncated = await service.save({ name: 'truncated', baseUrl: `http://127.0.0.1:${address.port}/truncated`, protocol: 'chat', apiKey: 'k', models: ['m'], model: 'm' }); await expect(service.complete(truncated.id, '', '')).rejects.toThrow(/截断/);
       const slow = await service.save({ name: 'slow', baseUrl: `http://127.0.0.1:${address.port}/slow`, protocol: 'chat', apiKey: 'k', models: ['m'], model: 'm' });
       const controller = new AbortController(); const task = service.complete(slow.id, '', '', controller.signal); controller.abort(); await expect(task).rejects.toThrow(/取消/);
     } finally { server.closeAllConnections(); await new Promise<void>((r) => server.close(() => r())); }
