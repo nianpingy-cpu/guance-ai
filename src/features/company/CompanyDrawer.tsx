@@ -119,7 +119,7 @@ export function CompanyDrawer() {
       title="编辑企业资料"
       footer={
         <div className="flex items-center justify-between gap-3">
-          <p className="text-[12px] text-faint">保存后立即写入本地浏览器，并影响预算校验与审批状态。</p>
+          <p className="text-[12px] text-faint">修改保存在本机，并影响当前项目的预算校验与审批状态。</p>
           <div className="flex shrink-0 gap-2">
             <Button onClick={close}>取消</Button>
             <Button variant="primary" icon={<Save size={14} />} onClick={save}>
@@ -275,7 +275,7 @@ export function CompanyDrawer() {
         <div>
           <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-faint">任务边界</p>
           <p className="text-[11px] leading-5 text-muted">
-            本演示不包含真实企业切换、真实平台采集、模型预测或广告投放接口。所有资料与结果均为虚构演示，修改只保存在当前浏览器。
+            演示项目使用模拟资料，业务项目请填写自己的信息。模型连接与数据来源在设置中管理；实际投放由用户在广告平台完成。
           </p>
         </div>
       </div>

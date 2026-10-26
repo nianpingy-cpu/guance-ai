@@ -11,6 +11,7 @@ let activeSave: Promise<void> | undefined;
 export function applyProject(project: Project) {
   applying = true;
   useDesktopState.setState({ current: project, error: '' });
+  localStorage.setItem('guance:last-project', project.id);
   useAppStore.setState({ analyses: [], mode: 'demo', ...project.data });
   applying = false;
 }

@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createServer } from 'node:http';
 import { setTimeout as delay } from 'node:timers/promises';
+import { Buffer } from 'node:buffer';
 const data = await mkdtemp(join(tmpdir(), 'guance-desktop-'));
 const results = [];
 await mkdir('docs/desktop', { recursive: true });
@@ -52,9 +53,21 @@ try {
   await page.evaluate((p) => window.guance.invoke('projects.save', { id: p.id, revision: p.revision, data: p.data }), p);
   for (const path of ['dashboard', 'signals', 'strategy', 'review']) {
     await page.goto(`guance://app/${path}`); await page.getByRole('button', { name: '设置', exact: true }).waitFor();
+    assert.equal(await page.getByRole('button', { name: '编辑当前企业资料', exact: true }).textContent(), '桌面持久化验收');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
     await page.screenshot({ path: `docs/desktop/${path}.png`, fullPage: true });
   }
+  await page.goto('guance://app/signals'); await page.getByRole('button', { name: '导入情报', exact: true }).first().click();
+  await page.locator('input[type="file"]').setInputFiles({ name: 'native-fixture.csv', mimeType: 'text/csv', buffer: Buffer.from('标题,来源平台,类别,发布日期,摘要,原文引用,来源名称,相关性\n桌面导入验收,公开资料,行业,2026-10-26,人工导入样本,原始记录,本机测试文件,3\n') });
+  await page.getByRole('button', { name: /确认导入/ }).click();
+  let imported; for (let i = 0; i < 100; i++) { imported = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), real.id); if (imported.data.signals.length) break; await delay(100); }
+  assert.equal(imported.data.signals.length, 1); assert.equal(imported.data.sources[0].origin, 'manual');
+  const exportedPath = join(data, 'project-export.json');
+  await app.evaluate(({ BrowserWindow }, filename) => BrowserWindow.getAllWindows()[0].webContents.session.once('will-download', (_event, item) => item.setSavePath(filename)), exportedPath);
+  await page.getByRole('button', { name: '导出当前任务 JSON', exact: true }).click();
+  let exported; for (let i = 0; i < 100; i++) { try { exported = JSON.parse(await readFile(exportedPath, 'utf8')); break; } catch { await delay(100); } }
+  assert.equal(exported.data.signals.length, 1); assert.equal(exported.data.company.budgetCents, 654321); assert.ok(!JSON.stringify(exported).includes('LOCAL_FIXTURE_ONLY'));
+  results.push('桌面CSV人工导入与实际JSON下载；自定义协议/CSP下导出正常，业务导出无凭据');
   await app.close(); app = undefined;
   [app, page] = await launch();
   const restored = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), real.id);
