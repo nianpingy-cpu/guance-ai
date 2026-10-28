@@ -372,7 +372,7 @@ export function StrategyPage() {
               onClick={() =>
                 budgetError || overBy > 0
                   ? toast('草稿未完全保存', budgetError || '请先将预算调整到企业上限内。', 'warning')
-                  : toast('草稿已保存', '当前有效预算与方案内容已自动保存在本机浏览器。', 'success')
+                  : toast('草稿已保存', '当前有效预算与方案内容已自动保存在本机。', 'success')
               }
             >
               保存草稿

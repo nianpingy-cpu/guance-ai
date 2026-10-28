@@ -368,7 +368,7 @@ export function ReviewPage() {
           <p className="text-[12px] text-muted">
             没有提供的数据显示为“暂无数据”；有花费但咨询为 0 时不计算咨询成本。
           </p>
-          <Tag tone="outline">数据保存在本机浏览器</Tag>
+          <Tag tone="outline">数据保存在本机</Tag>
         </div>
       </Card>
 
