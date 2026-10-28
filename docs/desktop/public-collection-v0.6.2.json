@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-28T16:54:22.367Z",
+  "appVersion": "0.6.2",
+  "url": "https://blog.rust-lang.org/feed.xml",
+  "publicTransport": "resolved addresses validated and pinned; native TLS certificate verification",
+  "job": {
+    "id": "3965a170-4dbf-4ddf-91d4-ef2c5cec9732",
+    "projectId": "81af7e47-de13-4ce1-ad20-c79aa21b1a2b",
+    "kind": "collect",
+    "status": "completed",
+    "progress": "已完成",
+    "createdAt": "2026-10-28T16:54:21.460Z",
+    "result": "读取10条，新增10条；重复0条，缺少标题/正文0条。每次最多处理100条订阅内容。"
+  },
+  "signals": 10,
+  "sources": 10,
+  "provenanceChecked": true,
+  "paidModelRequests": 0,
+  "officialSocialPlatformRequests": 0,
+  "isolatedTestData": true
+}

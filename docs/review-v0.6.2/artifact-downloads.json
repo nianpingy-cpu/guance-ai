@@ -1,0 +1,27 @@
+{
+  "runId": 40737678310,
+  "headSha": "99087b4fbb9af5899af34a810ca6cd117555b46c",
+  "artifacts": [
+    {
+      "name": "desktop-macos-arm64",
+      "artifactId": 12837189719,
+      "zipBytes": 183389381,
+      "zipSHA256": "cba45f186f7a5bc5af222a1aa2374c6101ee4a8b0d347c0166c18e59d64db32e",
+      "githubDigestVerified": true
+    },
+    {
+      "name": "desktop-windows",
+      "artifactId": 12838337617,
+      "zipBytes": 167568206,
+      "zipSHA256": "43cd8cabb8e5cd27863bd7a6abedfa85491129b81d8f8e5a40fbc843837ac207",
+      "githubDigestVerified": true
+    },
+    {
+      "name": "desktop-macos-x64",
+      "artifactId": 12839290552,
+      "zipBytes": 188892731,
+      "zipSHA256": "74e5c6d9fb86d8dc1a137ca059e950509847fb0416310c0fd65162776c59c6df",
+      "githubDigestVerified": true
+    }
+  ]
+}

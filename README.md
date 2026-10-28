@@ -1,10 +1,10 @@
-# 观策AI 桌面试用版 v0.6.1
+# 观策AI 桌面试用版 v0.6.2
 
 本机营销情报与决策工具：采集/导入 → 核实情报 → 模型分析 → 人工编辑审批 → 效果复盘 → 下一轮任务。前台保留四个入口；项目、模型、来源与同步位于设置。
 
 React/Vite由Electron 45承载；独立utility process运行SQLite、模型、采集和同步。初次启动是模拟项目，可创建独立真实业务项目。数据先保存本机；用户自配模型和可选WebDAV。凭据系统加密保存，不进入业务导出或同步。
 
-当前是未签名的内部试用预览，发布门槛尚未全部满足。真实模型、外部WebDAV、社交平台与各系统安装状态请看[发布记录](docs/RELEASE-v0.6.md)，不要将协议测试等同于接通证明。手机端不在本轮范围。
+当前是未签名的内部试用预览，发布门槛尚未全部满足。0.6.1因独立审查发现的保存/同步问题已撤回试用推荐；新版交付与验证见[0.6.2发行记录](docs/RELEASE-v0.6.2.md)；修复及升级要求见[独立审查与修复](docs/QA-v0.6.2-review-fixes.md)。旧模型、外部服务及安装验证基线见[历史发布记录](docs/RELEASE-v0.6.md)，不将旧证据当作新版已实测。手机端不在本轮范围。
 
 ## 启动与验证
 
@@ -25,8 +25,11 @@ npm test
 npm run desktop:build
 npm run desktop:test
 node scripts/desktop-sync-verify.mjs
+node scripts/desktop-boundary-verify.mjs
+node scripts/desktop-recovery-verify.mjs
 node scripts/desktop-visual.mjs
 node scripts/desktop-performance.mjs
+node scripts/desktop-parallel-performance.mjs
 npm run desktop:pack
 ```
 

@@ -1,0 +1,256 @@
+{
+  "at": "2026-10-28T17:35:20.645Z",
+  "mode": "existing-source-build",
+  "data": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-print-check-g4kU6t",
+  "printOptions": {
+    "pageSize": "A4",
+    "landscape": false,
+    "printBackground": true,
+    "displayHeaderFooter": false,
+    "preferCSSPageSize": false,
+    "scale": 1,
+    "margins": {
+      "top": 0.3937007874015748,
+      "bottom": 0.3937007874015748,
+      "left": 0.3937007874015748,
+      "right": 0.3937007874015748
+    }
+  },
+  "pages": [
+    {
+      "route": "strategy",
+      "pdf": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\print-check-fixed\\strategy-a4.pdf",
+      "details": [
+        {
+          "title": "约束、不确定性与关联主题",
+          "open": true
+        },
+        {
+          "title": "约束、不确定性与关联主题",
+          "open": true
+        },
+        {
+          "title": "消费者主题、证据与竞品机会 · 预设模拟分析",
+          "open": true
+        },
+        {
+          "title": "查看证据质量结构",
+          "open": true
+        },
+        {
+          "title": "模型分析 · 选择情报生成主题与 A/B 方案",
+          "open": true
+        }
+      ],
+      "layout": {
+        "innerWidth": 718,
+        "scrollWidth": 703,
+        "tables": [],
+        "charts": [
+          {
+            "label": "方案预算分配，企业上限 ¥5,000",
+            "width": 653,
+            "labels": [
+              "上限 ¥5,000",
+              "方案 A",
+              "内容种草内容种草",
+              "¥5,000",
+              "使用上限的 100%",
+              "方案 B",
+              "同城转化同城转化",
+              "¥5,000",
+              "使用上限的 100%",
+              "每段为一个渠道预算；总长度不超过虚线即满足约束"
+            ]
+          },
+          {
+            "label": "消费者关注主题排序，共 5 个主题",
+            "width": 653,
+            "labels": [
+              "01",
+              "礼盒体面感礼盒体面感",
+              "送礼场景优先 · 观测事实送礼场景优先 · 观测事实",
+              "18",
+              "02",
+              "价格带与试错门槛价格带与试错门槛",
+              "中等价位 + 低试错 · 观测事实中等价位 + 低试错 · 观测事实",
+              "14",
+              "03",
+              "节前企业团购节前企业团购",
+              "B 端小批量团购 · 观测事实B 端小批量团购 · 观测事实",
+              "12",
+              "04",
+              "品质证明与信任品质证明与信任",
+              "用可核验信息降低疑虑 · 观测事实用可核验信息降低疑虑 · 观测事实",
+              "9",
+              "05",
+              "同城即时礼赠同城即时礼赠",
+              "同城即时转化测试 · 分析推断同城即时转化测试 · 分析推断",
+              "7"
+            ]
+          },
+          {
+            "label": "各主题的证据质量结构",
+            "width": 653,
+            "labels": [
+              "礼盒体面感1. 礼盒体面感",
+              "置信度较高",
+              "5",
+              "价格带与试错门槛2. 价格带与试错门槛",
+              "置信度中等",
+              "4",
+              "节前企业团购3. 节前企业团购",
+              "置信度较高",
+              "4",
+              "品质证明与信任4. 品质证明与信任",
+              "置信度中等",
+              "4",
+              "同城即时礼赠5. 同城即时礼赠",
+              "置信度较低",
+              "4"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "route": "review",
+      "pdf": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\print-check-fixed\\review-a4.pdf",
+      "details": [
+        {
+          "title": "查看计划对比与渠道效率",
+          "open": true
+        }
+      ],
+      "layout": {
+        "innerWidth": 718,
+        "scrollWidth": 703,
+        "tables": [
+          {
+            "headers": [
+              "渠道",
+              "计划预算（元）",
+              "实际花费（元）",
+              "曝光量",
+              "点击量",
+              "有效咨询",
+              "CTR",
+              "CPC",
+              "咨询成本"
+            ],
+            "width": 701,
+            "parentWidth": 701,
+            "parentOverflow": "visible",
+            "columns": [
+              {
+                "text": "渠道",
+                "left": 1,
+                "right": 78.875
+              },
+              {
+                "text": "计划预算（元）",
+                "left": 78.875,
+                "right": 156.75
+              },
+              {
+                "text": "实际花费（元）",
+                "left": 156.75,
+                "right": 234.625
+              },
+              {
+                "text": "曝光量",
+                "left": 234.625,
+                "right": 312.5
+              },
+              {
+                "text": "点击量",
+                "left": 312.5,
+                "right": 390.375
+              },
+              {
+                "text": "有效咨询",
+                "left": 390.375,
+                "right": 468.25
+              },
+              {
+                "text": "CTR",
+                "left": 468.25,
+                "right": 546.125
+              },
+              {
+                "text": "CPC",
+                "left": 546.125,
+                "right": 624
+              },
+              {
+                "text": "咨询成本",
+                "left": 624,
+                "right": 702
+              }
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "label": "渠道计划与实际花费，单位 元",
+            "width": 653,
+            "labels": [
+              "¥0",
+              "¥500",
+              "¥1.0k",
+              "¥1.5k",
+              "¥2.0k",
+              "1,980",
+              "小红书小红书",
+              "计划 2.0k",
+              "1,760",
+              "抖音抖音",
+              "计划 1.8k",
+              "1,120",
+              "微信社群微信社群",
+              "计划 1.2k"
+            ]
+          },
+          {
+            "label": "渠道 CTR、CPC 与有效咨询成本分项对比",
+            "width": 653,
+            "labels": [
+              "渠道",
+              "CTR",
+              "% · 点击 ÷ 曝光",
+              "CPC",
+              "元 / 点击 · 花费 ÷ 点击",
+              "有效咨询成本",
+              "元 / 条 · 花费 ÷ 有效咨询",
+              "小红书小红书",
+              "2.50%2.50%",
+              "¥1.72¥1.72",
+              "¥63.87¥63.87",
+              "抖音抖音",
+              "2.51%2.51%",
+              "¥1.14¥1.14",
+              "¥51.76¥51.76",
+              "微信社群微信社群",
+              "2.05%2.05%",
+              "¥2.60¥2.60",
+              "¥65.88¥65.88"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "application": {
+    "version": "0.6.2",
+    "packaged": false,
+    "userData": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-print-check-g4kU6t",
+    "electron": "45.0.0"
+  },
+  "project": {
+    "id": "486c390d-2717-43f6-be9e-b55968fc68ed",
+    "name": "齐鲁茶研 · 演示项目",
+    "mode": "demo",
+    "revision": "6f6b26efac0c2bd6393023f7cafa0a8aea31110377dbd36c89193fb0b0b3bb17"
+  },
+  "projectRevisionUnchanged": true
+}

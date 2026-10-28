@@ -1,0 +1,31 @@
+{
+  "newAgainstV1": {
+    "error": "此目录使用旧版同步协议。请先升级所有设备，再配置同一个新的空WebDAV目录；旧目录保持不变，本机数据及升级前备份保留",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/old/guance-v1/manifest.json"
+      }
+    ],
+    "oldManifestUnchanged": true
+  },
+  "v061AgainstV2": {
+    "error": "[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      1\n    ],\n    \"path\": [\n      \"version\"\n    ],\n    \"message\": \"Invalid input: expected 1\"\n  }\n]",
+    "requests": [
+      {
+        "method": "MKCOL",
+        "path": "/fresh/guance-v1/"
+      },
+      {
+        "method": "GET",
+        "path": "/fresh/guance-v1/manifest.json"
+      }
+    ],
+    "newManifestUnchanged": true
+  },
+  "operationUploads": [],
+  "databaseDirectories": [
+    "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-old-sync-P3VRBE",
+    "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-new-sync-6IZLRE"
+  ]
+}

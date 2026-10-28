@@ -1,0 +1,452 @@
+{
+  "at": "2026-10-28T17:59:29.015Z",
+  "platform": "win32",
+  "node": "v24.13.0",
+  "mode": "installed-executable",
+  "executable": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\installed-trial\\观策AI.exe",
+  "args": [],
+  "cwd": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\outputs\\guance-ai",
+  "temporaryRoot": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-recovery-ak28YM",
+  "status": "passed",
+  "isolation": {
+    "independentGuanceTestData": true,
+    "userAppDataRead": false,
+    "userCredentialsRead": false,
+    "modelRequests": 0,
+    "collectionRequests": 0,
+    "syncRequests": 0
+  },
+  "scope": "可复现的数据库文件头损坏及 SQL 触发器故障注入；不代表真实磁盘故障测试。",
+  "recoveryGuide": "docs/DESKTOP-GUIDE.md#备份恢复",
+  "scenarios": [
+    {
+      "id": "corrupt-header-manual-backup-recovery",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:29.098Z",
+      "checks": [
+        "损坏文件启动自行非零退出，并明确报告本地启动失败",
+        "损坏数据库字节未变；未静默创建演示数据库覆盖现场",
+        "projects.backup 生成的完整备份可读且预算和目标正确",
+        "按教程保留整个数据目录及故障数据库后恢复备份",
+        "恢复后真实项目、金额和营销目标通过界面逐项核对；所有项目业务数据摘要一致"
+      ],
+      "profile": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-recovery-ak28YM\\corruption",
+      "expectedSchemaVersion": 3,
+      "manualBackup": {
+        "filename": "guance-2026-10-28T17-59-33-014Z-9d9ff7c2.sqlite",
+        "sha256": "af97cc8a663d5a8aeecbfac940877bd7345d698f865c4a1f8e55dfaaeca1ca6a",
+        "integrity": [
+          "ok"
+        ],
+        "userVersion": 3,
+        "changesColumns": [
+          "id",
+          "project_id",
+          "parent_revision",
+          "revision",
+          "body",
+          "created_at",
+          "resolves",
+          "parent_ids"
+        ],
+        "projectDigest": "a15651383a4072e4cde1d13f0864bf0c8b43920152c0df6be8e82ad25fac7f63",
+        "changeDigest": "1664bc286d90a784c634c6ba6ce5ad7a2e703ac25307900e71281be321f016c2",
+        "projectCount": 2,
+        "changeCount": 3,
+        "appliedCount": 3,
+        "projectHeadCount": 2,
+        "projects": [
+          {
+            "id": "c24e3314-6fce-429c-afb3-a58fa18d2b12",
+            "name": "数据库损坏恢复验收",
+            "mode": "real",
+            "revision": "2b8d968024e94da5b6c4cdff31f6de12381b5bc8d579358fc41ba24280a861e9",
+            "budgetCents": 765400,
+            "goal": "恢复后保留预算和获客目标"
+          },
+          {
+            "id": "cd6f6349-7c34-46dc-ba8b-4c4543af1e23",
+            "name": "齐鲁茶研 · 演示项目",
+            "mode": "demo",
+            "revision": "6f6b26efac0c2bd6393023f7cafa0a8aea31110377dbd36c89193fb0b0b3bb17",
+            "budgetCents": 500000,
+            "goal": "一周内获取有效消费者咨询（私信、电话或门店预约）"
+          }
+        ]
+      },
+      "preparation": {
+        "applicationProcessExited": true,
+        "walCheckpoint": {
+          "busy": 0,
+          "log": 0,
+          "checkpointed": 0
+        },
+        "reason": "先将已提交 WAL 完整落盘，保证注入的是独立主库文件头损坏，而非可被现存 WAL 自动修复的头"
+      },
+      "injection": {
+        "method": "关闭应用后覆盖临时 guance.sqlite 的前16字节",
+        "actualDiskFailure": false,
+        "pristineSha256": "680092044d8074311937b65140cc93b6aa022fe3d736afdcec656ad38ac8c2d0",
+        "corruptedSha256": "88b241bae1d8acb8fbbcb81487770007b7b0ea3975d5b5a34341364ed3a41406"
+      },
+      "failedStartup": {
+        "pid": 24904,
+        "code": 1,
+        "signal": null,
+        "timedOut": false,
+        "stdout": "\r\n",
+        "stderr": "Desktop startup failed: file is not a database\n",
+        "expectedError": "not a database|file is encrypted|malformed",
+        "cleanup": "应用自行退出；未扫描或终止其他进程"
+      },
+      "recovery": {
+        "archive": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-recovery-ak28YM\\corruption\\recovery-evidence\\corrupt-original",
+        "backup": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-recovery-ak28YM\\corruption\\data\\backups\\guance-2026-10-28T17-59-33-014Z-9d9ff7c2.sqlite",
+        "moved": [
+          "guance.sqlite",
+          "guance.sqlite-wal",
+          "guance.sqlite-shm"
+        ],
+        "steps": [
+          "已退出应用",
+          "复制整个 data 目录留档",
+          "将原 guance.sqlite 及存在的 -wal/-shm 移入现场归档目录",
+          "将有效备份复制为 data/guance.sqlite",
+          "重新启动应用并核对项目、预算及目标"
+        ]
+      },
+      "restoredUi": {
+        "projectId": "c24e3314-6fce-429c-afb3-a58fa18d2b12",
+        "name": "数据库损坏恢复验收",
+        "mode": "real",
+        "budgetCents": 765400,
+        "budgetYuanDisplayed": "7654.00",
+        "goal": "恢复后保留预算和获客目标"
+      },
+      "restoredDatabase": {
+        "integrity": [
+          "ok"
+        ],
+        "userVersion": 3,
+        "changesColumns": [
+          "id",
+          "project_id",
+          "parent_revision",
+          "revision",
+          "body",
+          "created_at",
+          "resolves",
+          "parent_ids"
+        ],
+        "projectDigest": "a15651383a4072e4cde1d13f0864bf0c8b43920152c0df6be8e82ad25fac7f63",
+        "changeDigest": "1664bc286d90a784c634c6ba6ce5ad7a2e703ac25307900e71281be321f016c2",
+        "projectCount": 2,
+        "changeCount": 3,
+        "appliedCount": 3,
+        "projectHeadCount": 2,
+        "projects": [
+          {
+            "id": "c24e3314-6fce-429c-afb3-a58fa18d2b12",
+            "name": "数据库损坏恢复验收",
+            "mode": "real",
+            "revision": "2b8d968024e94da5b6c4cdff31f6de12381b5bc8d579358fc41ba24280a861e9",
+            "budgetCents": 765400,
+            "goal": "恢复后保留预算和获客目标"
+          },
+          {
+            "id": "cd6f6349-7c34-46dc-ba8b-4c4543af1e23",
+            "name": "齐鲁茶研 · 演示项目",
+            "mode": "demo",
+            "revision": "6f6b26efac0c2bd6393023f7cafa0a8aea31110377dbd36c89193fb0b0b3bb17",
+            "budgetCents": 500000,
+            "goal": "一周内获取有效消费者咨询（私信、电话或门店预约）"
+          }
+        ]
+      },
+      "finishedAt": "2026-10-28T17:59:41.107Z"
+    },
+    {
+      "id": "v1-migration-transaction-rollback-and-recovery",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:41.107Z",
+      "checks": [
+        "构造的 v1 数据库通过 integrity_check，完整业务项目保留",
+        "故障发生于 ALTER TABLE 及第一条 applied 写入之后；错误由测试触发器明确抛出",
+        "失败后 schema/user_version/applied/项目/变更记录均与迁移前一致，无半迁移",
+        "迁移前自动备份可读且保留完整 v1 schema、业务与故障触发器",
+        "从失败迁移的自动备份还原，移除测试故障触发器后正常启动",
+        "重试前再次自动备份；成功迁移至健康库 schema 3，所有 change 已进入 applied，新增检查点 2 条",
+        "真实项目、预算和目标在界面正确；所有项目业务摘要及原有变更保留"
+      ],
+      "profile": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-recovery-ak28YM\\migration",
+      "expectedSchemaVersion": 3,
+      "injection": {
+        "method": "合法 v1 表布局上安装仅测试用 BEFORE INSERT 触发器，第二条 applied 写入时 RAISE(ABORT)",
+        "actualDiskFailure": false,
+        "triggerSql": "CREATE TRIGGER recovery_test_fail_migration BEFORE INSERT ON applied WHEN (SELECT count(*) FROM applied) >= 1 BEGIN SELECT RAISE(ABORT, 'GUANCE_TEST_MIGRATION_ABORT_AFTER_FIRST_INSERT'); END",
+        "version1": {
+          "integrity": [
+            "ok"
+          ],
+          "userVersion": 1,
+          "changesColumns": [
+            "id",
+            "project_id",
+            "parent_revision",
+            "revision",
+            "body",
+            "created_at"
+          ],
+          "projectDigest": "c04c7562944504b2f9ea6606c33c0f66dcc6c77b7504dccafd22f19d043e2931",
+          "changeDigest": "193b35c0ee31fe73ddcfec39ff4fe6c43fff3f3ac33482093bdaff4275709430",
+          "projectCount": 2,
+          "changeCount": 3,
+          "appliedCount": 0,
+          "projectHeadCount": 0,
+          "projects": [
+            {
+              "id": "cfb1f248-6d6b-41a1-a4ce-a2fbde7ae031",
+              "name": "迁移回滚恢复验收",
+              "mode": "real",
+              "revision": "2f0f1719a90f8c13c8bf768e394c0b575851cf2b8e0b66da7cc143df2fa0450e",
+              "budgetCents": 432100,
+              "goal": "升级恢复后继续本轮获客计划"
+            },
+            {
+              "id": "d0ec224e-5a1e-4edd-948c-ddb7bdc138ab",
+              "name": "齐鲁茶研 · 演示项目",
+              "mode": "demo",
+              "revision": "6f6b26efac0c2bd6393023f7cafa0a8aea31110377dbd36c89193fb0b0b3bb17",
+              "budgetCents": 500000,
+              "goal": "一周内获取有效消费者咨询（私信、电话或门店预约）"
+            }
+          ]
+        }
+      },
+      "failedStartup": {
+        "pid": 41280,
+        "code": 1,
+        "signal": null,
+        "timedOut": false,
+        "stdout": "\r\n",
+        "stderr": "Desktop startup failed: GUANCE_TEST_MIGRATION_ABORT_AFTER_FIRST_INSERT\n",
+        "expectedError": "GUANCE_TEST_MIGRATION_ABORT_AFTER_FIRST_INSERT",
+        "cleanup": "应用自行退出；未扫描或终止其他进程"
+      },
+      "automaticBackup": {
+        "filename": "guance-2026-10-28T17-59-45-997Z-3024f649.sqlite",
+        "sha256": "aa6b896fa5d176bc6090c9391625f4c3f0ee27c009cbfba6f890e0fae5289461",
+        "integrity": [
+          "ok"
+        ],
+        "userVersion": 1,
+        "changesColumns": [
+          "id",
+          "project_id",
+          "parent_revision",
+          "revision",
+          "body",
+          "created_at"
+        ],
+        "projectDigest": "c04c7562944504b2f9ea6606c33c0f66dcc6c77b7504dccafd22f19d043e2931",
+        "changeDigest": "193b35c0ee31fe73ddcfec39ff4fe6c43fff3f3ac33482093bdaff4275709430",
+        "projectCount": 2,
+        "changeCount": 3,
+        "appliedCount": 0,
+        "projectHeadCount": 0,
+        "projects": [
+          {
+            "id": "cfb1f248-6d6b-41a1-a4ce-a2fbde7ae031",
+            "name": "迁移回滚恢复验收",
+            "mode": "real",
+            "revision": "2f0f1719a90f8c13c8bf768e394c0b575851cf2b8e0b66da7cc143df2fa0450e",
+            "budgetCents": 432100,
+            "goal": "升级恢复后继续本轮获客计划"
+          },
+          {
+            "id": "d0ec224e-5a1e-4edd-948c-ddb7bdc138ab",
+            "name": "齐鲁茶研 · 演示项目",
+            "mode": "demo",
+            "revision": "6f6b26efac0c2bd6393023f7cafa0a8aea31110377dbd36c89193fb0b0b3bb17",
+            "budgetCents": 500000,
+            "goal": "一周内获取有效消费者咨询（私信、电话或门店预约）"
+          }
+        ]
+      },
+      "rolledBackDatabase": {
+        "integrity": [
+          "ok"
+        ],
+        "userVersion": 1,
+        "changesColumns": [
+          "id",
+          "project_id",
+          "parent_revision",
+          "revision",
+          "body",
+          "created_at"
+        ],
+        "projectDigest": "c04c7562944504b2f9ea6606c33c0f66dcc6c77b7504dccafd22f19d043e2931",
+        "changeDigest": "193b35c0ee31fe73ddcfec39ff4fe6c43fff3f3ac33482093bdaff4275709430",
+        "projectCount": 2,
+        "changeCount": 3,
+        "appliedCount": 0,
+        "projectHeadCount": 0,
+        "projects": [
+          {
+            "id": "cfb1f248-6d6b-41a1-a4ce-a2fbde7ae031",
+            "name": "迁移回滚恢复验收",
+            "mode": "real",
+            "revision": "2f0f1719a90f8c13c8bf768e394c0b575851cf2b8e0b66da7cc143df2fa0450e",
+            "budgetCents": 432100,
+            "goal": "升级恢复后继续本轮获客计划"
+          },
+          {
+            "id": "d0ec224e-5a1e-4edd-948c-ddb7bdc138ab",
+            "name": "齐鲁茶研 · 演示项目",
+            "mode": "demo",
+            "revision": "6f6b26efac0c2bd6393023f7cafa0a8aea31110377dbd36c89193fb0b0b3bb17",
+            "budgetCents": 500000,
+            "goal": "一周内获取有效消费者咨询（私信、电话或门店预约）"
+          }
+        ]
+      },
+      "recovery": {
+        "archive": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-recovery-ak28YM\\migration\\recovery-evidence\\failed-migration-original",
+        "backup": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-recovery-ak28YM\\migration\\data\\backups\\guance-2026-10-28T17-59-45-997Z-3024f649.sqlite",
+        "moved": [
+          "guance.sqlite",
+          "guance.sqlite-wal",
+          "guance.sqlite-shm"
+        ],
+        "steps": [
+          "已退出应用",
+          "复制整个 data 目录留档",
+          "将原 guance.sqlite 及存在的 -wal/-shm 移入现场归档目录",
+          "将有效备份复制为 data/guance.sqlite",
+          "在还原副本中移除仅测试用触发器 recovery_test_fail_migration；保留原始自动备份不改动",
+          "重新启动应用并核对项目、预算及目标"
+        ]
+      },
+      "restoredUi": {
+        "projectId": "cfb1f248-6d6b-41a1-a4ce-a2fbde7ae031",
+        "name": "迁移回滚恢复验收",
+        "mode": "real",
+        "budgetCents": 432100,
+        "budgetYuanDisplayed": "4321.00",
+        "goal": "升级恢复后继续本轮获客计划"
+      },
+      "migrationHistory": {
+        "originalChangesPreserved": 3,
+        "preservedChangeDigest": "193b35c0ee31fe73ddcfec39ff4fe6c43fff3f3ac33482093bdaff4275709430",
+        "addedCheckpoints": [
+          {
+            "id": "58846e9d-9afd-4070-babb-2a01f0770472",
+            "projectId": "cfb1f248-6d6b-41a1-a4ce-a2fbde7ae031",
+            "revision": "2f0f1719a90f8c13c8bf768e394c0b575851cf2b8e0b66da7cc143df2fa0450e"
+          },
+          {
+            "id": "f926fe57-7ece-4f54-bbc2-0be0a496a584",
+            "projectId": "d0ec224e-5a1e-4edd-948c-ddb7bdc138ab",
+            "revision": "6f6b26efac0c2bd6393023f7cafa0a8aea31110377dbd36c89193fb0b0b3bb17"
+          }
+        ]
+      },
+      "retryAutomaticBackup": {
+        "filename": "guance-2026-10-28T17-59-48-352Z-5314f1e8.sqlite",
+        "integrity": [
+          "ok"
+        ],
+        "userVersion": 1,
+        "changesColumns": [
+          "id",
+          "project_id",
+          "parent_revision",
+          "revision",
+          "body",
+          "created_at"
+        ],
+        "projectDigest": "c04c7562944504b2f9ea6606c33c0f66dcc6c77b7504dccafd22f19d043e2931",
+        "changeDigest": "193b35c0ee31fe73ddcfec39ff4fe6c43fff3f3ac33482093bdaff4275709430",
+        "projectCount": 2,
+        "changeCount": 3,
+        "appliedCount": 0,
+        "projectHeadCount": 0,
+        "projects": [
+          {
+            "id": "cfb1f248-6d6b-41a1-a4ce-a2fbde7ae031",
+            "name": "迁移回滚恢复验收",
+            "mode": "real",
+            "revision": "2f0f1719a90f8c13c8bf768e394c0b575851cf2b8e0b66da7cc143df2fa0450e",
+            "budgetCents": 432100,
+            "goal": "升级恢复后继续本轮获客计划"
+          },
+          {
+            "id": "d0ec224e-5a1e-4edd-948c-ddb7bdc138ab",
+            "name": "齐鲁茶研 · 演示项目",
+            "mode": "demo",
+            "revision": "6f6b26efac0c2bd6393023f7cafa0a8aea31110377dbd36c89193fb0b0b3bb17",
+            "budgetCents": 500000,
+            "goal": "一周内获取有效消费者咨询（私信、电话或门店预约）"
+          }
+        ]
+      },
+      "upgradedDatabase": {
+        "integrity": [
+          "ok"
+        ],
+        "userVersion": 3,
+        "changesColumns": [
+          "id",
+          "project_id",
+          "parent_revision",
+          "revision",
+          "body",
+          "created_at",
+          "resolves",
+          "parent_ids"
+        ],
+        "projectDigest": "c04c7562944504b2f9ea6606c33c0f66dcc6c77b7504dccafd22f19d043e2931",
+        "changeDigest": "de547ee1a7b95a5eed5996954f8c10b1b6d153b8f1c56534ec5dd88b9d163d40",
+        "projectCount": 2,
+        "changeCount": 5,
+        "appliedCount": 5,
+        "projectHeadCount": 2,
+        "projects": [
+          {
+            "id": "cfb1f248-6d6b-41a1-a4ce-a2fbde7ae031",
+            "name": "迁移回滚恢复验收",
+            "mode": "real",
+            "revision": "2f0f1719a90f8c13c8bf768e394c0b575851cf2b8e0b66da7cc143df2fa0450e",
+            "budgetCents": 432100,
+            "goal": "升级恢复后继续本轮获客计划"
+          },
+          {
+            "id": "d0ec224e-5a1e-4edd-948c-ddb7bdc138ab",
+            "name": "齐鲁茶研 · 演示项目",
+            "mode": "demo",
+            "revision": "6f6b26efac0c2bd6393023f7cafa0a8aea31110377dbd36c89193fb0b0b3bb17",
+            "budgetCents": 500000,
+            "goal": "一周内获取有效消费者咨询（私信、电话或门店预约）"
+          }
+        ]
+      },
+      "finishedAt": "2026-10-28T17:59:50.998Z"
+    }
+  ],
+  "screenshots": [
+    "docs/desktop/recovery-corruption-before.png",
+    "docs/desktop/recovery-corruption-restored.png",
+    "docs/desktop/recovery-migration-before.png",
+    "docs/desktop/recovery-migration-restored.png"
+  ],
+  "gitHead": "99087b4fbb9af5899af34a810ca6cd117555b46c",
+  "application": {
+    "version": "0.6.2",
+    "isPackaged": true,
+    "electron": "45.0.0",
+    "databaseSchemaVersion": 3
+  },
+  "schemaProfile": "event-lineage-schema-3",
+  "finishedAt": "2026-10-28T17:59:50.998Z"
+}

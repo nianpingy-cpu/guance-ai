@@ -1,0 +1,1358 @@
+{
+  "at": "2026-10-28T16:45:32.545Z",
+  "platform": "win32",
+  "node": "v24.13.0",
+  "mode": "source-electron-existing-build",
+  "executable": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\outputs\\guance-ai\\node_modules\\electron\\dist\\electron.exe",
+  "profile": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-parallel-perf-Y03QBq",
+  "status": "passed",
+  "hardware": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13620H",
+    "logicalCpus": 16,
+    "ramBytes": 16849256448,
+    "freeRamBeforeBytes": 2627424256,
+    "architecture": "x64",
+    "osRelease": "10.0.26200",
+    "storageMedia": "not measured",
+    "freeRamAfterBytes": 2222129152
+  },
+  "scope": "当前实际机器上的合成长正文及并行任务验收；不等同4核8GB参考硬件，也不代表真实模型或公网WebDAV性能。",
+  "isolation": {
+    "independentGuanceTestData": true,
+    "userFilesRead": false,
+    "userCredentialsRead": false,
+    "paidModelRequests": 0,
+    "realRemoteServicesUsed": false
+  },
+  "data": {
+    "records": 10000,
+    "longRecords": 1000,
+    "originalCharactersPerLongRecord": 1500,
+    "synthetic": true,
+    "payloadJsonCharacters": 8935177,
+    "payloadUtf8Bytes": 17377408,
+    "dataJsonCharacters": 8935046,
+    "dataUtf8Bytes": 17377277,
+    "longOriginalTotalCharacters": 1500000,
+    "longQuotesAlsoRetained": true
+  },
+  "fixtureTiming": {
+    "modelChunks": 60,
+    "modelChunkDelayMs": 100,
+    "uploadChunkDelayMs": 15,
+    "note": "有效模型JSON分块返回；WebDAV实际读取完整密文并有固定逐块延时，以形成可重复的并行传输窗口。此延时不计作真实服务性能。"
+  },
+  "uiTiming": {
+    "definition": "Playwright实际fill/click，等待期望可见结果并完成两帧绘制；包含自动化驱动开销，不是纯JS filter计时。",
+    "referenceTargetMs": 500,
+    "samples": [
+      {
+        "phase": "baseline",
+        "action": "search-unique",
+        "startedAt": "2026-10-28T16:45:46.047Z",
+        "taskBefore": null,
+        "fixtureBefore": {
+          "modelStreaming": false,
+          "modelBytes": 0,
+          "activeDavUploads": 0,
+          "davBytes": 0
+        },
+        "status": "passed",
+        "durationMs": 152.6,
+        "finishedAt": "2026-10-28T16:45:46.200Z",
+        "fixtureAfter": {
+          "modelStreaming": false,
+          "modelBytes": 0,
+          "activeDavUploads": 0,
+          "davBytes": 0
+        },
+        "meetsReferenceTarget": true,
+        "bothTasksActiveThroughoutAction": false
+      },
+      {
+        "phase": "baseline",
+        "action": "clear-search",
+        "startedAt": "2026-10-28T16:45:46.200Z",
+        "taskBefore": null,
+        "fixtureBefore": {
+          "modelStreaming": false,
+          "modelBytes": 0,
+          "activeDavUploads": 0,
+          "davBytes": 0
+        },
+        "status": "passed",
+        "durationMs": 132.7,
+        "finishedAt": "2026-10-28T16:45:46.332Z",
+        "fixtureAfter": {
+          "modelStreaming": false,
+          "modelBytes": 0,
+          "activeDavUploads": 0,
+          "davBytes": 0
+        },
+        "meetsReferenceTarget": true,
+        "bothTasksActiveThroughoutAction": false
+      },
+      {
+        "phase": "baseline",
+        "action": "next-page",
+        "startedAt": "2026-10-28T16:45:46.332Z",
+        "taskBefore": null,
+        "fixtureBefore": {
+          "modelStreaming": false,
+          "modelBytes": 0,
+          "activeDavUploads": 0,
+          "davBytes": 0
+        },
+        "status": "passed",
+        "durationMs": 167.6,
+        "finishedAt": "2026-10-28T16:45:46.500Z",
+        "fixtureAfter": {
+          "modelStreaming": false,
+          "modelBytes": 0,
+          "activeDavUploads": 0,
+          "davBytes": 0
+        },
+        "meetsReferenceTarget": true,
+        "bothTasksActiveThroughoutAction": false
+      },
+      {
+        "phase": "baseline",
+        "action": "previous-page",
+        "startedAt": "2026-10-28T16:45:46.500Z",
+        "taskBefore": null,
+        "fixtureBefore": {
+          "modelStreaming": false,
+          "modelBytes": 0,
+          "activeDavUploads": 0,
+          "davBytes": 0
+        },
+        "status": "passed",
+        "durationMs": 166.3,
+        "finishedAt": "2026-10-28T16:45:46.666Z",
+        "fixtureAfter": {
+          "modelStreaming": false,
+          "modelBytes": 0,
+          "activeDavUploads": 0,
+          "davBytes": 0
+        },
+        "meetsReferenceTarget": true,
+        "bothTasksActiveThroughoutAction": false
+      },
+      {
+        "phase": "parallel",
+        "action": "search-unique",
+        "startedAt": "2026-10-28T16:45:48.192Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:48.190Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 806,
+          "activeDavUploads": 1,
+          "davBytes": 2592118
+        },
+        "status": "passed",
+        "durationMs": 109.1,
+        "finishedAt": "2026-10-28T16:45:48.301Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 868,
+          "activeDavUploads": 1,
+          "davBytes": 3050870
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:48.304Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "clear-search",
+        "startedAt": "2026-10-28T16:45:48.311Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:48.310Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 868,
+          "activeDavUploads": 1,
+          "davBytes": 3116406
+        },
+        "status": "passed",
+        "durationMs": 140.9,
+        "finishedAt": "2026-10-28T16:45:48.452Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 930,
+          "activeDavUploads": 1,
+          "davBytes": 3640694
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:48.455Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "next-page",
+        "startedAt": "2026-10-28T16:45:48.458Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:48.458Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 930,
+          "activeDavUploads": 1,
+          "davBytes": 3640694
+        },
+        "status": "passed",
+        "durationMs": 410.3,
+        "finishedAt": "2026-10-28T16:45:48.869Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 1178,
+          "activeDavUploads": 1,
+          "davBytes": 5279094
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:48.872Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "previous-page",
+        "startedAt": "2026-10-28T16:45:48.878Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:48.876Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 1178,
+          "activeDavUploads": 1,
+          "davBytes": 5279094
+        },
+        "status": "passed",
+        "durationMs": 191.3,
+        "finishedAt": "2026-10-28T16:45:49.069Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 1302,
+          "activeDavUploads": 1,
+          "davBytes": 6065526
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:49.073Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "search-unique",
+        "startedAt": "2026-10-28T16:45:49.081Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:49.079Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 1302,
+          "activeDavUploads": 1,
+          "davBytes": 6065526
+        },
+        "status": "passed",
+        "durationMs": 88.2,
+        "finishedAt": "2026-10-28T16:45:49.169Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 1364,
+          "activeDavUploads": 1,
+          "davBytes": 6393206
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:49.171Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "clear-search",
+        "startedAt": "2026-10-28T16:45:49.175Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:49.174Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 1364,
+          "activeDavUploads": 1,
+          "davBytes": 6393206
+        },
+        "status": "passed",
+        "durationMs": 127.5,
+        "finishedAt": "2026-10-28T16:45:49.302Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 1426,
+          "activeDavUploads": 1,
+          "davBytes": 6983030
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:49.305Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "next-page",
+        "startedAt": "2026-10-28T16:45:49.310Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:49.309Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 1426,
+          "activeDavUploads": 1,
+          "davBytes": 6983030
+        },
+        "status": "passed",
+        "durationMs": 360,
+        "finishedAt": "2026-10-28T16:45:49.670Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 1674,
+          "activeDavUploads": 1,
+          "davBytes": 8424822
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:49.672Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "previous-page",
+        "startedAt": "2026-10-28T16:45:49.675Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:49.674Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 1674,
+          "activeDavUploads": 1,
+          "davBytes": 8424822
+        },
+        "status": "passed",
+        "durationMs": 197.9,
+        "finishedAt": "2026-10-28T16:45:49.873Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 1798,
+          "activeDavUploads": 1,
+          "davBytes": 9276790
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:50.189Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "search-unique",
+        "startedAt": "2026-10-28T16:45:50.194Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:50.193Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 1984,
+          "activeDavUploads": 1,
+          "davBytes": 10521974
+        },
+        "status": "passed",
+        "durationMs": 173.7,
+        "finishedAt": "2026-10-28T16:45:50.368Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 2046,
+          "activeDavUploads": 1,
+          "davBytes": 11177334
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:50.381Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "clear-search",
+        "startedAt": "2026-10-28T16:45:50.398Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:50.396Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 2108,
+          "activeDavUploads": 1,
+          "davBytes": 11308406
+        },
+        "status": "passed",
+        "durationMs": 139.1,
+        "finishedAt": "2026-10-28T16:45:50.537Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 2170,
+          "activeDavUploads": 1,
+          "davBytes": 11898230
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:50.539Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "next-page",
+        "startedAt": "2026-10-28T16:45:50.542Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:50.541Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 2170,
+          "activeDavUploads": 1,
+          "davBytes": 11898230
+        },
+        "status": "passed",
+        "durationMs": 244.2,
+        "finishedAt": "2026-10-28T16:45:50.787Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 2294,
+          "activeDavUploads": 1,
+          "davBytes": 12750198
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:50.790Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "parallel",
+        "action": "previous-page",
+        "startedAt": "2026-10-28T16:45:50.794Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:50.793Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": true,
+          "modelBytes": 2294,
+          "activeDavUploads": 1,
+          "davBytes": 12750198
+        },
+        "status": "passed",
+        "durationMs": 179,
+        "finishedAt": "2026-10-28T16:45:50.973Z",
+        "fixtureAfter": {
+          "modelStreaming": true,
+          "modelBytes": 2418,
+          "activeDavUploads": 1,
+          "davBytes": 13536630
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:50.977Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "running",
+            "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+          },
+          "sync": {
+            "busy": true,
+            "lastSuccess": "",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": true
+      },
+      {
+        "phase": "after-completion",
+        "action": "search-unique",
+        "startedAt": "2026-10-28T16:45:54.789Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:54.788Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "completed",
+            "progress": "已完成",
+            "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+          },
+          "sync": {
+            "busy": false,
+            "lastSuccess": "2026-10-28T16:45:54.599Z",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": false,
+          "modelBytes": 3692,
+          "activeDavUploads": 0,
+          "davBytes": 23224564
+        },
+        "status": "passed",
+        "durationMs": 103.1,
+        "finishedAt": "2026-10-28T16:45:54.892Z",
+        "fixtureAfter": {
+          "modelStreaming": false,
+          "modelBytes": 3692,
+          "activeDavUploads": 0,
+          "davBytes": 23224564
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:54.895Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "completed",
+            "progress": "已完成",
+            "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+          },
+          "sync": {
+            "busy": false,
+            "lastSuccess": "2026-10-28T16:45:54.599Z",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": false
+      },
+      {
+        "phase": "after-completion",
+        "action": "clear-search",
+        "startedAt": "2026-10-28T16:45:54.902Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:54.899Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "completed",
+            "progress": "已完成",
+            "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+          },
+          "sync": {
+            "busy": false,
+            "lastSuccess": "2026-10-28T16:45:54.599Z",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": false,
+          "modelBytes": 3692,
+          "activeDavUploads": 0,
+          "davBytes": 23224564
+        },
+        "status": "passed",
+        "durationMs": 126.7,
+        "finishedAt": "2026-10-28T16:45:55.028Z",
+        "fixtureAfter": {
+          "modelStreaming": false,
+          "modelBytes": 3692,
+          "activeDavUploads": 0,
+          "davBytes": 23224564
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:55.032Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "completed",
+            "progress": "已完成",
+            "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+          },
+          "sync": {
+            "busy": false,
+            "lastSuccess": "2026-10-28T16:45:54.599Z",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": false
+      },
+      {
+        "phase": "after-completion",
+        "action": "next-page",
+        "startedAt": "2026-10-28T16:45:55.037Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:55.035Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "completed",
+            "progress": "已完成",
+            "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+          },
+          "sync": {
+            "busy": false,
+            "lastSuccess": "2026-10-28T16:45:54.599Z",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": false,
+          "modelBytes": 3692,
+          "activeDavUploads": 0,
+          "davBytes": 23224564
+        },
+        "status": "passed",
+        "durationMs": 388.2,
+        "finishedAt": "2026-10-28T16:45:55.425Z",
+        "fixtureAfter": {
+          "modelStreaming": false,
+          "modelBytes": 3692,
+          "activeDavUploads": 0,
+          "davBytes": 23224564
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:55.429Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "completed",
+            "progress": "已完成",
+            "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+          },
+          "sync": {
+            "busy": false,
+            "lastSuccess": "2026-10-28T16:45:54.599Z",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": false
+      },
+      {
+        "phase": "after-completion",
+        "action": "previous-page",
+        "startedAt": "2026-10-28T16:45:55.435Z",
+        "taskBefore": {
+          "at": "2026-10-28T16:45:55.435Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "completed",
+            "progress": "已完成",
+            "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+          },
+          "sync": {
+            "busy": false,
+            "lastSuccess": "2026-10-28T16:45:54.599Z",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "fixtureBefore": {
+          "modelStreaming": false,
+          "modelBytes": 3692,
+          "activeDavUploads": 0,
+          "davBytes": 23224564
+        },
+        "status": "passed",
+        "durationMs": 190.2,
+        "finishedAt": "2026-10-28T16:45:55.626Z",
+        "fixtureAfter": {
+          "modelStreaming": false,
+          "modelBytes": 3692,
+          "activeDavUploads": 0,
+          "davBytes": 23224564
+        },
+        "meetsReferenceTarget": true,
+        "taskAfter": {
+          "at": "2026-10-28T16:45:55.628Z",
+          "analysis": {
+            "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+            "status": "completed",
+            "progress": "已完成",
+            "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+          },
+          "sync": {
+            "busy": false,
+            "lastSuccess": "2026-10-28T16:45:54.599Z",
+            "error": "",
+            "conflicts": 0
+          }
+        },
+        "bothTasksActiveThroughoutAction": false
+      }
+    ],
+    "confirmedOverlappingActions": [
+      {
+        "action": "search-unique",
+        "durationMs": 109.1
+      },
+      {
+        "action": "clear-search",
+        "durationMs": 140.9
+      },
+      {
+        "action": "next-page",
+        "durationMs": 410.3
+      },
+      {
+        "action": "previous-page",
+        "durationMs": 191.3
+      },
+      {
+        "action": "search-unique",
+        "durationMs": 88.2
+      },
+      {
+        "action": "clear-search",
+        "durationMs": 127.5
+      },
+      {
+        "action": "next-page",
+        "durationMs": 360
+      },
+      {
+        "action": "previous-page",
+        "durationMs": 197.9
+      },
+      {
+        "action": "search-unique",
+        "durationMs": 173.7
+      },
+      {
+        "action": "clear-search",
+        "durationMs": 139.1
+      },
+      {
+        "action": "next-page",
+        "durationMs": 244.2
+      },
+      {
+        "action": "previous-page",
+        "durationMs": 179
+      }
+    ],
+    "maximumMs": 410.3,
+    "meetsReferenceTargetOnThisMachine": true
+  },
+  "localFixtures": {
+    "model": "http://127.0.0.1:63936",
+    "webdav": "http://127.0.0.1:63937",
+    "loopbackOnly": true
+  },
+  "application": {
+    "version": "0.6.2",
+    "isPackaged": false,
+    "mainPid": 8408,
+    "electron": "45.0.0",
+    "chrome": "156.0.8078.48",
+    "userData": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-parallel-perf-Y03QBq"
+  },
+  "save": {
+    "durationMs": 10714.3,
+    "revision": "a2fc52a6103aeb3000e170644ccb7fc33dc2a46c03737f9aecae07c89d6c3539",
+    "savedRecords": 10000,
+    "method": "正常projects.save IPC，含序列化、校验与SQLite写入"
+  },
+  "pageLoadMs": 673.4,
+  "analysis": {
+    "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+    "initialStatus": "running",
+    "selectedSignals": [
+      "PERF-S-0",
+      "PERF-S-1",
+      "PERF-S-2",
+      "PERF-S-3",
+      "PERF-S-4",
+      "PERF-S-5",
+      "PERF-S-6",
+      "PERF-S-7",
+      "PERF-S-8",
+      "PERF-S-9"
+    ],
+    "final": {
+      "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+      "status": "completed",
+      "progress": "已完成",
+      "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+    }
+  },
+  "parallelStart": {
+    "at": "2026-10-28T16:45:48.184Z",
+    "analysis": {
+      "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+      "status": "running",
+      "progress": "已发送模型请求，等待分析；取消后服务商仍可能计费"
+    },
+    "sync": {
+      "busy": true,
+      "lastSuccess": "",
+      "error": "",
+      "conflicts": 0
+    }
+  },
+  "initialSync": {
+    "status": "completed",
+    "durationMs": 8086.6,
+    "returned": {
+      "configured": true,
+      "url": "http://127.0.0.1:63937/dav",
+      "username": "fixture",
+      "automatic": false,
+      "busy": false,
+      "lastSuccess": "2026-10-28T16:45:54.599Z",
+      "error": "",
+      "conflicts": []
+    }
+  },
+  "parallelCompletion": {
+    "at": "2026-10-28T16:45:54.786Z",
+    "analysis": {
+      "id": "c7987b98-3b31-49d9-a6e3-4605fbc8e86a",
+      "status": "completed",
+      "progress": "已完成",
+      "result": "已生成5个主题与A/B两套方案；需人工核实并审批"
+    },
+    "sync": {
+      "busy": false,
+      "lastSuccess": "2026-10-28T16:45:54.599Z",
+      "error": "",
+      "conflicts": 0
+    }
+  },
+  "parallelDurationMs": 8101,
+  "generatedResult": {
+    "revision": "f20a1abe15d7c3249112375db535f84a4211774c4b19670b530630e4538563f0",
+    "signalCount": 10000,
+    "analyses": 1,
+    "themes": 5,
+    "plans": [
+      {
+        "code": "A",
+        "analysisId": "beb77196-fe1c-4930-affa-8771d579d653",
+        "budgetCents": 1000000
+      },
+      {
+        "code": "B",
+        "analysisId": "beb77196-fe1c-4930-affa-8771d579d653",
+        "budgetCents": 1000000
+      }
+    ],
+    "approvals": 0
+  },
+  "finalSync": {
+    "durationMs": 6931.4,
+    "lastSuccess": "2026-10-28T16:46:05.315Z",
+    "conflicts": 0
+  },
+  "remote": {
+    "protocol": 2,
+    "verification": "正常客户端加密上传；测试程序使用假口令解密核对落盘内容，未代替第二客户端下载验收",
+    "encryptedFiles": 5,
+    "encryptedOperationFiles": 4,
+    "transferredCiphertextBytes": 46403240,
+    "storedCiphertextBytes": 46403240,
+    "finalRevisionVerified": "f20a1abe15d7c3249112375db535f84a4211774c4b19670b530630e4538563f0",
+    "finalSignalCount": 10000,
+    "finalAnalysisCount": 1,
+    "plaintextBusinessOrCredentialsFound": false
+  },
+  "applicationMetrics": [
+    {
+      "pid": 8408,
+      "type": "Browser",
+      "cpu": {
+        "cumulativeCPUUsage": 7.881713,
+        "percentCPUUsage": 0,
+        "idleWakeupsPerSecond": 0
+      },
+      "memory": {
+        "workingSetSize": 187760,
+        "peakWorkingSetSize": 326840,
+        "privateBytes": 107420
+      }
+    },
+    {
+      "pid": 73348,
+      "type": "GPU",
+      "cpu": {
+        "cumulativeCPUUsage": 2.041341,
+        "percentCPUUsage": 0,
+        "idleWakeupsPerSecond": 0
+      },
+      "memory": {
+        "workingSetSize": 106760,
+        "peakWorkingSetSize": 111808,
+        "privateBytes": 120420
+      }
+    },
+    {
+      "pid": 29236,
+      "type": "Utility",
+      "name": "Network Service",
+      "cpu": {
+        "cumulativeCPUUsage": 0.092333,
+        "percentCPUUsage": 0,
+        "idleWakeupsPerSecond": 0
+      },
+      "memory": {
+        "workingSetSize": 47580,
+        "peakWorkingSetSize": 47620,
+        "privateBytes": 11752
+      }
+    },
+    {
+      "pid": 17784,
+      "type": "Tab",
+      "cpu": {
+        "cumulativeCPUUsage": 9.520725,
+        "percentCPUUsage": 0,
+        "idleWakeupsPerSecond": 0
+      },
+      "memory": {
+        "workingSetSize": 479636,
+        "peakWorkingSetSize": 693808,
+        "privateBytes": 416700
+      }
+    },
+    {
+      "pid": 52052,
+      "type": "Utility",
+      "name": "Node Utility Process",
+      "cpu": {
+        "cumulativeCPUUsage": 6.997591,
+        "percentCPUUsage": 0,
+        "idleWakeupsPerSecond": 0
+      },
+      "memory": {
+        "workingSetSize": 369496,
+        "peakWorkingSetSize": 465424,
+        "privateBytes": 358632
+      }
+    }
+  ],
+  "applicationClosed": true,
+  "cleanup": {
+    "launcherPid": 35156,
+    "mainPid": 8408,
+    "trackedProcesses": [
+      {
+        "pid": 8408,
+        "type": "Browser"
+      },
+      {
+        "pid": 73348,
+        "type": "GPU"
+      },
+      {
+        "pid": 29236,
+        "type": "Utility",
+        "name": "Network Service"
+      },
+      {
+        "pid": 17784,
+        "type": "Tab"
+      },
+      {
+        "pid": 52052,
+        "type": "Utility",
+        "name": "Node Utility Process"
+      }
+    ],
+    "remainingPids": [],
+    "applicationExitCode": 0,
+    "applicationExitSignal": null,
+    "testProcessesExited": true
+  },
+  "fixtureHandlersStopped": true,
+  "fixtures": {
+    "model": {
+      "requests": [
+        {
+          "startedAt": "2026-10-28T16:45:46.888Z",
+          "requestBytes": 55782,
+          "selectedSignalIds": [
+            "PERF-S-0",
+            "PERF-S-1",
+            "PERF-S-2",
+            "PERF-S-3",
+            "PERF-S-4",
+            "PERF-S-5",
+            "PERF-S-6",
+            "PERF-S-7",
+            "PERF-S-8",
+            "PERF-S-9"
+          ],
+          "suppliedLongQuoteCharacters": 15000,
+          "expectedResponseBytes": 3692,
+          "finishedAt": "2026-10-28T16:45:53.312Z"
+        }
+      ],
+      "responseChunks": 60,
+      "responseBytes": 3692,
+      "active": false
+    },
+    "webdav": {
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/dav/guance-v1/manifest.json",
+          "startedAt": "2026-10-28T16:45:46.890Z",
+          "bodyBytes": 0,
+          "bodyChunks": 0,
+          "finishedAt": "2026-10-28T16:45:46.890Z"
+        },
+        {
+          "method": "MKCOL",
+          "path": "/dav/guance-v1/",
+          "startedAt": "2026-10-28T16:45:46.899Z",
+          "bodyBytes": 0,
+          "bodyChunks": 0,
+          "finishedAt": "2026-10-28T16:45:46.899Z"
+        },
+        {
+          "method": "PUT",
+          "path": "/dav/guance-v1/manifest.json",
+          "startedAt": "2026-10-28T16:45:46.964Z",
+          "bodyBytes": 188,
+          "bodyChunks": 1,
+          "finishedAt": "2026-10-28T16:45:46.965Z"
+        },
+        {
+          "method": "GET",
+          "path": "/dav/guance-v1/manifest.json",
+          "startedAt": "2026-10-28T16:45:46.966Z",
+          "bodyBytes": 0,
+          "bodyChunks": 0,
+          "finishedAt": "2026-10-28T16:45:46.967Z"
+        },
+        {
+          "method": "PROPFIND",
+          "path": "/dav/guance-v1/",
+          "startedAt": "2026-10-28T16:45:47.033Z",
+          "bodyBytes": 0,
+          "bodyChunks": 0,
+          "finishedAt": "2026-10-28T16:45:47.033Z"
+        },
+        {
+          "method": "PUT",
+          "path": "/dav/guance-v1/3c3c88f5-1f4b-45a7-b0bf-0e73e89fbc74.op.json",
+          "startedAt": "2026-10-28T16:45:47.291Z",
+          "bodyBytes": 50792,
+          "bodyChunks": 2,
+          "finishedAt": "2026-10-28T16:45:47.328Z"
+        },
+        {
+          "method": "PUT",
+          "path": "/dav/guance-v1/06f5fdc5-7200-43d8-931d-97b51626836f.op.json",
+          "startedAt": "2026-10-28T16:45:47.330Z",
+          "bodyBytes": 3004,
+          "bodyChunks": 1,
+          "finishedAt": "2026-10-28T16:45:47.360Z"
+        },
+        {
+          "method": "PUT",
+          "path": "/dav/guance-v1/042bf4ba-2b39-4ec5-93b5-9f531e3a288a.op.json",
+          "startedAt": "2026-10-28T16:45:47.504Z",
+          "bodyBytes": 23170580,
+          "bodyChunks": 354,
+          "finishedAt": "2026-10-28T16:45:53.781Z"
+        },
+        {
+          "method": "GET",
+          "path": "/dav/guance-v1/manifest.json",
+          "startedAt": "2026-10-28T16:45:58.396Z",
+          "bodyBytes": 0,
+          "bodyChunks": 0,
+          "finishedAt": "2026-10-28T16:45:58.396Z"
+        },
+        {
+          "method": "PROPFIND",
+          "path": "/dav/guance-v1/",
+          "startedAt": "2026-10-28T16:45:58.455Z",
+          "bodyBytes": 0,
+          "bodyChunks": 0,
+          "finishedAt": "2026-10-28T16:45:58.455Z"
+        },
+        {
+          "method": "PUT",
+          "path": "/dav/guance-v1/9c2a4615-076b-439a-bb7d-fd04aaa20eb8.op.json",
+          "startedAt": "2026-10-28T16:45:59.150Z",
+          "bodyBytes": 23178676,
+          "bodyChunks": 356,
+          "finishedAt": "2026-10-28T16:46:05.314Z"
+        }
+      ],
+      "activeUploads": 0,
+      "totalBytes": 46403240,
+      "totalChunks": 714
+    },
+    "errors": []
+  },
+  "finishedAt": "2026-10-28T16:46:06.854Z"
+}

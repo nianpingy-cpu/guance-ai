@@ -1,0 +1,123 @@
+{
+  "at": "2026-10-28T17:56:42.415Z",
+  "platform": "win32",
+  "status": "passed",
+  "realInstallerUpgrade": true,
+  "modelRequests": [
+    {
+      "phase": "before",
+      "path": "/v1/chat/completions",
+      "method": "POST",
+      "authenticated": true
+    },
+    {
+      "phase": "after",
+      "path": "/v1/chat/completions",
+      "method": "POST",
+      "authenticated": true
+    }
+  ],
+  "installDirectory": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\installed-trial",
+  "profile": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\upgrade-v0.6.2-data-k1TZws",
+  "installer": {
+    "path": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\final-ci-v0.6.2\\desktop-windows\\release\\GuanceAI-win-x64-0.6.2.exe",
+    "sha256": "9bd3ec214a2484ee4e121e126bc735baf767f519c7422c0e87f4f240541f194e"
+  },
+  "isolation": {
+    "sameGuanceTestDataBeforeAfter": true,
+    "fixedLoopbackModelOrigin": true,
+    "userAppDataRead": false,
+    "realExternalModelRequests": 0,
+    "collectionRequests": 0,
+    "syncRequests": 0,
+    "fixtureCredentialOnly": true
+  },
+  "signed": false,
+  "notarized": false,
+  "manualWizard": false,
+  "screenshots": [
+    "windows-upgrade-v0.6.2-before.png",
+    "windows-upgrade-v0.6.2-goal-edit.png",
+    "windows-upgrade-v0.6.2-after.png"
+  ],
+  "checks": [
+    "旧版真实已安装0.6.1保存500049分、人工审批及复盘、默认模型和系统加密虚构凭据",
+    "新版0.6.2首次启动完整保留业务；同端口同origin实际解密旧测试凭据并认证，无再次保存模型配置",
+    "新版正常UI只改企业目标，5000.49元完整保留；审批快照和人工复盘逐项一致且可查看",
+    "真实schema2→3自动备份可只读打开，旧业务/审批/复盘/变更/加密设置与升级前一致；当前schema3及检查点存在"
+  ],
+  "fixture": {
+    "origin": "http://127.0.0.1:60147",
+    "protocol": "chat",
+    "serverStayedOpenDuringInstaller": true
+  },
+  "beforeApplication": {
+    "version": "0.6.1",
+    "userData": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\upgrade-v0.6.2-data-k1TZws",
+    "isPackaged": true
+  },
+  "projectId": "ea5e7fef-5637-4e92-b7d5-38a448396218",
+  "providerId": "186c3836-f9bb-4001-9344-2bb4eb961530",
+  "before": {
+    "schema": 2,
+    "budgetCents": 500049,
+    "businessHash": "bfe85cdf7e930f0aa1f5a1cd96a12f0e2398ca4d2867786ceae8a29c856fd4af",
+    "approvals": 1,
+    "reviews": 1,
+    "approvalsHash": "6def5508877e39d97f74c4fed58b2bf931a6f9e2780b2ba08dac3306a7db3e7c",
+    "reviewsHash": "8dae8b5557d12e816c4fb4c9faee1404bbb8d7a754163da3049eac42e46d10d0",
+    "changes": 8,
+    "settingsHash": "2ae6e831eb8c1c887823e94c70744521a01c63b63138ee298d5666f780bb57c9",
+    "checkpoints": 0,
+    "projectCount": 2
+  },
+  "beforeExecutableSha256": "4b18f3224d522c04fb72833e58ae93b984377708a389394a6ca1f4db1361ac1f",
+  "installation": {
+    "startedAt": "2026-10-28T17:56:50.098Z",
+    "finishedAt": "2026-10-28T17:57:23.764Z",
+    "exitCode": 0,
+    "silent": true,
+    "directory": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\installed-trial",
+    "stdoutStderr": "",
+    "manualWizard": false
+  },
+  "afterApplication": {
+    "version": "0.6.2",
+    "userData": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\upgrade-v0.6.2-data-k1TZws",
+    "isPackaged": true
+  },
+  "afterExecutableSha256": "f7e81005155d44f9017f344d360a8b8e4b702687e66d395971596e811bc9ba3a",
+  "after": {
+    "schema": 3,
+    "budgetCents": 500049,
+    "businessHash": "3440194cf7f87119bd605e98b9df2fd9a62811cdb5286e21a76e6ada47a17c69",
+    "approvals": 1,
+    "reviews": 1,
+    "approvalsHash": "6def5508877e39d97f74c4fed58b2bf931a6f9e2780b2ba08dac3306a7db3e7c",
+    "reviewsHash": "8dae8b5557d12e816c4fb4c9faee1404bbb8d7a754163da3049eac42e46d10d0",
+    "changes": 11,
+    "settingsHash": "2ae6e831eb8c1c887823e94c70744521a01c63b63138ee298d5666f780bb57c9",
+    "checkpoints": 2,
+    "projectCount": 2
+  },
+  "migrationBackups": [
+    {
+      "name": "guance-2026-10-28T17-57-33-208Z-09e91f83.sqlite",
+      "schema": 2,
+      "budgetCents": 500049,
+      "businessHash": "bfe85cdf7e930f0aa1f5a1cd96a12f0e2398ca4d2867786ceae8a29c856fd4af",
+      "approvals": 1,
+      "reviews": 1,
+      "approvalsHash": "6def5508877e39d97f74c4fed58b2bf931a6f9e2780b2ba08dac3306a7db3e7c",
+      "reviewsHash": "8dae8b5557d12e816c4fb4c9faee1404bbb8d7a754163da3049eac42e46d10d0",
+      "changes": 8,
+      "settingsHash": "2ae6e831eb8c1c887823e94c70744521a01c63b63138ee298d5666f780bb57c9",
+      "checkpoints": 0,
+      "projectCount": 2,
+      "sha256": "9d073f59f58f57ee67ee447019629a1051fffb0368d77d335dcbdd5aa24c9d84",
+      "readable": true
+    }
+  ],
+  "fixtureServerStopped": true,
+  "finishedAt": "2026-10-28T17:57:41.787Z"
+}

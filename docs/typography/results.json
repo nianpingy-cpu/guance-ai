@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-26T12:51:36.811Z",
+  "at": "2026-10-28T17:40:57.154Z",
   "localFontRequests": 21,
   "results": [
     {
@@ -152,10 +152,6 @@
         {
           "family": "Noto Sans SC Variable",
           "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
         }
       ],
       "cjkAndLatinReady": true
@@ -227,30 +223,6 @@
         {
           "family": "Noto Sans SC Variable",
           "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
         }
       ],
       "cjkAndLatinReady": true
@@ -263,34 +235,6 @@
       "titleTracking": "-1.44px",
       "bodyWeight": "400",
       "loadedFaces": [
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
-        {
-          "family": "Noto Sans SC Variable",
-          "weight": "100 900"
-        },
         {
           "family": "Noto Sans SC Variable",
           "weight": "100 900"

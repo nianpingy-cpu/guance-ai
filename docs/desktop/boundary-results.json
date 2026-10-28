@@ -1,0 +1,201 @@
+{
+  "at": "2026-10-28T17:59:25.305Z",
+  "platform": "win32",
+  "node": "v24.13.0",
+  "mode": "installed-executable",
+  "executable": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\installed-trial\\观策AI.exe",
+  "profile": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-boundary-svuDiY",
+  "status": "passed",
+  "scope": "隔离测试应用的正常边界契约；不代表完整安全审计或真实外部网络验收。",
+  "isolation": {
+    "independentGuanceTestData": true,
+    "userFilesRead": false,
+    "userCredentialsRead": false,
+    "modelRequests": 0,
+    "collectionRequests": 0,
+    "syncRequests": 0,
+    "realExternalServicesUsed": false
+  },
+  "checks": [
+    {
+      "id": "renderer-node-disabled",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:26.663Z",
+      "evidence": {
+        "globals": {
+          "require": "undefined",
+          "process": "undefined",
+          "Buffer": "undefined",
+          "module": "undefined",
+          "bridge": true
+        },
+        "preferences": {
+          "nodeIntegration": false,
+          "sandbox": true,
+          "webSecurity": true
+        }
+      },
+      "finishedAt": "2026-10-28T17:59:26.675Z"
+    },
+    {
+      "id": "context-isolation",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:26.675Z",
+      "evidence": {
+        "contextIsolation": true,
+        "mainMarker": "undefined",
+        "worldId": 999,
+        "isolatedMarkerInMain": "undefined"
+      },
+      "finishedAt": "2026-10-28T17:59:26.687Z"
+    },
+    {
+      "id": "csp-inline-script",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:26.687Z",
+      "evidence": {
+        "events": [
+          {
+            "blockedURI": "inline",
+            "effectiveDirective": "script-src-elem",
+            "disposition": "enforce",
+            "originalPolicy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'"
+          }
+        ],
+        "markerExecuted": false
+      },
+      "finishedAt": "2026-10-28T17:59:26.693Z"
+    },
+    {
+      "id": "csp-fetch",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:26.693Z",
+      "evidence": {
+        "events": [
+          {
+            "blockedURI": "https://guance-boundary.invalid/csp-probe",
+            "effectiveDirective": "connect-src",
+            "disposition": "enforce",
+            "originalPolicy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'"
+          }
+        ],
+        "fetchOutcome": "TypeError",
+        "fallbackRequests": []
+      },
+      "finishedAt": "2026-10-28T17:59:26.702Z"
+    },
+    {
+      "id": "renderer-navigation",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:26.703Z",
+      "evidence": {
+        "target": "https://guance-boundary.invalid/navigation-probe",
+        "before": "guance://app/dashboard",
+        "after": "guance://app/dashboard",
+        "event": {
+          "url": "https://guance-boundary.invalid/navigation-probe",
+          "defaultPrevented": true
+        },
+        "fallbackRequests": []
+      },
+      "finishedAt": "2026-10-28T17:59:26.778Z"
+    },
+    {
+      "id": "popup-policy",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:26.778Z",
+      "evidence": {
+        "target": "https://guance-boundary.invalid/popup-probe",
+        "returnedNull": true,
+        "windows": [
+          1
+        ],
+        "createdWindows": [],
+        "recordedExternalCalls": [
+          "https://guance-boundary.invalid/popup-probe"
+        ],
+        "realBrowserOpened": false
+      },
+      "finishedAt": "2026-10-28T17:59:26.790Z"
+    },
+    {
+      "id": "notification-permission",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:26.791Z",
+      "evidence": {
+        "supported": true,
+        "result": "denied"
+      },
+      "finishedAt": "2026-10-28T17:59:26.795Z"
+    },
+    {
+      "id": "other-window-ipc",
+      "status": "passed",
+      "startedAt": "2026-10-28T17:59:26.795Z",
+      "evidence": {
+        "mainId": 1,
+        "otherId": 2,
+        "hidden": true,
+        "sharedPreload": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\installed-trial\\resources\\app.asar\\desktop-dist\\preload.cjs",
+        "preloadSource": "main.ts应用目录/desktop-dist/preload.cjs",
+        "bridgeAvailable": true,
+        "url": "guance://app/dashboard",
+        "allowed": false,
+        "error": "Error invoking remote method 'guance:request': Error: 无权访问本地服务",
+        "secondaryDestroyed": true,
+        "windowsAfter": [
+          1
+        ]
+      },
+      "finishedAt": "2026-10-28T17:59:26.973Z"
+    }
+  ],
+  "application": {
+    "version": "0.6.2",
+    "isPackaged": true,
+    "appPath": "C:\\Users\\27796\\Documents\\Codex\\2026-10-26\\referenced-chatgpt-conversation-this-is-an-2\\work\\installed-trial\\resources\\app.asar",
+    "electron": "45.0.0",
+    "chrome": "156.0.8078.48",
+    "userData": "C:\\Users\\27796\\AppData\\Local\\Temp\\guance-boundary-svuDiY"
+  },
+  "baseline": {
+    "mainId": 1,
+    "initialWindows": [
+      1
+    ],
+    "preferences": {
+      "allowRunningInsecureContent": false,
+      "contextIsolation": true,
+      "disableDialogs": false,
+      "disablePopups": false,
+      "disableWakeLocks": false,
+      "enableBlinkFeatures": "",
+      "experimentalFeatures": false,
+      "javascript": true,
+      "nodeIntegration": false,
+      "nodeIntegrationInSubFrames": false,
+      "nodeIntegrationInWorker": false,
+      "safeDialogs": false,
+      "safeDialogsMessage": "",
+      "sandbox": true,
+      "webSecurity": true,
+      "webviewTag": false
+    },
+    "externalRecorderInstalled": true,
+    "fallbackRequestGuardInstalled": true
+  },
+  "fixture": {
+    "id": "0b00f340-8ec6-4b97-afa3-09ee6e8b6c31",
+    "name": "桌面边界契约验收（虚构项目）",
+    "mode": "real"
+  },
+  "networkGuard": [],
+  "cleanup": {
+    "externalOpenerRestored": true,
+    "secondaryWindowDestroyed": true,
+    "networkGuardRemoved": true,
+    "testListenersRemoved": true
+  },
+  "applicationClosed": true,
+  "finishedAt": "2026-10-28T17:59:28.360Z"
+}
