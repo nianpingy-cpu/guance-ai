@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-28T15:13:00.522Z",
+  "platform": "win32",
+  "appVersion": "0.6.1",
+  "server": "hacdias/webdav v5.17.2, independent loopback server",
+  "configuredCadenceMs": 60000,
+  "firstObservedAfterMs": 60176,
+  "sourceManuallyTriggered": false,
+  "physicalDevices": 1,
+  "desktopInstances": 2,
+  "encryptedFiles": 3,
+  "results": [
+    "已安装应用在一分钟定时器触发后自动上传，无手动调用源端sync.run",
+    "真实独立WebDAV服务器落盘密文，无业务明文或测试凭据",
+    "第二个已安装桌面实例接收自动上传的项目，版本一致"
+  ],
+  "serverStopped": true
+}

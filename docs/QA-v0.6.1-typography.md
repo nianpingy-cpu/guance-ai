@@ -24,7 +24,7 @@
 | lint、双端类型检查、构建 | 通过；最后提交后以CI复核为准 |
 | 运行时依赖审计 | 0项报告 |
 
-新版三系统CI、安装包和最终提交在交付记录中另列，未生成前不作为已完成证据。本轮没有重新提交真实模型分析；此前真实服务对模拟情报的成功记录见RELEASE-v0.6.md。
+最终三系统CI run40709300542、提交a7220cf均通过，并生成Windows x64及两种Mac架构安装包。后续快速重启修复将测试数增至42，见QA-v0.6.1-restart.md。本轮没有重新提交真实模型分析；此前真实服务对模拟情报的成功记录见RELEASE-v0.6.md。
 
 证据：`docs/typography/`字体加载记录与四页截图，`docs/visual/results.json`、`docs/desktop-visual/results.json`、`docs/desktop-long-text/results.json`及对应截图。截图人工复核了工作台与策略页的标题、正文、数字和控件；自动检测只能发现部分碰撞，不能替代全部人工验收。
 

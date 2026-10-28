@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-28T15:10:23.021Z",
+  "platform": "win32",
+  "beforeVersion": "0.6.0",
+  "afterVersion": "0.6.1",
+  "realInstallerUpgrade": true,
+  "isolatedDataDirectory": true,
+  "results": [
+    "升级前真实业务项目预算与目标保留",
+    "默认模型与已保存凭据保留；本机协议服务实际解密认证成功",
+    "未读取或修改用户正常项目/密钥；测试使用虚构凭据"
+  ],
+  "manualWizard": false,
+  "signed": false
+}
