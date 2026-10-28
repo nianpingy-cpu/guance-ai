@@ -281,12 +281,12 @@ export function ReviewPage() {
             }
           />
         </div>
-        <div className="overflow-x-auto scrollbar-thin">
-          <table className="data-table min-w-[900px]">
+        <div className="review-print-scroll overflow-x-auto scrollbar-thin">
+          <table className="review-print-table data-table min-w-[900px]">
             <thead>
               <tr>
                 <th>渠道</th>
-                <th>计划预算</th>
+                <th>计划预算（元）</th>
                 <th>实际花费（元）</th>
                 <th>曝光量</th>
                 <th>点击量</th>
@@ -313,7 +313,7 @@ export function ReviewPage() {
                     </button>
                     <p className="mt-0.5 max-w-[150px] text-[11px] leading-4 text-faint">{planned.role}</p>
                   </td>
-                  <td className="tabular text-[11px] text-muted">{formatCny(planned.budgetCents)}</td>
+                  <td className="tabular text-[11px] text-muted">{formatCny(planned.budgetCents, 2)}</td>
                   <td>
                     <MoneyCell
                       value={actual.actualSpendCents}
@@ -662,9 +662,10 @@ function MoneyCell({
 
   return (
     <div>
+      <span className="print-only tabular">{value === null ? '暂无数据' : (value / 100).toFixed(2)}</span>
       <input
         aria-label={label}
-        className="input input-number !h-8 !w-[92px] !px-2 !py-1 !text-[11px]"
+        className="print-hide input input-number !h-8 !w-[92px] !px-2 !py-1 !text-[11px]"
         inputMode="decimal"
         value={text}
         onFocus={() => {
@@ -720,9 +721,10 @@ function CountCell({
 
   return (
     <div>
+      <span className="print-only tabular">{formatNumber(value)}</span>
       <input
         aria-label={label}
-        className="input input-number !h-8 !w-[84px] !px-2 !py-1 !text-[11px]"
+        className="print-hide input input-number !h-8 !w-[84px] !px-2 !py-1 !text-[11px]"
         inputMode="numeric"
         value={text}
         onFocus={() => {

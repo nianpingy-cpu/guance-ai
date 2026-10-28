@@ -95,4 +95,31 @@ describe('signal import validation', () => {
     expect(result.successCount).toBe(0);
     expect(result.issues[0].row).toBe(0);
   });
+
+  it.each([
+    { nullFirst: true, invalidRow: 1 },
+    { nullFirst: false, invalidRow: 2 },
+  ])('keeps valid JSON rows when a null item is at row $invalidRow', ({ nullFirst, invalidRow }) => {
+    const valid = { title: '有效记录', platform: '公开资料', category: 'industry', publishedAt: '2026-10-28', summary: '有效摘要' };
+    const result = parseSignalImport({
+      content: JSON.stringify(nullFirst ? [null, valid] : [valid, null]),
+      filename: 'mixed.json', prefix: 'MIXED', existingSignals: [], existingSources: [], simulated: false,
+    });
+    expect(result.successCount).toBe(1);
+    expect(result.failedCount).toBe(1);
+    expect(result.issues).toEqual([{ row: invalidRow, message: expect.stringContaining('对象') }]);
+    expect(result.signals[0].title).toBe('有效记录');
+    expect(result.sources[0].origin).toBe('manual');
+  });
+
+  it('reports non-object JSON rows separately and keeps the valid row', () => {
+    const valid = { title: '有效记录', platform: '公开资料', category: 'industry', publishedAt: '2026-10-28', summary: '有效摘要' };
+    const result = parseSignalImport({
+      content: JSON.stringify({ signals: [null, [], 'invalid', 1, true, valid] }),
+      filename: 'mixed.json', prefix: 'MIXED', existingSignals: [], existingSources: [],
+    });
+    expect(result.successCount).toBe(1);
+    expect(result.failedCount).toBe(5);
+    expect(result.issues.map((issue) => issue.row)).toEqual([1, 2, 3, 4, 5]);
+  });
 });

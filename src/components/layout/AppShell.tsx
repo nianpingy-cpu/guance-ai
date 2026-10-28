@@ -15,7 +15,7 @@ import { InfoBanner } from '@/components/ui/Form';
 import { ToastViewport } from '@/components/ui/ToastViewport';
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import { Settings } from '@/desktop/Settings';
-import { applyProject, flushDesktop, refreshProjects, useDesktopState } from '@/desktop/client';
+import { flushDesktop, resetDesktopProject, useDesktopState } from '@/desktop/client';
 import { AnalysisPanel } from '@/desktop/AnalysisPanel';
 import { CollectionPanel } from '@/desktop/CollectionPanel';
 
@@ -97,7 +97,7 @@ export function AppShell() {
             <Button
               variant="danger"
               icon={<RotateCcw size={14} />}
-              onClick={() => { void (async () => { if (window.guance) { await flushDesktop(); const id = useDesktopState.getState().current!.id; applyProject(await window.guance.invoke('projects.resetDemo', { id })); await refreshProjects(); } else resetDemo(); setResetOpen(false); navigate('/dashboard'); toast('演示数据已恢复', '已回到初始演示状态。', 'success'); })().catch((e: unknown) => toast('未恢复数据', String(e), 'warning')); }}
+              onClick={() => { void (async () => { if (window.guance) { const id = useDesktopState.getState().current!.id; await resetDesktopProject(id); } else resetDemo(); setResetOpen(false); navigate('/dashboard'); toast('演示数据已恢复', '已回到初始演示状态。', 'success'); })().catch((e: unknown) => toast('未恢复数据', String(e), 'warning')); }}
             >
               确认恢复
             </Button>

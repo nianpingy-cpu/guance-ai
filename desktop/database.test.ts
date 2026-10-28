@@ -72,12 +72,52 @@ it('旧Web导出可导入、修改并重开；数据库升级前保留可读备�
   const db = database(); const demo = db.create('旧数据', 'demo'); delete demo.data.mode;
   const imported = db.import('迁移', demo.data); const value = structuredClone(imported.data); value.company.budgetCents = 666600;
   expect(db.save(imported.id, imported.revision, value).data.mode).toBe('demo');
-  db.db.exec('ALTER TABLE changes DROP COLUMN resolves; PRAGMA user_version=1');
+  db.db.exec('ALTER TABLE changes DROP COLUMN resolves; ALTER TABLE changes DROP COLUMN parent_ids; DROP TABLE project_heads; PRAGMA user_version=1');
   const upgraded = new LocalDatabase(db.directory);
-  expect(upgraded.db.prepare('PRAGMA user_version').get()?.user_version).toBe(2);
+  expect(upgraded.db.prepare('PRAGMA user_version').get()?.user_version).toBe(3);
   const files = readdirSync(join(db.directory, 'backups')).filter((p) => p.endsWith('.sqlite'));
   expect(files.length).toBeGreaterThan(0);
   const backup = new DatabaseSync(join(db.directory, 'backups', files.at(-1)!), { readOnly: true });
   expect(backup.prepare('SELECT count(*) AS n FROM projects').get()?.n).toBeGreaterThan(0);
   backup.close(); upgraded.close();
+});
+it('migrates v2 with readable backup, audit history and independent conflict checkpoints', () => {
+  const db = database(); const p = db.create('升级并发', 'real'); const remote = structuredClone(p.data); remote.company.budgetCents = 888800; db.save(p.id, p.revision, remote);
+  const local = structuredClone(p.data); local.company.goal = '旧冲突保留'; expect(() => db.save(p.id, p.revision, local)).toThrow('CONFLICT');
+  const oldIds = db.changes().map(c => c.id);
+  db.db.exec('ALTER TABLE changes DROP COLUMN parent_ids; DROP TABLE project_heads; PRAGMA user_version=2');
+  const upgraded = new LocalDatabase(db.directory);
+  try {
+    expect(upgraded.load(p.id).data.company.budgetCents).toBe(888800); expect(upgraded.conflicts()[0].project.data.company.goal).toBe('旧冲突保留');
+    expect(upgraded.changes().filter(c => oldIds.includes(c.id))).toHaveLength(oldIds.length);
+    expect(upgraded.changes().filter(c => c.parents !== undefined)).toHaveLength(2);
+    const peer = database(); for (const c of upgraded.changes().filter(c => c.parents !== undefined)) peer.applyRemote(c);
+    expect(peer.conflicts()).toHaveLength(1);
+    const files = readdirSync(join(db.directory, 'backups')).filter(p => p.endsWith('.sqlite'));
+    const backup = new DatabaseSync(join(db.directory, 'backups', files.at(-1)!), { readOnly: true });
+    expect(backup.prepare('PRAGMA user_version').get()?.user_version).toBe(2); expect(backup.prepare('SELECT count(*) AS n FROM changes').get()?.n).toBe(oldIds.length); backup.close();
+  } finally { upgraded.close(); }
+});
+it('does not infer legacy event ancestry from a matching content hash', () => {
+  const db = database(); const p = db.create('旧事件', 'real'); const c = db.changes()[0]; const legacy = { ...c }; delete legacy.parents;
+  expect(() => db.applyRemote(legacy)).toThrow('旧版同步'); expect(db.load(p.id).revision).toBe(p.revision);
+});
+it('waits for precise event parents even when their content hash is already known', () => {
+  const source = database(), target = database(); const p = source.create('乱序', 'demo'); const root = source.changes()[0]; target.applyRemote(root);
+  p.data.company.budgetCents = 600000; source.save(p.id, p.revision, p.data); source.resetDemo(p.id);
+  const all = source.changes(); const reset = all.find(c => c.id !== root.id && c.revision === root.revision)!;
+  expect(target.applyRemote(reset)).toBe('pending');
+  for (const c of all) target.applyRemote(c);
+  expect(target.load(p.id).data.company.budgetCents).toBe(500000); expect(target.conflicts()).toHaveLength(0);
+});
+it('rolls back a failed v2 upgrade without changing business data or schema', () => {
+  const db = database(); const p = db.create('升级故障', 'real');
+  db.db.exec("ALTER TABLE changes DROP COLUMN parent_ids; DROP TABLE project_heads; PRAGMA user_version=2; CREATE TRIGGER fail_checkpoint BEFORE INSERT ON changes BEGIN SELECT RAISE(ABORT, 'checkpoint failure'); END");
+  expect(() => new LocalDatabase(db.directory)).toThrow('checkpoint failure');
+  expect(db.db.prepare('PRAGMA user_version').get()?.user_version).toBe(2);
+  expect(db.load(p.id).data).toEqual(p.data);
+  expect(db.db.prepare('PRAGMA table_info(changes)').all().some(row => row.name === 'parent_ids')).toBe(false);
+  const files = readdirSync(join(db.directory, 'backups')).filter(name => name.endsWith('.sqlite'));
+  const backup = new DatabaseSync(join(db.directory, 'backups', files.at(-1)!), { readOnly: true });
+  expect(backup.prepare('SELECT count(*) AS n FROM projects').get()?.n).toBe(1); backup.close();
 });

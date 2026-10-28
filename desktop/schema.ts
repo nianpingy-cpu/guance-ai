@@ -55,5 +55,5 @@ export function parseData(value: unknown): AppData {
   return data;
 }
 export const projectSchema = z.object({ id, name: str.min(1).max(200), mode: z.enum(['demo', 'real']), revision: id, updatedAt: str, data: dataSchema });
-export const changeSchema = z.object({ id: z.string().uuid(), projectId: id, parentRevision: z.string().max(200), revision: id, project: projectSchema, createdAt: str, resolves: z.array(id).max(1000).default([]) });
+export const changeSchema = z.object({ id: z.string().uuid(), projectId: id, parentRevision: z.string().max(200), revision: id, project: projectSchema, createdAt: str, resolves: z.array(id).max(1000).default([]), parents: z.array(z.string().uuid()).max(1000).optional() });
 export type Change = z.infer<typeof changeSchema>;

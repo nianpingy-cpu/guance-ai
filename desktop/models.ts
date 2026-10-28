@@ -29,6 +29,7 @@ export class ModelService {
   async save(input: unknown): Promise<Provider> {
     const p = providerSchema.parse(input); endpoint(p.baseUrl);
     const configs = this.stored(); const before = configs.find((c) => c.id === p.id);
+    if (before && new URL(before.baseUrl).origin !== new URL(p.baseUrl).origin && !p.apiKey) throw new Error('服务站点已更换，请重新填写该站点的密钥');
     const cipher = p.apiKey ? await this.vault.encrypt(p.apiKey) : before?.cipher;
     if (!cipher) throw new Error('请填写密钥');
     const saved: Stored = { id: p.id ?? randomUUID(), name: p.name, baseUrl: p.baseUrl.replace(/\/$/, ''), protocol: p.protocol, models: [...new Set([...p.models, p.model].filter(Boolean))], model: p.model, hasKey: true, cipher };

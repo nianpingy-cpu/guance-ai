@@ -11,7 +11,7 @@ export const syncConfigSchema = z.object({ url: z.string().min(1).max(2000), use
 const base64 = z.string().regex(/^[A-Za-z0-9+/]*={0,2}$/);
 const envelopeSchema = z.object({ iv: base64.max(24), tag: base64.max(32), data: base64.max(28_000_000) }).strict();
 type Envelope = z.infer<typeof envelopeSchema>;
-const manifestSchema = z.object({ version: z.literal(1), salt: base64.min(24).max(64), encrypted: envelopeSchema }).strict();
+const manifestSchema = z.object({ version: z.literal(2), salt: base64.min(24).max(64), encrypted: envelopeSchema }).strict();
 type Config = { url: string; username: string; passwordCipher: string; phraseCipher: string; automatic: boolean };
 function derive(phrase: string, salt: string): Promise<Buffer> { return new Promise((resolve, reject) => pbkdf2(phrase, Buffer.from(salt, 'base64'), 310000, 32, 'sha256', (error, key) => error ? reject(error) : resolve(key))); }
 export function encrypt(value: unknown, key: Buffer, context: string): Envelope { const iv = randomBytes(12); const cipher = createCipheriv('aes-256-gcm', key, iv); cipher.setAAD(Buffer.from(context)); const body = Buffer.concat([cipher.update(JSON.stringify(value), 'utf8'), cipher.final()]); return { iv: iv.toString('base64'), tag: cipher.getAuthTag().toString('base64'), data: body.toString('base64') }; }
@@ -22,20 +22,36 @@ export class SyncService {
   constructor(private db: LocalDatabase, private vault: Vault) { this.timer = setInterval(() => { if (this.config()?.automatic && !this.busy) void this.run().catch(() => undefined); }, 60000); this.timer.unref(); }
   private config(): Config | null { return this.db.setting<Config | null>('sync.config', null); }
   status() { const c = this.config(); return { configured: Boolean(c), url: c?.url ?? '', username: c?.username ?? '', automatic: c?.automatic ?? false, busy: this.busy, ...this.db.setting<{ lastSuccess: string; error: string }>('sync.status', { lastSuccess: '', error: '' }), conflicts: this.db.conflicts().map((c) => ({ id: c.id, projectId: c.projectId, name: c.project.name, remoteRevision: c.revision, remoteUpdatedAt: c.project.updatedAt, remoteBudgetCents: c.project.data.company.budgetCents, localBudgetCents: this.db.load(c.projectId).data.company.budgetCents })) }; }
-  async configure(value: unknown) { if (this.busy) throw new Error('请等待同步完成再修改配置'); const p = syncConfigSchema.parse(value); endpoint(p.url); const before = this.config(); const passwordCipher = p.password ? await this.vault.encrypt(p.password) : before?.passwordCipher; const phraseCipher = p.passphrase ? await this.vault.encrypt(p.passphrase) : before?.phraseCipher; if (p.passphrase && p.passphrase.length < 12) throw new Error('同步口令至少12字符'); if (!passwordCipher || !phraseCipher) throw new Error('首次配置请填写WebDAV密码和独立同步口令'); this.db.setSetting('sync.config', { url: p.url.replace(/\/$/, ''), username: p.username, passwordCipher, phraseCipher, automatic: p.automatic }); }
+  async configure(value: unknown) {
+    if (this.busy) throw new Error('请等待同步完成再修改配置');
+    const p = syncConfigSchema.parse(value); const url = endpoint(p.url); const before = this.config();
+    const normalized = url.href.replace(/\/$/, '');
+    const changedOrigin = before && new URL(before.url).origin !== url.origin;
+    const changedAccount = before && before.username !== p.username;
+    const changedDirectory = before && new URL(before.url).href.replace(/\/$/, '') !== normalized;
+    if ((changedOrigin || changedAccount) && !p.password) throw new Error('WebDAV站点或账号已改变，请重新填写目标站点密码');
+    if (changedDirectory && !p.passphrase) throw new Error('WebDAV目录已改变，请明确填写目标目录的同步口令；迁移时可填写原口令');
+    if (p.passphrase && p.passphrase.length < 12) throw new Error('同步口令至少12字符');
+    const passwordCipher = p.password ? await this.vault.encrypt(p.password) : before?.passwordCipher;
+    const phraseCipher = p.passphrase ? await this.vault.encrypt(p.passphrase) : before?.phraseCipher;
+    if (!passwordCipher || !phraseCipher) throw new Error('首次配置请填写WebDAV密码和独立同步口令');
+    this.db.setSetting('sync.config', { url: normalized, username: p.username, passwordCipher, phraseCipher, automatic: p.automatic });
+  }
   disconnect() { if (this.busy) throw new Error('同步进行中，请等待完成'); this.db.setSetting('sync.config', null); }
   private async remote() {
     const config = this.config(); if (!config) throw new Error('请先配置WebDAV同步'); const password = await this.vault.decrypt(config.passwordCipher); const phrase = await this.vault.decrypt(config.phraseCipher);
     const root = `${config.url}/guance-v1/`;
     const dav = (method: string, path: string, body?: string, accepted: number[] = []) => checkedFetch(new URL(path, root), { method, headers: { authorization: `Basic ${Buffer.from(`${config.username}:${password}`).toString('base64')}`, ...(method === 'PROPFIND' ? { depth: '1', 'content-type': 'application/xml' } : { 'content-type': 'application/json' }), ...(method === 'PUT' ? { 'if-none-match': '*' } : {}) }, body, signal: AbortSignal.timeout(30000) }, 24_000_000, accepted);
-    await dav('MKCOL', '', undefined, [405]);
     let response = await dav('GET', 'manifest.json', undefined, [404]);
     if (response.status === 404) {
-      const salt = randomBytes(24).toString('base64'); const key = await derive(phrase, salt); const manifest = { version: 1, salt, encrypted: encrypt({ product: 'guance-sync', version: 1 }, key, 'guance-v1:manifest') };
+      await dav('MKCOL', '', undefined, [405]);
+      const salt = randomBytes(24).toString('base64'); const key = await derive(phrase, salt); const manifest = { version: 2, salt, encrypted: encrypt({ product: 'guance-sync', version: 2 }, key, 'guance-v2:manifest') };
       await dav('PUT', 'manifest.json', JSON.stringify(manifest), [412]); response = await dav('GET', 'manifest.json');
     }
-    const manifest = manifestSchema.parse(await response.json()); const key = await derive(phrase, manifest.salt);
-    const proof = decrypt(manifest.encrypted, key, 'guance-v1:manifest'); z.object({ product: z.literal('guance-sync'), version: z.literal(1) }).parse(proof);
+    const raw: unknown = await response.json();
+    if (raw && typeof raw === 'object' && 'version' in raw && raw.version === 1) throw new Error('此目录使用旧版同步协议。请先升级所有设备，再配置同一个新的空WebDAV目录；旧目录保持不变，本机数据及升级前备份保留');
+    const manifest = manifestSchema.parse(raw); const key = await derive(phrase, manifest.salt);
+    const proof = decrypt(manifest.encrypted, key, 'guance-v2:manifest'); z.object({ product: z.literal('guance-sync'), version: z.literal(2) }).parse(proof);
     return { dav, key, root };
   }
   async test() { const { dav } = await this.remote(); await dav('PROPFIND', '', '<?xml version="1.0"?><d:propfind xmlns:d="DAV:"><d:prop><d:resourcetype/></d:prop></d:propfind>'); return 'WebDAV连接成功，读写权限与同步口令已验证'; }
@@ -49,9 +65,9 @@ export class SyncService {
       const list = z.object({ multistatus: z.object({ response: z.array(z.object({ href: z.string() })).optional() }) }).parse(parsed).multistatus.response ?? [];
       const names = new Set(list.flatMap((r) => { const u = new URL(r.href, root); if (u.origin !== new URL(root).origin || !u.pathname.startsWith(new URL(root).pathname)) return []; const name = decodeURIComponent(u.pathname.slice(new URL(root).pathname.length)); return /^[\da-f-]{36}\.op\.json$/i.test(name) ? [name] : []; }));
       if (names.size > 20000) throw new Error('同步记录超过首版容量，请先导出备份并联系维护者归档');
-      for (const c of this.db.changes()) if (!names.has(`${c.id}.op.json`)) await dav('PUT', `${c.id}.op.json`, JSON.stringify(encrypt(c, key, `guance-v1:${c.id}`)), [412]);
+      for (const c of this.db.changes().filter(c => c.parents !== undefined)) if (!names.has(`${c.id}.op.json`)) await dav('PUT', `${c.id}.op.json`, JSON.stringify(encrypt(c, key, `guance-v2:${c.id}`)), [412]);
       const incoming = [];
-      for (const name of names) { const id = name.slice(0, -8); if (this.db.db.prepare('SELECT id FROM applied WHERE id=?').get(id)) continue; const encrypted: unknown = await (await dav('GET', name)).json(); const c = changeSchema.parse(decrypt(encrypted, key, `guance-v1:${id}`)); if (c.id !== id) throw new Error('变更编号与密文文件名不一致'); incoming.push(c); }
+      for (const name of names) { const id = name.slice(0, -8); if (this.db.db.prepare('SELECT id FROM applied WHERE id=?').get(id)) continue; const encrypted: unknown = await (await dav('GET', name)).json(); const c = changeSchema.parse(decrypt(encrypted, key, `guance-v2:${id}`)); if (c.id !== id) throw new Error('变更编号与密文文件名不一致'); if (c.parents === undefined) throw new Error('同步协议2的记录缺少事件父编号，未应用该记录'); incoming.push(c); }
       let pending = incoming; let progress = true;
       while (pending.length && progress) { const remaining = []; progress = false; for (const c of pending) { if (this.db.applyRemote(c) === 'pending') remaining.push(c); else progress = true; } pending = remaining; }
       if (pending.length) throw new Error(`${pending.length}条变更缺少前序版本，已保留本机数据，请重试或核对远端备份`);

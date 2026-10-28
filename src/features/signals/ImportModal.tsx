@@ -184,7 +184,7 @@ export function ImportModal() {
               <Tag tone={parseState.failedCount > 0 ? 'warning' : 'neutral'}>
                 失败 {formatNumber(parseState.failedCount)} 条
               </Tag>
-              <span className="text-[11px] text-muted">校验通过后才会写入当前演示数据。</span>
+              <span className="text-[11px] text-muted">确认后仅将校验通过的行写入当前项目。</span>
             </div>
             {parseState.issues.length > 0 ? (
               <div className="max-h-[170px] overflow-y-auto rounded-[12px] border border-[#f0dfbd] bg-[#fdfaf2] p-3 scrollbar-thin">
@@ -206,7 +206,7 @@ export function ImportModal() {
 
         <div className="rounded-[12px] bg-[#f8fafb] px-3.5 py-2.5">
           <p className="text-[12px] leading-5 text-muted">
-            导入数据默认标记为演示来源，不会伪装为真实平台统计。真实采集、授权与去重策略不在本版本范围内。
+            导入结果按当前项目标记为演示数据或人工导入，并保留文件来源；文件内容仍需人工核实，不代表已获得平台授权。
           </p>
         </div>
       </div>

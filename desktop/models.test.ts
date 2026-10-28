@@ -10,6 +10,17 @@ const dirs: string[] = []; const dbs: LocalDatabase[] = [];
 afterEach(() => { dbs.forEach((d) => d.close()); dbs.length = 0; dirs.splice(0).forEach((p) => rmSync(p, { recursive: true, force: true })); });
 function setup() { const dir = mkdtempSync(join(tmpdir(), 'guance-model-')); dirs.push(dir); const db = new LocalDatabase(dir); dbs.push(db); return db; }
 describe('模型边界', () => {
+  it('更换服务商站点必须重新提供密钥，不能向新站点复用原密钥', async () => {
+    const db = setup(); const service = new ModelService(db, { encrypt: async (s) => 'cipher:' + s, decrypt: async (s) => s.slice(7) });
+    const p = await service.save({ name: '连接', baseUrl: 'https://first.example/v1', protocol: 'chat', apiKey: 'FAKE_OLD_KEY', models: ['m'], model: 'm' });
+    const { hasKey, ...input } = p; expect(hasKey).toBe(true);
+    await expect(service.save({ ...input, baseUrl: 'https://second.example/v1' })).rejects.toThrow(/站点|重新.*密钥/);
+    expect(service.list().providers[0].baseUrl).toBe('https://first.example/v1');
+    await service.save({ ...input, baseUrl: 'https://first.example/v2' });
+    expect(service.list().providers[0].baseUrl).toBe('https://first.example/v2');
+    await service.save({ ...input, baseUrl: 'https://second.example/v1', apiKey: 'FAKE_NEW_KEY' });
+    expect(service.list().providers[0].baseUrl).toBe('https://second.example/v1');
+  });
   it('主题数量由实际关联情报计算，不使用模型编造的提及数', () => { const db = setup(); const p = db.create('demo', 'demo'); const theme = { ...p.data.themes[0], evidenceSignalIds: ['S-01', 'S-01'], mentionCount: 9999 }; const plans = p.data.plans.map((plan) => ({ ...plan, evidenceThemeIds: [theme.id] })); const result = validateAnalysis({ themes: [theme], plans }, p.data, ['S-01']); expect(result.themes[0].mentionCount).toBe(1); expect(result.themes[0].evidenceSignalIds).toEqual(['S-01']); });
   it('三种协议发出实际HTTP请求，解析结果；401不重复提交；取消中止请求', async () => {
     const requests: Array<{ path: string; key: string; body: string }> = [];

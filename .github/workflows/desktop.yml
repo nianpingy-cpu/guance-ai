@@ -2,7 +2,7 @@ name: Desktop Trial
 on:
   workflow_dispatch:
   push:
-    branches: [feat/13-encrypted-sync-release, feat/15-refined-typography, fix/17-restart-lock]
+    branches: [feat/13-encrypted-sync-release, feat/15-refined-typography, fix/17-restart-lock, fix/19-review-blockers]
     paths: ['desktop/**', 'src/**', 'scripts/**', 'public/**', 'build/**', 'package*.json', 'tsconfig*.json', 'vite.config.ts', '.github/workflows/desktop.yml', 'THIRD_PARTY*']
 concurrency:
   group: desktop-${{ github.ref }}
@@ -42,6 +42,8 @@ jobs:
       - run: npm test
       - run: npm run desktop:build
       - run: npm run desktop:test
+      - run: node scripts/desktop-boundary-verify.mjs
+      - run: node scripts/desktop-recovery-verify.mjs
       - run: node scripts/desktop-sync-verify.mjs
       - run: node scripts/desktop-visual.mjs
       - name: Long text layout regression
@@ -53,6 +55,14 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
       - name: Verify packaged app
         run: npm run desktop:test
+        env:
+          GUANCE_EXECUTABLE: ${{ matrix.executable }}
+      - name: Verify packaged permission boundary
+        run: node scripts/desktop-boundary-verify.mjs
+        env:
+          GUANCE_EXECUTABLE: ${{ matrix.executable }}
+      - name: Verify packaged recovery
+        run: node scripts/desktop-recovery-verify.mjs
         env:
           GUANCE_EXECUTABLE: ${{ matrix.executable }}
       - uses: actions/upload-artifact@v4

@@ -25,7 +25,7 @@ function toForm(company: Company): FormState {
     goal: company.goal,
     campaignStart: company.campaignStart,
     campaignEnd: company.campaignEnd,
-    budgetYuan: (company.budgetCents / 100).toFixed(0),
+    budgetYuan: (company.budgetCents / 100).toFixed(2),
   };
 }
 

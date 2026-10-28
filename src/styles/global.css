@@ -704,6 +704,10 @@ p {
   }
 }
 
+.print-only {
+  display: none;
+}
+
 @media print {
   :root {
     --bg-canvas: #fff;
@@ -716,6 +720,30 @@ p {
 
   .print-hide {
     display: none !important;
+  }
+
+  .print-only {
+    display: inline;
+  }
+
+  .review-print-scroll {
+    overflow: visible !important;
+  }
+
+  .review-print-table {
+    min-width: 0 !important;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .review-print-table th,
+  .review-print-table td {
+    padding: 7px 4px;
+    font-size: 11px;
+    line-height: 1.6;
+    letter-spacing: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .page-wrap {

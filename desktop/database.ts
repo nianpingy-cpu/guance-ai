@@ -27,17 +27,34 @@ export class LocalDatabase {
     try {
       this.db.exec('PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;');
       const version = Number(this.db.prepare('PRAGMA user_version').get()?.user_version ?? 0);
-      if (version > 2) throw new Error('数据库版本高于当前应用，请升级应用');
+      if (version > 3) throw new Error('数据库版本高于当前应用，请升级应用');
       if (version === 0) {
         this.db.exec(`BEGIN; CREATE TABLE projects (id TEXT PRIMARY KEY, name TEXT NOT NULL, mode TEXT NOT NULL, revision TEXT NOT NULL, body TEXT NOT NULL, updated_at TEXT NOT NULL);
         CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-        CREATE TABLE changes (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, parent_revision TEXT NOT NULL, revision TEXT NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL, resolves TEXT NOT NULL DEFAULT '[]');
+        CREATE TABLE changes (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, parent_revision TEXT NOT NULL, revision TEXT NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL, resolves TEXT NOT NULL DEFAULT '[]', parent_ids TEXT);
+        CREATE TABLE project_heads (project_id TEXT PRIMARY KEY, change_id TEXT NOT NULL);
         CREATE TABLE applied (id TEXT PRIMARY KEY);
         CREATE TABLE conflicts (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL);
         CREATE TABLE jobs (id TEXT PRIMARY KEY, body TEXT NOT NULL);
-        PRAGMA user_version=2; COMMIT;`);
+        PRAGMA user_version=3; COMMIT;`);
       }
-      if (version === 1) { this.backup(); this.db.exec("BEGIN; ALTER TABLE changes ADD COLUMN resolves TEXT NOT NULL DEFAULT '[]'; INSERT OR IGNORE INTO applied SELECT id FROM changes; PRAGMA user_version=2; COMMIT;"); }
+      if (version === 1 || version === 2) {
+        this.backup(); this.db.exec('BEGIN IMMEDIATE');
+        if (version === 1) this.db.exec("ALTER TABLE changes ADD COLUMN resolves TEXT NOT NULL DEFAULT '[]'; INSERT OR IGNORE INTO applied SELECT id FROM changes;");
+        this.db.exec('ALTER TABLE changes ADD COLUMN parent_ids TEXT; CREATE TABLE project_heads (project_id TEXT PRIMARY KEY, change_id TEXT NOT NULL)');
+        // Legacy hashes cannot identify causal events (including ABA histories).
+        // Keep their audit log, and start explicit checkpoints for current data
+        // and every unresolved branch instead of guessing ancestry from hashes.
+        for (const p of this.list()) this.record(this.load(p.id), '', [], []);
+        const conflicts = this.conflicts();
+        this.db.exec('DELETE FROM conflicts');
+        for (const conflict of conflicts) {
+          const id = this.record(conflict.project, '', [], [], false);
+          const checkpoint = { ...conflict, id, parentRevision: '', resolves: [], parents: [] };
+          this.db.prepare('INSERT INTO conflicts VALUES(?,?,?,?)').run(id, conflict.projectId, JSON.stringify(checkpoint), conflict.createdAt);
+        }
+        this.db.exec('PRAGMA user_version=3; COMMIT');
+      }
     } catch (error) { this.db.close(); throw error; }
   }
   list(): ProjectSummary[] { return this.db.prepare('SELECT id,name,mode,revision,updated_at FROM projects ORDER BY updated_at DESC, id').all().map((row) => ({ id: String(row.id), name: String(row.name), mode: row.mode === 'real' ? 'real' : 'demo', revision: String(row.revision), updatedAt: String(row.updated_at) })); }
@@ -70,8 +87,10 @@ export class LocalDatabase {
       if (before.revision !== expected) {
         if (data.mode === before.mode && revision(data) !== before.revision && this.db.prepare('SELECT id FROM changes WHERE project_id=? AND revision=?').get(id, expected)) {
           const proposed = { ...before, data, revision: revision(data), updatedAt: new Date().toISOString() };
-          const changeId = this.record(proposed, expected);
-          const change: Change = { id: changeId, projectId: id, parentRevision: expected, revision: proposed.revision, project: { ...proposed, data: { ...data, schemaVersion: 4 } }, createdAt: proposed.updatedAt, resolves: [] };
+          const bases = this.changes().filter(c => c.projectId === id && c.revision === expected && c.parents !== undefined);
+          const parents = bases.length === 1 ? [bases[0].id] : [];
+          const changeId = this.record(proposed, expected, [], parents, false);
+          const change: Change = { id: changeId, projectId: id, parentRevision: expected, revision: proposed.revision, project: { ...proposed, data: { ...data, schemaVersion: 4 } }, createdAt: proposed.updatedAt, resolves: [], parents };
           this.db.prepare('INSERT INTO conflicts VALUES(?,?,?,?)').run(changeId, id, JSON.stringify(change), change.createdAt);
           this.db.exec('COMMIT'); committedConflict = true;
         }
@@ -97,35 +116,45 @@ export class LocalDatabase {
       this.db.exec('COMMIT'); return p;
     } catch (error) { if (!committedConflict) this.db.exec('ROLLBACK'); throw error; }
   }
-  record(project: Project, parent: string, resolves: string[] = []) {
+  private head(projectId: string): string | undefined { const row = this.db.prepare('SELECT change_id FROM project_heads WHERE project_id=?').get(projectId); return row ? String(row.change_id) : undefined; }
+  record(project: Project, parent: string, resolves: string[] = [], parents?: string[], makeHead = true) {
     const id = randomUUID();
-    this.db.prepare('INSERT INTO changes VALUES(?,?,?,?,?,?,?)').run(id, project.id, parent, project.revision, JSON.stringify(project), project.updatedAt, JSON.stringify(resolves));
+    const head = this.head(project.id);
+    this.db.prepare('INSERT INTO changes VALUES(?,?,?,?,?,?,?,?)').run(id, project.id, parent, project.revision, JSON.stringify(project), project.updatedAt, JSON.stringify(resolves), JSON.stringify(parents ?? (head ? [head] : [])));
     this.db.prepare('INSERT OR IGNORE INTO applied VALUES(?)').run(id);
+    if (makeHead) this.db.prepare('INSERT INTO project_heads VALUES(?,?) ON CONFLICT(project_id) DO UPDATE SET change_id=excluded.change_id').run(project.id, id);
     return id;
   }
-  changes(): Change[] { return this.db.prepare('SELECT * FROM changes ORDER BY created_at,id').all().map((r) => changeSchema.parse({ id: r.id, projectId: r.project_id, parentRevision: r.parent_revision, revision: r.revision, project: JSON.parse(String(r.body)), createdAt: r.created_at, resolves: JSON.parse(String(r.resolves)) })); }
+  changes(): Change[] { return this.db.prepare('SELECT * FROM changes ORDER BY created_at,id').all().map((r) => changeSchema.parse({ id: r.id, projectId: r.project_id, parentRevision: r.parent_revision, revision: r.revision, project: JSON.parse(String(r.body)), createdAt: r.created_at, resolves: JSON.parse(String(r.resolves)), parents: r.parent_ids === null ? undefined : JSON.parse(String(r.parent_ids)) })); }
   conflicts(): Change[] { return this.db.prepare('SELECT body FROM conflicts ORDER BY created_at,id').all().map((r) => changeSchema.parse(JSON.parse(String(r.body)))); }
-  private ancestor(projectId: string, older: string, newer: string): boolean {
-    const history = this.changes().filter((c) => c.projectId === projectId); const todo = [newer]; const seen = new Set<string>();
-    while (todo.length) { const rev = todo.pop()!; if (rev === older) return true; if (seen.has(rev)) continue; seen.add(rev); for (const c of history.filter((c) => c.revision === rev)) todo.push(c.parentRevision, ...c.resolves); }
+  private ancestor(history: Change[], older: string, newer: string): boolean {
+    const byId = new Map(history.map(c => [c.id, c])); const todo = [newer]; const seen = new Set<string>();
+    while (todo.length) { const id = todo.pop()!; if (id === older) return true; if (seen.has(id)) continue; seen.add(id); todo.push(...(byId.get(id)?.parents ?? [])); }
     return false;
   }
   applyRemote(value: unknown): 'applied' | 'pending' {
     const c = changeSchema.parse(value); parseData(c.project.data);
+    if (c.parents === undefined) throw new Error('旧版同步记录缺少事件父编号，请升级所有设备并迁移到新的空同步目录');
+    if (c.parents.includes(c.id) || new Set(c.parents).size !== c.parents.length) throw new Error('同步事件父编号无效');
     if (c.projectId !== c.project.id || c.revision !== c.project.revision || c.revision !== revision(c.project.data) || c.project.mode !== (c.project.data.mode ?? 'demo')) throw new Error('同步记录摘要或项目标识无效');
     if (this.db.prepare('SELECT id FROM applied WHERE id=?').get(c.id)) return 'applied';
     const row = this.db.prepare('SELECT * FROM projects WHERE id=?').get(c.projectId); const current = row ? parseProject(row) : undefined;
     if (current && current.mode !== c.project.mode) throw new Error('同步不能改变项目数据模式');
-    if (c.parentRevision && !this.changes().some((h) => h.projectId === c.projectId && h.revision === c.parentRevision) && current?.revision !== c.parentRevision && !c.resolves.includes(current?.revision ?? '')) return 'pending';
+    const history = this.changes();
+    if (c.parents.some(parent => !history.some(h => h.id === parent))) return 'pending';
+    if (c.parents.some(parent => !history.some(h => h.id === parent && h.projectId === c.projectId))) throw new Error('同步事件引用了其他项目');
+    const head = this.head(c.projectId); const graph = [...history.filter(h => h.projectId === c.projectId), c];
     this.db.exec('BEGIN IMMEDIATE');
     try {
-      const covered = current && this.ancestor(c.projectId, c.revision, current.revision);
-      const replace = !current || current.revision === c.parentRevision || c.resolves.includes(current.revision);
-      if (replace && !covered) this.db.prepare('INSERT INTO projects VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,mode=excluded.mode,revision=excluded.revision,body=excluded.body,updated_at=excluded.updated_at').run(c.project.id, c.project.name, c.project.mode, c.revision, JSON.stringify(c.project.data), c.project.updatedAt);
-      else if (!covered && current?.revision !== c.revision) this.db.prepare('INSERT OR IGNORE INTO conflicts VALUES(?,?,?,?)').run(c.id, c.projectId, JSON.stringify(c), c.createdAt);
-      this.db.prepare('INSERT OR IGNORE INTO changes VALUES(?,?,?,?,?,?,?)').run(c.id, c.projectId, c.parentRevision, c.revision, JSON.stringify(c.project), c.createdAt, JSON.stringify(c.resolves));
+      const covered = head !== undefined && this.ancestor(graph, c.id, head);
+      const replace = !current || (head !== undefined && this.ancestor(graph, head, c.id));
+      if (replace && !covered) {
+        this.db.prepare('INSERT INTO projects VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,mode=excluded.mode,revision=excluded.revision,body=excluded.body,updated_at=excluded.updated_at').run(c.project.id, c.project.name, c.project.mode, c.revision, JSON.stringify(c.project.data), c.project.updatedAt);
+        this.db.prepare('INSERT INTO project_heads VALUES(?,?) ON CONFLICT(project_id) DO UPDATE SET change_id=excluded.change_id').run(c.projectId, c.id);
+      } else if (!covered) this.db.prepare('INSERT OR IGNORE INTO conflicts VALUES(?,?,?,?)').run(c.id, c.projectId, JSON.stringify(c), c.createdAt);
+      this.db.prepare('INSERT OR IGNORE INTO changes VALUES(?,?,?,?,?,?,?,?)').run(c.id, c.projectId, c.parentRevision, c.revision, JSON.stringify(c.project), c.createdAt, JSON.stringify(c.resolves), JSON.stringify(c.parents));
       this.db.prepare('INSERT INTO applied VALUES(?)').run(c.id);
-      for (const conflict of this.conflicts().filter((x) => x.projectId === c.projectId && c.resolves.includes(x.revision))) this.db.prepare('DELETE FROM conflicts WHERE id=?').run(conflict.id);
+      for (const conflict of this.conflicts().filter(x => x.projectId === c.projectId && x.id !== c.id && this.ancestor(graph, x.id, c.id))) this.db.prepare('DELETE FROM conflicts WHERE id=?').run(conflict.id);
       this.db.exec('COMMIT'); return 'applied';
     } catch (error) { this.db.exec('ROLLBACK'); throw error; }
   }
@@ -136,9 +165,9 @@ export class LocalDatabase {
     const resolved = this.conflicts().filter((c) => c.projectId === current.id);
     const versions = new Map([current, ...resolved.map((c) => c.project)].map((p) => [p.revision, p]));
     for (const losing of versions.values()) if (losing.revision !== chosen.revision) this.insert(`${losing.name.slice(0, 160)} · 冲突保留 ${losing.revision.slice(0, 8)}`, losing.data);
-    const resolves = [...versions.keys()];
+    const resolves = [...versions.keys()]; const head = this.head(current.id); const parents = [...new Set([...(head ? [head] : []), ...resolved.map(c => c.id)])];
     this.db.exec('BEGIN IMMEDIATE');
-    try { const next = { ...chosen, id: current.id, updatedAt: new Date().toISOString() }; this.db.prepare('UPDATE projects SET name=?,mode=?,revision=?,body=?,updated_at=? WHERE id=?').run(next.name, next.mode, next.revision, JSON.stringify(next.data), next.updatedAt, next.id); this.record(next, current.revision, resolves); this.db.prepare('DELETE FROM conflicts WHERE project_id=?').run(current.id); this.db.exec('COMMIT'); }
+    try { const next = { ...chosen, id: current.id, updatedAt: new Date().toISOString() }; this.db.prepare('UPDATE projects SET name=?,mode=?,revision=?,body=?,updated_at=? WHERE id=?').run(next.name, next.mode, next.revision, JSON.stringify(next.data), next.updatedAt, next.id); this.record(next, current.revision, resolves, parents); this.db.prepare('DELETE FROM conflicts WHERE project_id=?').run(current.id); this.db.exec('COMMIT'); }
     catch (error) { this.db.exec('ROLLBACK'); throw error; }
   }
   import(name: string, snapshot: unknown): Project {

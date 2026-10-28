@@ -10,6 +10,10 @@ import type {
 
 type RawRow = Record<string, unknown>;
 
+function isRawRow(value: unknown): value is RawRow {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
 const CATEGORY_MAP: Record<string, SignalCategory> = {
   消费者: 'consumer',
   消费者反馈: 'consumer',
@@ -120,11 +124,11 @@ function rowsFromCsv(text: string): RawRow[] {
   });
 }
 
-function rowsFromJson(text: string): RawRow[] {
+function rowsFromJson(text: string): unknown[] {
   const parsed: unknown = JSON.parse(text);
-  if (Array.isArray(parsed)) return parsed as RawRow[];
+  if (Array.isArray(parsed)) return parsed;
   if (parsed && typeof parsed === 'object' && Array.isArray((parsed as { signals?: unknown }).signals)) {
-    return (parsed as { signals: RawRow[] }).signals;
+    return (parsed as { signals: unknown[] }).signals;
   }
   throw new Error('JSON 需为数组，或包含 signals 数组的对象');
 }
@@ -154,7 +158,7 @@ export function parseSignalImport({
   const sources = [...existingSources];
   const seen = new Set(existingSignals.map((signal) => `${signal.title}__${signal.platform}`));
 
-  let rows: RawRow[];
+  let rows: unknown[];
   try {
     rows = filename.toLowerCase().endsWith('.json') ? rowsFromJson(content) : rowsFromCsv(content);
     if (rows.length === 0) throw new Error('没有可导入的数据行');
@@ -171,6 +175,10 @@ export function parseSignalImport({
 
   rows.forEach((row, index) => {
     const rowNumber = index + 1;
+    if (!isRawRow(row)) {
+      issues.push({ row: rowNumber, message: '每行情报须为 JSON 对象，不能是空值、数组或其他类型' });
+      return;
+    }
     const title = pick(row, 'title');
     const platform = pick(row, 'platform');
     const category = CATEGORY_MAP[pick(row, 'category')];
