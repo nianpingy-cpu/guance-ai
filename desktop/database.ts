@@ -24,19 +24,21 @@ export class LocalDatabase {
   constructor(readonly directory: string) {
     mkdirSync(directory, { recursive: true });
     this.db = new DatabaseSync(join(directory, 'guance.sqlite'));
-    this.db.exec('PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;');
-    const version = Number(this.db.prepare('PRAGMA user_version').get()?.user_version ?? 0);
-    if (version > 2) throw new Error('数据库版本高于当前应用，请升级应用');
-    if (version === 0) {
-      this.db.exec(`BEGIN; CREATE TABLE projects (id TEXT PRIMARY KEY, name TEXT NOT NULL, mode TEXT NOT NULL, revision TEXT NOT NULL, body TEXT NOT NULL, updated_at TEXT NOT NULL);
+    try {
+      this.db.exec('PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;');
+      const version = Number(this.db.prepare('PRAGMA user_version').get()?.user_version ?? 0);
+      if (version > 2) throw new Error('数据库版本高于当前应用，请升级应用');
+      if (version === 0) {
+        this.db.exec(`BEGIN; CREATE TABLE projects (id TEXT PRIMARY KEY, name TEXT NOT NULL, mode TEXT NOT NULL, revision TEXT NOT NULL, body TEXT NOT NULL, updated_at TEXT NOT NULL);
         CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
         CREATE TABLE changes (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, parent_revision TEXT NOT NULL, revision TEXT NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL, resolves TEXT NOT NULL DEFAULT '[]');
         CREATE TABLE applied (id TEXT PRIMARY KEY);
         CREATE TABLE conflicts (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL);
         CREATE TABLE jobs (id TEXT PRIMARY KEY, body TEXT NOT NULL);
         PRAGMA user_version=2; COMMIT;`);
-    }
-    if (version === 1) { this.backup(); this.db.exec("BEGIN; ALTER TABLE changes ADD COLUMN resolves TEXT NOT NULL DEFAULT '[]'; INSERT OR IGNORE INTO applied SELECT id FROM changes; PRAGMA user_version=2; COMMIT;"); }
+      }
+      if (version === 1) { this.backup(); this.db.exec("BEGIN; ALTER TABLE changes ADD COLUMN resolves TEXT NOT NULL DEFAULT '[]'; INSERT OR IGNORE INTO applied SELECT id FROM changes; PRAGMA user_version=2; COMMIT;"); }
+    } catch (error) { this.db.close(); throw error; }
   }
   list(): ProjectSummary[] { return this.db.prepare('SELECT id,name,mode,revision,updated_at FROM projects ORDER BY updated_at DESC, id').all().map((row) => ({ id: String(row.id), name: String(row.name), mode: row.mode === 'real' ? 'real' : 'demo', revision: String(row.revision), updatedAt: String(row.updated_at) })); }
   load(id: string): Project { return parseProject(this.db.prepare('SELECT * FROM projects WHERE id=?').get(id)); }

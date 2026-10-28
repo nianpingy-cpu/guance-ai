@@ -4,11 +4,32 @@ import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { Worker } from 'node:worker_threads';
+import { once } from 'node:events';
 import { LocalDatabase } from './database';
 
 const opened: LocalDatabase[] = [];
 afterEach(() => { for (const d of opened.splice(0)) { d.close(); rmSync(d.directory, { recursive: true, force: true }); } });
 function database() { const d = new LocalDatabase(mkdtempSync(join(tmpdir(), 'guance-test-'))); opened.push(d); return d; }
+it('waits for a previous SQLite writer before configuring WAL on immediate restart', async () => {
+  const directory = mkdtempSync(join(tmpdir(), 'guance-restart-'));
+  const writer = new Worker(`
+    const { workerData, parentPort } = require('node:worker_threads');
+    const { DatabaseSync } = require('node:sqlite');
+    const db = new DatabaseSync(workerData);
+    db.exec('CREATE TABLE held(value INTEGER); BEGIN EXCLUSIVE; INSERT INTO held VALUES(1)');
+    parentPort.postMessage('locked');
+    setTimeout(() => { db.exec('COMMIT'); db.close(); }, 250);
+  `, { eval: true, workerData: join(directory, 'guance.sqlite') });
+  const exited = once(writer, 'exit');
+  let reopened: LocalDatabase | undefined;
+  try {
+    await once(writer, 'message');
+    reopened = new LocalDatabase(directory);
+    expect(reopened.db.prepare('SELECT value FROM held').get()?.value).toBe(1);
+    expect(reopened.db.prepare('PRAGMA journal_mode').get()?.journal_mode).toBe('wal');
+  } finally { await exited; if (reopened) { reopened.close(); rmSync(directory, { recursive: true, force: true }); } }
+});
 it('persists projects across connections and separates real data from the demo', () => {
   const db = database(); const demo = db.create('样例', 'demo'); const real = db.create('真实项目');
   expect(real.data.signals).toHaveLength(0); expect(real.data.approvals).toHaveLength(0);

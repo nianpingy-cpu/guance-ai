@@ -39,6 +39,7 @@ try {
     results.push(`${process.platform}系统加密实际保存测试凭据；本机HTTP协议端到端生成与引用审计（非真实模型）`);
   } finally { fixture.closeAllConnections(); await new Promise((r) => fixture.close(r)); }
   await assert.rejects(page.evaluate(() => window.guance.invoke('arbitrary.execute', { cmd: 'noop' })), /不支持/);
+  await assert.rejects(page.evaluate(() => window.guance.invoke('initialize', undefined)), /不支持/);
   results.push('IPC白名单拒绝未声明命令');
   await page.getByRole('button', { name: '设置', exact: true }).click();
   await page.getByLabel('新项目名称').fill('桌面持久化验收');
@@ -73,11 +74,13 @@ try {
   let exported; for (let i = 0; i < 100; i++) { try { exported = JSON.parse(await readFile(exportedPath, 'utf8')); break; } catch { await delay(100); } }
   assert.equal(exported.data.signals.length, 1); assert.equal(exported.data.company.budgetCents, 654321); assert.ok(!JSON.stringify(exported).includes('LOCAL_FIXTURE_ONLY'));
   results.push('桌面CSV人工导入与实际JSON下载；自定义协议/CSP下导出正常，业务导出无凭据');
-  await app.close(); app = undefined;
-  [app, page] = await launch();
-  const restored = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), real.id);
-  assert.equal(restored.data.company.budgetCents, 654321);
-  results.push('真实SQLite关闭重开保留金额与项目；四页无横向溢出');
+  for (let cycle = 0; cycle < 3; cycle++) {
+    await app.close(); app = undefined;
+    [app, page] = await launch();
+    const restored = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), real.id);
+    assert.equal(restored.data.company.budgetCents, 654321);
+  }
+  results.push('真实SQLite连续三次关闭立即重开保留金额与项目；四页无横向溢出');
   const exited = new Promise((resolve) => app.process().once('exit', resolve));
   await app.evaluate(({ app }) => app.exit(12)).catch(() => undefined); await exited; app = undefined;
   [app, page] = await launch();

@@ -13,6 +13,8 @@ if (!primary) app.quit();
 const development = !app.isPackaged && process.env.GUANCE_DEV_URL;
 let mainWindow: BrowserWindow;
 let worker: Electron.UtilityProcess;
+let workerExited = false;
+let workerStopping = false;
 let nextId = 0;
 const pending = new Map<number, { resolve: (value: unknown) => void; reject: (error: Error) => void }>();
 function request(command: string, input?: unknown): Promise<unknown> {
@@ -47,13 +49,14 @@ if (primary) app.whenReady().then(async () => {
     if (message.error) listener.reject(new Error(message.error)); else listener.resolve(message.result);
   });
   worker.on('error', (error) => { for (const p of pending.values()) p.reject(new Error(String(error))); pending.clear(); });
-  worker.on('exit', () => { for (const p of pending.values()) p.reject(new Error('本地服务已停止，请重新启动应用')); pending.clear(); });
+  worker.on('exit', () => { workerExited = true; for (const p of pending.values()) p.reject(new Error('本地服务已停止，请重新启动应用')); pending.clear(); });
   await request('initialize');
   ipcMain.handle('guance:request', async (event, message: { command: string; input: unknown }) => {
     const url = event.senderFrame?.url ?? '';
     const expected = development ? new URL(development).origin : 'guance://app';
     if (event.sender.id !== mainWindow.webContents.id || !(url === expected || url.startsWith(expected + '/'))) throw new Error('无权访问本地服务');
     if (!message || typeof message.command !== 'string' || JSON.stringify(message).length > 20_000_000) throw new Error('请求格式无效或过大');
+    if (message.command === 'initialize') throw new Error('不支持的操作');
     return request(message.command, message.input);
   });
   mainWindow = new BrowserWindow({ width: 1440, height: 960, minWidth: 1024, minHeight: 700, title: '观策AI', icon: join(client, 'icon.png'), backgroundColor: '#f5f7fa', webPreferences: { preload: join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true, webSecurity: true } });
@@ -66,4 +69,13 @@ if (primary) app.whenReady().then(async () => {
   await mainWindow.loadURL(development || 'guance://app/dashboard');
   if (!await safeStorage.isAsyncEncryptionAvailable()) mainWindow.webContents.send('guance:storage-unavailable');
 }).catch((error) => { console.error('Desktop startup failed:', error instanceof Error ? error.message : 'unknown'); app.exit(1); });
-app.on('window-all-closed', () => { worker?.kill(); app.quit(); });
+app.on('window-all-closed', () => app.quit());
+app.on('will-quit', (event) => {
+  if (!worker || workerExited) return;
+  event.preventDefault();
+  if (workerStopping) return;
+  workerStopping = true;
+  // Keep the profile's single-instance lock until SQLite's owning process exits.
+  worker.once('exit', () => app.quit());
+  if (!worker.kill()) app.quit();
+});
