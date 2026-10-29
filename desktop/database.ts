@@ -94,7 +94,7 @@ export class LocalDatabase {
           this.db.prepare('INSERT INTO conflicts VALUES(?,?,?,?)').run(changeId, id, JSON.stringify(change), change.createdAt);
           this.db.exec('COMMIT'); committedConflict = true;
         }
-        throw new Error('CONFLICT:项目已被其他操作更新；不同版本已保留，请到设置→数据同步核对冲突');
+        throw new Error('CONFLICT:项目已被其他操作更新；不同版本已保留，请到设置→跨设备同步（WebDAV）核对冲突');
       }
       if (data.mode !== before.data.mode) throw new Error('不能变更项目数据模式');
       for (const approval of before.data.approvals) {

@@ -2,7 +2,9 @@ import { create } from 'zustand';
 
 interface UiState {
   settingsOpen: boolean;
+  settingsTab: string;
   setSettingsOpen: (open: boolean) => void;
+  openSettings: (tab?: string) => void;
   companyDrawerOpen: boolean;
   importModalOpen: boolean;
   mobileNavOpen: boolean;
@@ -16,7 +18,9 @@ interface UiState {
 
 export const useUiStore = create<UiState>((set) => ({
   settingsOpen: false,
+  settingsTab: '项目与备份',
   setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
+  openSettings: (settingsTab = '项目与备份') => set({ settingsOpen: true, settingsTab }),
   companyDrawerOpen: false,
   importModalOpen: false,
   mobileNavOpen: false,

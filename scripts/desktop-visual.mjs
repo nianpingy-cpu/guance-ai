@@ -41,7 +41,7 @@ try {
       await app.evaluate(({ BrowserWindow }, zoom) => BrowserWindow.getAllWindows()[0].webContents.setZoomFactor(zoom), z);
       for (const route of ['dashboard', 'signals', 'strategy', 'review']) { await page.goto(`guance://app/${route}`); await page.getByRole('heading', { level: 1 }).waitFor(); await page.evaluate(() => document.querySelectorAll('details').forEach((d) => { d.open = true; })); await check(`native-${w}-${z}-${route}`); }
       if (!stress) { await page.getByRole('button', { name: '设置', exact: true }).click();
-        for (const [tab, label] of [['项目与备份', 'projects'], ['模型连接', 'models'], ['来源连接', 'connections'], ['数据同步', 'sync']]) { await page.getByRole('button', { name: tab, exact: true }).click(); await check(`native-${w}-${z}-settings-${label}`); }
+        for (const [tab, label] of [['项目与备份', 'projects'], ['模型连接', 'models'], ['来源连接（可选）', 'connections'], ['跨设备同步（WebDAV）', 'sync']]) { await page.getByRole('button', { name: tab, exact: true }).click(); await check(`native-${w}-${z}-settings-${label}`); }
         await page.getByRole('button', { name: '关闭', exact: true }).click(); }
     }
   }

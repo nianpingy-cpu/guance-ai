@@ -26,7 +26,8 @@ it('blocks a legacy remote before any write and advertises v2 to stop legacy cli
     const original = JSON.stringify(manifest);
     await expect(sync.run()).rejects.toThrow('旧版同步协议'); expect(requests).toEqual(['GET']); expect(JSON.stringify(manifest)).toBe(original);
     requests.length = 0; manifest = undefined;
-    await sync.test(); expect(manifest).toMatchObject({ version: 2 });
+    db.setSetting('sync.status', { lastSuccess: '', error: '旧错误' });
+    await sync.test(); expect(manifest).toMatchObject({ version: 2 }); expect(db.setting<{ error: string }>('sync.status', { error: '' }).error).toBe('');
     // Exact version gate used by v0.6.1's original manifestSchema, before
     // decryption, directory listing, or operation uploads.
     expect(z.object({ version: z.literal(1), salt: z.string(), encrypted: z.unknown() }).strict().safeParse(manifest).success).toBe(false);

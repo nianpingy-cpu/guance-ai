@@ -54,7 +54,7 @@ export class SyncService {
     const proof = decrypt(manifest.encrypted, key, 'guance-v2:manifest'); z.object({ product: z.literal('guance-sync'), version: z.literal(2) }).parse(proof);
     return { dav, key, root };
   }
-  async test() { const { dav } = await this.remote(); await dav('PROPFIND', '', '<?xml version="1.0"?><d:propfind xmlns:d="DAV:"><d:prop><d:resourcetype/></d:prop></d:propfind>'); return 'WebDAV连接成功，读写权限与同步口令已验证'; }
+  async test() { const { dav } = await this.remote(); await dav('PROPFIND', '', '<?xml version="1.0"?><d:propfind xmlns:d="DAV:"><d:prop><d:resourcetype/></d:prop></d:propfind>'); const previous = this.db.setting<{ lastSuccess: string; error: string }>('sync.status', { lastSuccess: '', error: '' }); this.db.setSetting('sync.status', { ...previous, error: '' }); return 'WebDAV连接成功，读写权限与同步口令已验证'; }
   async run() {
     if (this.busy) throw new Error('同步正在进行'); this.busy = true;
     try {

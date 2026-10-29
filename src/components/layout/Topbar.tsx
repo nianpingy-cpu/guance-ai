@@ -7,7 +7,7 @@ export function Topbar() {
   const company = useAppStore((state) => state.company);
   const openCompany = useUiStore((state) => state.openCompanyDrawer);
   const toggleNav = useUiStore((state) => state.toggleMobileNav);
-  const setSettings = useUiStore((state) => state.setSettingsOpen);
+  const openSettings = useUiStore((state) => state.openSettings);
   const desktop = useDesktopState();
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-white print-hide">
@@ -29,7 +29,7 @@ export function Topbar() {
         >
           {company.brand}
         </button>
-        {window.guance && <button className="button shrink-0" onClick={() => setSettings(true)}>设置</button>}
+        {window.guance && <button className="button shrink-0" onClick={() => openSettings()}>设置</button>}
       </div>
     </header>
   );

@@ -39,7 +39,7 @@ export function AnalysisPanel() {
   };
   return <details className="print-hide mx-4 my-5 rounded-xl border border-line bg-white p-5 sm:mx-8"><summary className="cursor-pointer text-sm font-semibold">模型分析 · 选择情报生成主题与 A/B 方案</summary><div className="mt-4 space-y-4">
     <p className="text-xs leading-6 text-muted">只发送所选情报与当前企业资料。生成成功将更新当前主题与两套方案，审批历史保留；结果仍需人工核实。任务运行中修改依据会阻止覆盖。</p>
-    <Button size="sm" onClick={() => useUiStore.getState().setSettingsOpen(true)}>配置模型连接</Button>
+    <Button size="sm" onClick={() => useUiStore.getState().openSettings('模型连接')}>配置模型连接</Button>
     <input aria-label="搜索待分析情报" className="input" placeholder="按编号或标题搜索；一次显示前100条" value={query} onChange={(e) => setQuery(e.target.value)} />
     <div className="max-h-56 space-y-2 overflow-auto border-y border-line py-3">{signals.filter((s) => `${s.id} ${s.title}`.includes(query)).slice(0, 100).map((s) => <label key={s.id} className="flex gap-2 text-xs leading-6"><input type="checkbox" checked={selected.includes(s.id)} onChange={(e) => setSelected(e.target.checked ? [...selected, s.id].slice(0, 100) : selected.filter((id) => id !== s.id))} /><span>{s.id} · {s.title}</span></label>)}{!signals.length && <p className="text-xs text-muted">请先在市场情报导入或采集真实资料。</p>}</div>
     <Button variant="primary" disabled={busy || Boolean(active) || !selected.length} onClick={() => void analyze()}>使用 {selected.length} 条情报生成（可能计费）</Button>
