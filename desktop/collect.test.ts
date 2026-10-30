@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { setTimeout as delay } from 'node:timers/promises';
 import { LocalDatabase } from './database';
 import { Jobs } from './jobs';
-import { CollectionService, privateIP } from './collect';
+import { CollectionService, parseWechatArticle, privateIP, validateManualURL, wechatArticleURL } from './collect';
 it('平台应用编号变更时必须明确填写新密钥，失败保留原配置', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'guance-platform-config-')); const db = new LocalDatabase(dir);
   const service = new CollectionService(db, new Jobs(db), { encrypt: async (s) => 'cipher:' + s, decrypt: async (s) => s.slice(7) });
@@ -144,4 +144,52 @@ it('Atom相对原始链接按feed、entry和link的xml:base依次解析', async 
   const { job, data } = await collectAtomFixture(raw);
   expect(job?.status).toBe('completed'); expect(data.signals).toHaveLength(1);
   expect(data.sources[0].url).toBe('https://example.com/articles/2026/tea.html');
+});
+
+
+it('公众号文章链接只接受公开文章页，手动粘贴可保留社交平台分享链接', () => {
+  expect(wechatArticleURL('https://mp.weixin.qq.com/s/AbCdEf?from=timeline').hostname).toBe('mp.weixin.qq.com');
+  expect(() => wechatArticleURL('https://mp.weixin.qq.com/cgi-bin/home')).toThrow(/具体文章链接/);
+  expect(() => wechatArticleURL('https://example.com/s/article')).toThrow(/mp\.weixin\.qq\.com/);
+  expect(() => wechatArticleURL('http://mp.weixin.qq.com/s/article')).toThrow(/HTTPS/);
+  expect(validateManualURL('https://xhslink.com/a/abc')?.hostname).toBe('xhslink.com');
+  expect(validateManualURL('')).toBeUndefined();
+});
+
+it('公众号文章正文解析保留标题、作者、发布时间并清洗脚本', () => {
+  const html = '<html><head><title>备用标题</title></head><body><h1 id="activity-name"> 秋日新品观察 </h1><span id="js_name">品牌研究所</span><div id="js_content"><p>第一段内容</p><script>bad()</script><style>.x{}</style><p>第二段内容</p></div><script>var ct = "1761696000";</script></body></html>';
+  const parsed = parseWechatArticle(html);
+  expect(parsed.title).toBe('秋日新品观察'); expect(parsed.author).toBe('品牌研究所');
+  expect(parsed.body).toBe('第一段内容 第二段内容'); expect(parsed.published).toBe('2025-10-29T00:00:00.000Z');
+  expect(() => parseWechatArticle('<html><body>环境异常，请完成验证</body></html>')).toThrow(/安全验证|复制全文/);
+});
+
+it('粘贴抖音/小红书文案保存为待核实情报，链接保留且重复内容不重复入库', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'guance-paste-')); const db = new LocalDatabase(dir); const jobs = new Jobs(db);
+  const service = new CollectionService(db, jobs, { encrypt: async (s) => s, decrypt: async (s) => s }, true);
+  try {
+    const p = db.create('粘贴业务', 'real');
+    const input = { projectId: p.id, kind: 'paste' as const, url: 'https://xhslink.com/a/demo', platform: 'xiaohongshu' as const, content: '秋季护肤新品反馈\n用户提到质地清爽，希望增加小规格。', publishedAt: '2026-10-30' };
+    const job = service.start(input);
+    for (let i = 0; i < 50 && jobs.list(p.id).find((x) => x.id === job.id)?.status === 'running'; i++) await delay(10);
+    const finished = jobs.list(p.id).find((x) => x.id === job.id); expect(finished?.status).toBe('completed'); expect(finished?.result).toContain('新增1条');
+    const saved = db.load(p.id); expect(saved.data.signals).toHaveLength(1); expect(saved.data.sources[0]).toMatchObject({ platform: '小红书', origin: 'manual', url: 'https://xhslink.com/a/demo', simulated: false });
+    expect(saved.data.sources[0].publishedAt).toBe('2026-10-30T00:00:00.000Z');
+    expect(saved.data.signals[0].title).toBe('秋季护肤新品反馈'); expect(saved.data.signals[0].status).toBe('pending');
+    const repeated = service.start(input);
+    for (let i = 0; i < 50 && jobs.list(p.id).find((x) => x.id === repeated.id)?.status === 'running'; i++) await delay(10);
+    expect(jobs.list(p.id).find((x) => x.id === repeated.id)?.result).toContain('重复1条'); expect(db.load(p.id).data.signals).toHaveLength(1);
+  } finally { db.close(); rmSync(dir, { recursive: true, force: true }); }
+});
+
+it('公众号批量任务对非文章链接明确失败，不写入情报', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'guance-wechat-invalid-')); const db = new LocalDatabase(dir); const jobs = new Jobs(db);
+  const service = new CollectionService(db, jobs, { encrypt: async (s) => s, decrypt: async (s) => s }, true);
+  try {
+    const p = db.create('公众号业务', 'real');
+    const job = service.start({ projectId: p.id, kind: 'wechat-article', url: 'https://example.com/not-wechat', urls: ['https://example.com/not-wechat'] });
+    for (let i = 0; i < 50 && jobs.list(p.id).find((x) => x.id === job.id)?.status === 'running'; i++) await delay(10);
+    const finished = jobs.list(p.id).find((x) => x.id === job.id); expect(finished?.status).toBe('failed'); expect(finished?.error).toContain('mp.weixin.qq.com');
+    expect(db.load(p.id).data.signals).toHaveLength(0);
+  } finally { db.close(); rmSync(dir, { recursive: true, force: true }); }
 });

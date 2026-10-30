@@ -17,7 +17,7 @@ export interface DesktopCommands {
   'sync.disconnect': { input: undefined; output: void };
   'sync.resolve': { input: { id: string; choice: 'local' | 'remote' }; output: void };
   'sync.preview': { input: { id: string }; output: { local: Project; remote: Project } };
-  'collect.start': { input: { projectId: string; kind: 'web' | 'rss' | Platform; url: string; triggerTaskId?: string }; output: Job };
+  'collect.start': { input: { projectId: string; kind: 'web' | 'rss' | 'wechat-article' | 'paste' | Platform; url: string; urls?: string[]; platform?: 'douyin' | 'xiaohongshu' | 'wechat' | 'other'; title?: string; content?: string; publishedAt?: string; triggerTaskId?: string }; output: Job };
   'collect.retry': { input: { id: string }; output: Job };
   'connections.list': { input: undefined; output: Connection[] };
   'connections.save': { input: { platform: Platform; appId: string; secret?: string }; output: void };

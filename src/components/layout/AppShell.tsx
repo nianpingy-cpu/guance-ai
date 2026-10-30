@@ -9,6 +9,7 @@ import { DesktopSidebar, MobileSidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import { CompanyDrawer } from '@/features/company/CompanyDrawer';
 import { ImportModal } from '@/features/signals/ImportModal';
+import { QuickAddModal } from '@/features/signals/QuickAddModal';
 import { Modal } from '@/components/ui/Overlay';
 import { Button } from '@/components/ui/Button';
 import { InfoBanner } from '@/components/ui/Form';
@@ -83,6 +84,7 @@ export function AppShell() {
 
       <CompanyDrawer />
       <ImportModal />
+      <QuickAddModal />
       {window.guance && <Settings />}
       <ToastViewport />
 

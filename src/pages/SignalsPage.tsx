@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   CircleDashed,
   FilterX,
+  Plus,
   RotateCcw,
   Search,
   Upload,
@@ -58,6 +59,7 @@ export function SignalsPage() {
   const [page, setPage] = useState(1);
   const data = useAppStore((state) => state);
   const openImport = useUiStore((state) => state.openImportModal);
+  const openQuickAdd = useUiStore((state) => state.openQuickAdd);
   const [searchParams, setSearchParams] = useSearchParams();
   const focusId = searchParams.get('focus');
   const dateParam = searchParams.get('date');
@@ -142,7 +144,10 @@ export function SignalsPage() {
                 </span>
               ) : null}
             </Button>
-            <Button variant="primary" icon={<Upload size={14} />} onClick={openImport}>
+            {window.guance && <Button variant="primary" icon={<Plus size={14} />} onClick={openQuickAdd}>
+              粘贴添加
+            </Button>}
+            <Button variant="ghost" icon={<Upload size={14} />} onClick={openImport}>
               导入情报
             </Button>
           </>
@@ -304,13 +309,16 @@ export function SignalsPage() {
             <div className="p-6">
               <EmptyState
                 title="没有匹配的情报"
-                description="尝试放宽关键词、来源或时间范围；也可以导入新的情报。"
+                description="尝试放宽关键词、来源或时间范围；也可以粘贴公众号链接或抖音/小红书文案。"
                 action={
                   <div className="flex gap-2">
                     <Button size="sm" onClick={resetFilters} icon={<RotateCcw size={13} />}>
                       重置筛选
                     </Button>
-                    <Button size="sm" variant="primary" onClick={openImport} icon={<Upload size={13} />}>
+                    {window.guance && <Button size="sm" variant="primary" onClick={openQuickAdd} icon={<Plus size={13} />}>
+                      粘贴添加
+                    </Button>}
+                    <Button size="sm" onClick={openImport} icon={<Upload size={13} />}>
                       导入情报
                     </Button>
                   </div>

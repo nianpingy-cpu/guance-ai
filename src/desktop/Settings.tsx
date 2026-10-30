@@ -23,10 +23,10 @@ export function Settings() {
   useEffect(() => { if (open) setTab(initialTab); }, [open, initialTab]);
   useEffect(() => { if (open) void refreshProjects().catch((e: unknown) => setMessage(String(e))); }, [open]);
   const run = async (operation: () => Promise<void>) => { setBusy(true); setMessage(''); try { await operation(); } catch (e) { setMessage(e instanceof Error ? e.message : '操作失败'); } finally { setBusy(false); } };
-  return <Modal open={open} onClose={close} size="lg" title="设置" description="业务数据保存到本机。演示项目与真实项目独立管理；官方平台和 WebDAV 都是可选项，不填也能正常使用。">
-    <div className="mb-5 flex flex-wrap gap-2 border-b border-line pb-3">{['项目与备份', '模型连接', '来源连接（可选）', '跨设备同步（WebDAV）'].map((t) => <Button key={t} onClick={() => setTab(t)} variant={tab === t ? 'primary' : 'secondary'}>{t}</Button>)}</div>
+  return <Modal open={open} onClose={close} size="lg" title="设置" description="业务数据保存到本机。普通用户直接用“市场情报 → 粘贴添加”，无需登录或密钥；官方平台和 WebDAV 都是可选项。">
+    <div className="mb-5 flex flex-wrap gap-2 border-b border-line pb-3">{['项目与备份', '模型连接', '企业技术接入', '跨设备同步（WebDAV）'].map((t) => <Button key={t} onClick={() => setTab(t)} variant={tab === t ? 'primary' : 'secondary'}>{t}</Button>)}</div>
     {tab === '模型连接' && <ModelSettings />}
-    {tab === '来源连接（可选）' && <ConnectionSettings />}
+    {tab === '企业技术接入' && <ConnectionSettings />}
     {tab === '跨设备同步（WebDAV）' && <SyncSettings />}
     {(message || saveError) && <InfoBanner className="mb-4" tone="warning">{message || saveError}</InfoBanner>}
     {tab === '项目与备份' && <div className="space-y-5">

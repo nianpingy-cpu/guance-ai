@@ -9,7 +9,17 @@ import type { Vault } from './models';
 import { checkedFetch } from './network';
 import { checkedPublicFetch } from './public-network';
 export { isNonPublicAddress as privateIP } from './public-network';
-export const collectionSchema = z.object({ projectId: z.string().min(1), kind: z.enum(['web', 'rss', 'wechat', 'xiaohongshu', 'douyin']), url: z.string().max(2000), triggerTaskId: z.string().optional() }).strict();
+export const collectionSchema = z.object({
+  projectId: z.string().min(1),
+  kind: z.enum(['web', 'rss', 'wechat', 'xiaohongshu', 'douyin', 'wechat-article', 'paste']),
+  url: z.string().max(2000),
+  urls: z.array(z.string().trim().min(1).max(2000)).min(1).max(10).optional(),
+  platform: z.enum(['douyin', 'xiaohongshu', 'wechat', 'other']).optional(),
+  title: z.string().trim().max(2000).optional(),
+  content: z.string().trim().max(200000).optional(),
+  publishedAt: z.string().trim().max(100).optional(),
+  triggerTaskId: z.string().optional(),
+}).strict();
 type Request = z.infer<typeof collectionSchema>;
 export const platformSchema = z.object({ platform: z.enum(['wechat', 'xiaohongshu', 'douyin']), appId: z.string().trim().min(1).max(200), secret: z.string().max(16000).optional() }).strict();
 export const capabilities = [
@@ -23,6 +33,44 @@ function text(html: string) {
   // XHTML may use any namespace prefix; only the local tag name identifies non-content nodes.
   $('*').filter((_, node) => 'tagName' in node && excluded.has(node.tagName.split(':').at(-1)?.toLowerCase() ?? '')).remove();
   return $.text().replace(/\s+/g, ' ').trim();
+}
+
+const quickPlatformNames = { douyin: '抖音', xiaohongshu: '小红书', wechat: '微信公众号', other: '其他来源' } as const;
+
+export function validateManualURL(value: string): URL | undefined {
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  let url: URL;
+  try { url = new URL(trimmed); } catch { throw new Error('来源链接格式不正确，请粘贴完整的 https:// 链接'); }
+  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('来源链接需为不含账号密码的公开 HTTP/HTTPS 地址');
+  return url;
+}
+
+export function wechatArticleURL(value: string): URL {
+  let url: URL;
+  try { url = new URL(value.trim()); } catch { throw new Error('公众号文章链接格式不正确，请粘贴完整的 https:// 链接'); }
+  if (url.protocol !== 'https:' || url.username || url.password) throw new Error('请使用公众号文章的 HTTPS 链接');
+  if (url.hostname.toLowerCase() !== 'mp.weixin.qq.com') throw new Error('只支持 mp.weixin.qq.com 的公众号文章链接');
+  if (!(url.pathname === '/s' || url.pathname.startsWith('/s/'))) throw new Error('请粘贴具体文章链接（地址以 mp.weixin.qq.com/s 开头），不是公众号后台或其他页面');
+  return url;
+}
+
+export function parseWechatArticle(html: string) {
+  const $ = load(html);
+  const title = $('#activity-name').first().text().replace(/\s+/g, ' ').trim() || $('meta[property="og:title"]').attr('content')?.trim() || $('title').text().trim();
+  const content = $('#js_content').first();
+  if (!content.length) {
+    const page = $('body').text();
+    if (/环境异常|访问过于频繁|验证码|请在微信客户端|该内容已被发布者删除|参数错误/i.test(page)) throw new Error('微信要求安全验证或文章不可公开访问；请打开文章复制全文，再用“粘贴内容”保存');
+    throw new Error('未读取到公众号正文；请打开文章复制全文，再用“粘贴内容”保存');
+  }
+  const markup = (content.html() ?? '').replace(/<br\s*\/?>/gi, '<br/> ').replace(/<\/(p|section|div|li|h[1-6]|blockquote)>/gi, '</$1> ');
+  const body = text(markup);
+  if (!body) throw new Error('公众号正文为空；请打开文章复制全文，再用“粘贴内容”保存');
+  const timestamp = html.match(/var\s+ct\s*=\s*"(\d+)"/)?.[1];
+  const published = timestamp ? new Date(Number(timestamp) * 1000).toISOString() : '';
+  const author = $('#js_name').first().text().replace(/\s+/g, ' ').trim();
+  return { title: title || '微信公众号文章', body, published, author };
 }
 export function validateCollectionURL(value: string): URL {
   const u = new URL(value); if (!['http:', 'https:'].includes(u.protocol) || u.username || u.password) throw new Error('采集仅支持无凭据的公开HTTP/HTTPS地址');
@@ -80,9 +128,68 @@ export class CollectionService {
     this.db.setSetting('platforms', [...all.filter((c) => c.platform !== input.platform), { platform: input.platform, appId: input.appId, cipher }]);
   }
   removeConnection(platform: string) { this.db.setSetting('platforms', this.db.setting<Array<{ platform: string }>>('platforms', []).filter((c) => c.platform !== platform)); }
+  private assertTriggerTask(input: Request) { if (!input.triggerTaskId) return; const initial = this.db.load(input.projectId); if (!initial.data.feedbackTasks.some((t) => t.id === input.triggerTaskId)) throw new Error('复盘来源任务不存在'); }
+  private saveRecords(projectId: string, rows: Array<{ title: string; body: string; url: string; published: string; platform: string; origin: NonNullable<Source['origin']>; note: string }>, taskId: string, triggerTaskId?: string): string {
+    const current = this.db.load(projectId); const data = structuredClone(current.data); let added = 0; let duplicates = 0; let missing = 0;
+    const hashes = new Set(data.sources.map((s) => s.contentHash));
+    for (const row of rows) {
+      if (!row.title || !row.body) { missing++; continue; }
+      const hash = createHash('sha256').update(row.body.replace(/\s+/g, ' ').trim()).digest('hex'); if (hashes.has(hash)) { duplicates++; continue; } hashes.add(hash);
+      const id = randomUUID(); const date = new Date().toISOString(); const publishedAt = Number.isFinite(Date.parse(row.published)) ? new Date(row.published).toISOString() : '';
+      const source: Source = { id: `SRC-${id}`, name: row.title.slice(0, 200), platform: row.platform, kind: 'industry', publishedAt, url: row.url || undefined, collectedAt: date, taskId, contentHash: hash, simulated: false, origin: row.origin, rawContent: row.body.slice(0, 200000), note: `${row.note}；${publishedAt ? (row.origin === 'manual' ? '发布时间来自用户填写' : '发布时间来自原文') : '未提供发布时间'}；${row.body.length > 200000 ? '正文超过20万字，已截断；' : ''}请人工核实原始来源` };
+      const record: Signal = { id: `S-${id}`, title: row.title.slice(0, 2000), summary: row.body.slice(0, 500), quote: row.body.slice(0, 4000), sourceId: source.id, platform: source.platform, category: 'industry', priority: 'medium', status: 'pending', relevance: 3, impact: '尚未分析，请核实原始来源后再用于策略', tags: [], capturedAt: date, note: '' };
+      data.sources.push(source); data.signals.push(record); added++;
+    }
+    if (triggerTaskId && added > 0) data.feedbackTasks = data.feedbackTasks.map((t) => t.id === triggerTaskId ? { ...t, status: 'done' as const } : t);
+    this.db.save(current.id, current.revision, data);
+    return `读取${rows.length}条，新增${added}条；重复${duplicates}条，缺少标题/正文${missing}条。${added === 0 ? `未新增有效情报${triggerTaskId ? '，关联复盘任务保留待办' : ''}。` : ''}`;
+  }
+  private startPaste(input: Request) {
+    this.assertTriggerTask(input);
+    const content = input.content?.trim(); if (!content) throw new Error('请粘贴抖音、小红书或公众号的文案/正文');
+    const platform = input.platform ?? 'other'; const url = validateManualURL(input.url)?.href ?? '';
+    const firstLine = content.split(/\r?\n/).map((line) => line.trim()).find(Boolean) ?? '';
+    const title = input.title?.trim() || firstLine.slice(0, 120) || `${quickPlatformNames[platform]}内容`;
+    const job = this.jobs.start(input.projectId, 'collect', async (_signal, progress, taskId) => {
+      progress('正在保存粘贴内容');
+      return this.saveRecords(input.projectId, [{ title, body: content, url, published: input.publishedAt ?? '', platform: quickPlatformNames[platform], origin: 'manual', note: '用户粘贴导入' }], taskId, input.triggerTaskId);
+    });
+    this.db.setSetting('collect:' + job.id, input); return job;
+  }
+  private startWechatArticles(input: Request) {
+    this.assertTriggerTask(input);
+    const urls = (input.urls?.length ? input.urls : [input.url]).map((value) => value.trim()).filter(Boolean);
+    if (!urls.length) throw new Error('请粘贴至少一篇公众号文章链接');
+    if (urls.length > 10) throw new Error('一次最多读取10篇公众号文章');
+    const job = this.jobs.start(input.projectId, 'collect', async (signal, progress, taskId) => {
+      const rows: Array<{ title: string; body: string; url: string; published: string; platform: string; origin: NonNullable<Source['origin']>; note: string }> = []; const failures: string[] = [];
+      for (const [index, raw] of urls.entries()) {
+        if (signal.aborted) throw new Error('已取消');
+        progress(`正在读取第${index + 1}/${urls.length}篇公众号文章`);
+        try {
+          const url = wechatArticleURL(raw);
+          const options = { signal: AbortSignal.any([signal, AbortSignal.timeout(30000)]), headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 GuanceAI/0.6', accept: 'text/html,application/xhtml+xml', referer: 'https://mp.weixin.qq.com/' } };
+          const response = await (this.testing ? checkedFetch(url, options, 5_000_000) : checkedPublicFetch(url, options, 5_000_000));
+          const html = await response.text(); if (signal.aborted) throw new Error('已取消');
+          const parsed = parseWechatArticle(html);
+          rows.push({ title: parsed.title, body: parsed.body, url: url.href, published: parsed.published, platform: '微信公众号', origin: 'public-web', note: `用户粘贴公众号文章链接${parsed.author ? `；作者：${parsed.author}` : ''}` });
+        } catch (e) {
+          if (signal.aborted) throw new Error('已取消', { cause: e });
+          failures.push(`第${index + 1}篇：${e instanceof Error ? e.message : '读取失败'}`);
+        }
+      }
+      if (!rows.length) throw new Error(failures.join('；') || '未读取到公众号文章');
+      const summary = this.saveRecords(input.projectId, rows, taskId, input.triggerTaskId);
+      return failures.length ? `${summary}；${failures.length}篇未读取：${failures.join('；')}` : summary;
+    });
+    this.db.setSetting('collect:' + job.id, input); return job;
+  }
   retry(id: string) { const input = this.db.setting<unknown>('collect:' + id, null); if (!input) throw new Error('任务参数不存在，请新建采集任务'); return this.start(collectionSchema.parse(input)); }
   start(value: Request) {
-    const input = collectionSchema.parse(value); if (input.kind !== 'web' && input.kind !== 'rss') throw new Error('官方平台待开通，不能启动对应采集任务');
+    const input = collectionSchema.parse(value);
+    if (input.kind === 'paste') return this.startPaste(input);
+    if (input.kind === 'wechat-article') return this.startWechatArticles(input);
+    if (input.kind !== 'web' && input.kind !== 'rss') throw new Error('官方平台待开通，不能启动对应采集任务');
     const initial = this.db.load(input.projectId); if (input.triggerTaskId && !initial.data.feedbackTasks.some((t) => t.id === input.triggerTaskId)) throw new Error('复盘来源任务不存在');
     const job = this.jobs.start(input.projectId, 'collect', async (signal, progress, taskId) => {
       progress('正在核对来源地址'); const url = validateCollectionURL(input.url);

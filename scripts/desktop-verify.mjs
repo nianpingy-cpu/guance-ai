@@ -61,7 +61,13 @@ try {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
     await page.screenshot({ path: `docs/desktop/${path}.png`, fullPage: true });
   }
-  await page.goto('guance://app/signals'); await page.getByRole('button', { name: '导入情报', exact: true }).first().click();
+  await page.goto('guance://app/signals');
+  await page.getByRole('button', { name: '粘贴添加', exact: true }).first().click();
+  await page.getByRole('dialog').waitFor();
+  assert.equal(await page.getByText('不用登录、不用填写应用ID或密钥', { exact: false }).count() > 0, true);
+  await page.keyboard.press('Escape');
+  results.push('桌面“粘贴添加”入口可打开，明确无需登录或应用密钥');
+  await page.getByRole('button', { name: '导入情报', exact: true }).first().click();
   await page.locator('input[type="file"]').setInputFiles({ name: 'native-fixture.csv', mimeType: 'text/csv', buffer: Buffer.from('标题,来源平台,类别,发布日期,摘要,原文引用,来源名称,相关性\n桌面导入验收,公开资料,行业,2026-10-26,人工导入样本,原始记录,本机测试文件,3\n') });
   await page.getByRole('button', { name: /确认导入/ }).click();
   let imported; for (let i = 0; i < 100; i++) { imported = await page.evaluate((id) => window.guance.invoke('projects.load', { id }), real.id); if (imported.data.signals.length) break; await delay(100); }
