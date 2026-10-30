@@ -41,9 +41,11 @@ function isPlatformUrl(platform: PlatformId, value: string) {
   } catch { return false; }
 }
 
-function platformCaptureScript(platform: PlatformId) {
-  return `(() => {
+function platformCaptureScript(platform: PlatformId, scrolls: number, maxItems: number) {
+  return `(async () => {
     const platform = ${JSON.stringify(platform)};
+    const maxItems = ${maxItems};
+    const scrollSteps = ${scrolls};
     const clean = (value) => String(value || '').replace(/\\s+/g, ' ').trim();
     const meta = (name) => {
       const node = document.querySelector('meta[property="' + name + '"], meta[name="' + name + '"]');
@@ -55,40 +57,70 @@ function platformCaptureScript(platform: PlatformId) {
         return (url.protocol === 'https:' || url.protocol === 'http:') ? url.href : '';
       } catch { return ''; }
     };
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const blocked = () => /环境异常|访问过于频繁|验证码|安全验证|captcha|请完成验证/i.test(document.body?.innerText || '');
     const result = [];
+    const seen = new Set();
+    const add = (title, url, content) => {
+      const cleanUrl = absolute(url);
+      const cleanTitle = clean(title).slice(0, 2000);
+      const cleanContent = clean(content).slice(0, 200000);
+      if (!cleanUrl || !cleanTitle || !cleanContent || seen.has(cleanUrl) || result.length >= maxItems) return;
+      seen.add(cleanUrl);
+      result.push({ title: cleanTitle, url: cleanUrl, content: cleanContent, platform: platform === 'wechat' ? '微信公众号' : platform === 'xiaohongshu' ? '小红书' : '抖音' });
+    };
+    const collectSearchLinks = () => {
+      if (platform === 'xiaohongshu') {
+        for (const anchor of document.querySelectorAll('a[href*="/explore/"], a[href*="/discovery/item/"]')) {
+          add(anchor.getAttribute('title') || anchor.textContent || '', anchor.getAttribute('href') || '', anchor.getAttribute('title') || anchor.textContent || '');
+          if (result.length >= maxItems) break;
+        }
+      } else if (platform === 'douyin') {
+        for (const anchor of document.querySelectorAll('a[href*="/video/"]')) {
+          add(anchor.getAttribute('title') || anchor.textContent || '', anchor.getAttribute('href') || '', anchor.getAttribute('title') || anchor.textContent || '');
+          if (result.length >= maxItems) break;
+        }
+      }
+    };
     if (platform === 'wechat') {
       const body = clean(document.querySelector('#js_content')?.innerText || '');
-      if (body) result.push({ title: clean(document.querySelector('#activity-name')?.textContent || meta('og:title') || document.title), url: location.href, content: body, platform: '微信公众号' });
+      if (body) add(document.querySelector('#activity-name')?.textContent || meta('og:title') || document.title, location.href, body);
     } else if (platform === 'xiaohongshu') {
       const detail = /\\/explore\\//.test(location.pathname) || /\\/discovery\\/item\\//.test(location.pathname);
-      const body = detail ? clean(document.querySelector('#detail-desc')?.innerText || document.querySelector('.note-content')?.innerText || meta('description') || '') : '';
-      if (body) result.push({ title: clean(document.querySelector('#detail-title')?.textContent || meta('og:title') || document.title), url: location.href, content: body, platform: '小红书' });
-      if (!result.length) {
-        const seen = new Set();
-        for (const anchor of document.querySelectorAll('a[href*="/explore/"], a[href*="/discovery/item/"]')) {
-          const url = absolute(anchor.getAttribute('href') || '');
-          const title = clean(anchor.getAttribute('title') || anchor.textContent || '');
-          if (!url || !title || seen.has(url)) continue;
-          seen.add(url); result.push({ title, url, content: title, platform: '小红书' });
-          if (result.length >= 20) break;
-        }
+      const searchPage = /\\/search_result\\//.test(location.pathname) || location.search.includes('keyword=');
+      if (detail) {
+        const body = clean(document.querySelector('#detail-desc')?.innerText || document.querySelector('.note-content')?.innerText || meta('description') || '');
+        if (body) add(document.querySelector('#detail-title')?.textContent || meta('og:title') || document.title, location.href, body);
+      } else if (searchPage) {
+        collectSearchLinks();
       }
     } else if (platform === 'douyin') {
       const detail = /\\/video\\//.test(location.pathname) || new URL(location.href).searchParams.has('modal_id');
-      const body = detail ? clean(document.querySelector('[data-e2e="video-desc"]')?.innerText || meta('description') || '') : '';
-      if (body) result.push({ title: clean(meta('og:title') || document.title), url: location.href, content: body, platform: '抖音' });
-      if (!result.length) {
-        const seen = new Set();
-        for (const anchor of document.querySelectorAll('a[href*="/video/"]')) {
-          const url = absolute(anchor.getAttribute('href') || '');
-          const title = clean(anchor.getAttribute('title') || anchor.textContent || '');
-          if (!url || !title || seen.has(url)) continue;
-          seen.add(url); result.push({ title, url, content: title, platform: '抖音' });
-          if (result.length >= 20) break;
+      const searchPage = /\\/search\\//.test(location.pathname) || location.search.includes('keyword=');
+      if (detail) {
+        const body = clean(document.querySelector('[data-e2e="video-desc"]')?.innerText || meta('description') || '');
+        if (body) add(meta('og:title') || document.title, location.href, body);
+      } else if (searchPage) {
+        collectSearchLinks();
+      }
+    }
+    if (scrollSteps > 0 && result.length < maxItems && (platform === 'xiaohongshu' || platform === 'douyin')) {
+      for (let index = 0; index < scrollSteps; index++) {
+        if (blocked()) throw new Error('页面出现平台验证，请手动完成后重试');
+        const before = result.length;
+        window.scrollTo(0, document.documentElement.scrollHeight);
+        await sleep(1400 + Math.floor(Math.random() * 700));
+        collectSearchLinks();
+        if (result.length >= maxItems) break;
+        if (result.length === before) {
+          await sleep(800);
+          collectSearchLinks();
+          if (result.length === before) break;
         }
       }
     }
-    return result.slice(0, 20);
+    if (blocked() && result.length === 0) throw new Error('页面出现平台验证，请手动完成后重试');
+    return result.slice(0, maxItems);
   })()`;
 }
 
@@ -120,12 +152,14 @@ async function openPlatformWindow(platform: PlatformId, requestedUrl?: string) {
   await win.loadURL(requestedUrl || platformStartUrls[platform]);
 }
 
-async function capturePlatformWindow(platform: PlatformId) {
+async function capturePlatformWindow(platform: PlatformId, options?: { scrolls?: number; maxItems?: number }) {
   const win = platformWindows.get(platform);
   if (!win || win.isDestroyed()) throw new Error('请先打开对应平台的登录窗口，并在窗口中打开一篇内容');
-  const raw = await win.webContents.executeJavaScriptInIsolatedWorld(999, [{ code: platformCaptureScript(platform) }], true);
+  const scrolls = Math.max(0, Math.min(10, Math.floor(options?.scrolls ?? 0)));
+  const maxItems = Math.max(1, Math.min(50, Math.floor(options?.maxItems ?? 20)));
+  const raw = await win.webContents.executeJavaScriptInIsolatedWorld(999, [{ code: platformCaptureScript(platform, scrolls, maxItems) }], true);
   if (!Array.isArray(raw)) throw new Error('页面内容格式不支持');
-  return raw.slice(0, 20).flatMap((item) => {
+  return raw.slice(0, maxItems).flatMap((item) => {
     if (!item || typeof item !== 'object') return [];
     const title = typeof item.title === 'string' ? item.title.trim().slice(0, 2000) : '';
     const url = typeof item.url === 'string' ? item.url.trim().slice(0, 2000) : '';
@@ -187,14 +221,14 @@ if (primary) app.whenReady().then(async () => {
     return request(message.command, message.input);
   });
   mainWindow = new BrowserWindow({ width: 1440, height: 960, minWidth: 1024, minHeight: 700, title: '观策AI', icon: join(client, 'icon.png'), backgroundColor: '#f5f7fa', webPreferences: { preload: join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true, webSecurity: true } });
-  ipcMain.handle('guance:platform', async (event, message: { action?: string; platform?: string; url?: string }) => {
+  ipcMain.handle('guance:platform', async (event, message: { action?: string; platform?: string; url?: string; options?: { scrolls?: number; maxItems?: number } }) => {
     const url = event.senderFrame?.url ?? '';
     const expected = development ? new URL(development).origin : 'guance://app';
     if (event.sender.id !== mainWindow.webContents.id || !(url === expected || url.startsWith(expected + '/'))) throw new Error('无权访问平台窗口');
     if (!message || !platformIds.has(message.platform as PlatformId)) throw new Error('不支持的平台');
     const platform = message.platform as PlatformId;
     if (message.action === 'open') return openPlatformWindow(platform, typeof message.url === 'string' ? message.url : undefined);
-    if (message.action === 'capture') return capturePlatformWindow(platform);
+    if (message.action === 'capture') return capturePlatformWindow(platform, message.options);
     if (message.action === 'close') { const win = platformWindows.get(platform); if (win && !win.isDestroyed()) win.close(); return; }
     if (message.action === 'clear') return clearPlatformWindow(platform);
     throw new Error('不支持的平台操作');

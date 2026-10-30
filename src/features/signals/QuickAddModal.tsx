@@ -27,6 +27,10 @@ function extractUrls(text: string) {
   return (text.match(/https?:\/\/[^\s<>"']+/g) ?? []).map((url) => url.replace(/[),，。；;!！?？]+$/, '')).filter(Boolean);
 }
 
+function errorText(error: unknown) {
+  return error instanceof Error ? error.message.replace(/^Error invoking remote method '[^']+': (?:Error: )?/, '') : '操作失败';
+}
+
 function isWechatArticleLink(value: string) {
   try {
     const url = new URL(value);
@@ -45,6 +49,8 @@ export function QuickAddModal() {
   const [socialText, setSocialText] = useState('');
   const [loginPlatform, setLoginPlatform] = useState<Platform>('douyin');
   const [loginUrl, setLoginUrl] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [captureDepth, setCaptureDepth] = useState<'current' | '20' | '50'>('20');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [tone, setTone] = useState<Tone>('neutral');
@@ -53,7 +59,7 @@ export function QuickAddModal() {
   useEffect(() => {
     activeRef.current = open;
     if (!open) return;
-    setMode('wechat'); setWechatLinks(''); setSocialPlatform('douyin'); setSocialTitle(''); setSocialText(''); setLoginPlatform('douyin'); setLoginUrl(''); setBusy(false); setMessage(''); setTone('neutral');
+    setMode('wechat'); setWechatLinks(''); setSocialPlatform('douyin'); setSocialTitle(''); setSocialText(''); setLoginPlatform('douyin'); setLoginUrl(''); setSearchKeyword(''); setCaptureDepth('20'); setBusy(false); setMessage(''); setTone('neutral');
   }, [open]);
   useEffect(() => () => { activeRef.current = false; }, []);
 
@@ -117,7 +123,27 @@ export function QuickAddModal() {
       setTone('success');
       setMessage(`已打开${loginPlatformLabels[loginPlatform]}窗口。请完成登录并打开一篇视频、笔记或文章，然后回到这里点“采集当前页面”。`);
     } catch (error) {
-      if (activeRef.current) { setTone('danger'); setMessage(error instanceof Error ? error.message : '登录窗口打开失败'); }
+      if (activeRef.current) { setTone('danger'); setMessage(errorText(error) || '登录窗口打开失败'); }
+    } finally {
+      if (activeRef.current) setBusy(false);
+    }
+  }
+
+  async function openPlatformSearch() {
+    if (!window.guance) return;
+    const keyword = searchKeyword.trim();
+    if (!keyword) { setTone('warning'); setMessage('请先输入搜索关键词。'); return; }
+    if (loginPlatform === 'wechat') { setTone('warning'); setMessage('公众号请直接粘贴文章链接，或打开文章页后采集当前页。'); return; }
+    const url = loginPlatform === 'douyin'
+      ? `https://www.douyin.com/search/${encodeURIComponent(keyword)}`
+      : `https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(keyword)}`;
+    setBusy(true); setMessage(''); setTone('neutral');
+    try {
+      await window.guance.platform.open(loginPlatform, url);
+      setTone('success');
+      setMessage(`已在登录窗口打开“${keyword}”的搜索结果。需要时手动登录/通过验证，然后回到这里采集。`);
+    } catch (error) {
+      if (activeRef.current) { setTone('danger'); setMessage(errorText(error) || '搜索页面打开失败'); }
     } finally {
       if (activeRef.current) setBusy(false);
     }
@@ -128,7 +154,8 @@ export function QuickAddModal() {
     setBusy(true); setMessage(''); setTone('neutral');
     try {
       await flushDesktop();
-      const items = await window.guance.platform.capture(loginPlatform);
+      const depth = loginPlatform === 'wechat' || captureDepth === 'current' ? { scrolls: 0, maxItems: 10 } : captureDepth === '50' ? { scrolls: 8, maxItems: 50 } : { scrolls: 4, maxItems: 20 };
+      const items = await window.guance.platform.capture(loginPlatform, depth);
       if (!items.length) throw new Error('当前页面没有识别到可保存内容。请先在登录窗口打开一篇视频、笔记或文章，或完成登录后再试。');
       let saved = 0; let failed = 0;
       for (const item of items.slice(0, 20)) {
@@ -142,7 +169,7 @@ export function QuickAddModal() {
       setTone(saved ? 'success' : 'warning');
       setMessage(`已保存 ${saved} 条${failed ? `，${failed} 条失败` : ''}。请到市场情报核实原始来源。`);
     } catch (error) {
-      if (activeRef.current) { setTone('danger'); setMessage(error instanceof Error ? error.message : '采集当前页面失败'); }
+      if (activeRef.current) { setTone('danger'); setMessage(errorText(error) || '采集当前页面失败'); }
     } finally {
       if (activeRef.current) setBusy(false);
     }
@@ -155,14 +182,14 @@ export function QuickAddModal() {
       await window.guance.platform.clear(loginPlatform);
       setTone('success'); setMessage(`已清除${loginPlatformLabels[loginPlatform]}的登录状态。`);
     } catch (error) {
-      if (activeRef.current) { setTone('danger'); setMessage(error instanceof Error ? error.message : '清除登录状态失败'); }
+      if (activeRef.current) { setTone('danger'); setMessage(errorText(error) || '清除登录状态失败'); }
     } finally {
       if (activeRef.current) setBusy(false);
     }
   }
 
   return <Modal open={open} onClose={close} size="lg" title="添加情报" description="推荐直接粘贴；需要登录的页面可用内置登录窗口，手动登录后采集当前页面。"
-    footer={<><Button onClick={close}>关闭</Button><Button variant="primary" disabled={busy || !projectId} onClick={() => void (mode === 'login' ? captureLoginPage() : submit())}>{busy ? '处理中…' : mode === 'login' ? '采集当前页面' : mode === 'wechat' ? '读取并添加文章' : '保存为情报'}</Button></>}>
+    footer={<><Button onClick={close}>关闭</Button><Button variant="primary" disabled={busy || !projectId} onClick={() => void (mode === 'login' ? captureLoginPage() : submit())}>{busy ? '处理中…' : mode === 'login' ? (loginPlatform === 'wechat' || captureDepth === 'current' ? '采集当前页面' : '采集当前搜索结果') : mode === 'wechat' ? '读取并添加文章' : '保存为情报'}</Button></>}>
     <div className="space-y-4">
       <InfoBanner tone="brand" title="给业务同事的最简操作">
         公众号文章：复制文章链接即可。抖音 / 小红书：复制分享文案或正文即可。粘贴模式：不用登录、不用填写应用ID或密钥；需要登录时再用“登录窗口采集”。
@@ -215,10 +242,23 @@ export function QuickAddModal() {
           点击下方按钮会打开独立的平台登录窗口。请只登录自己的账号；窗口不会读取或上传你的密码，但登录状态会保存在本机独立分区。平台可能要求验证码，账号风控风险由使用者自行承担。
         </InfoBanner>
         <div className="grid gap-2 sm:grid-cols-3">
-          {loginPlatformOptions.map((item) => <button key={item.value} type="button" onClick={() => { setLoginPlatform(item.value); setMessage(''); }} className={`rounded-xl border p-3 text-left ${loginPlatform === item.value ? 'border-brand bg-[#f5f8fc]' : 'border-line bg-white'}`}><p className="text-sm font-semibold text-ink">{item.label}</p><p className="mt-1 text-[11px] leading-5 text-muted">{item.note}</p></button>)}
+          {loginPlatformOptions.map((item) => <button key={item.value} type="button" onClick={() => { setLoginPlatform(item.value); if (item.value === 'wechat') setCaptureDepth('current'); setMessage(''); }} className={`rounded-xl border p-3 text-left ${loginPlatform === item.value ? 'border-brand bg-[#f5f8fc]' : 'border-line bg-white'}`}><p className="text-sm font-semibold text-ink">{item.label}</p><p className="mt-1 text-[11px] leading-5 text-muted">{item.note}</p></button>)}
         </div>
         <Field label="可选：先打开一个链接" htmlFor="quick-login-url" hint="不填则打开平台首页。公众号可粘贴文章链接；抖音/小红书可粘贴视频或笔记链接。">
           <input id="quick-login-url" className="input" type="url" placeholder="https://…" value={loginUrl} onChange={(event) => setLoginUrl(event.target.value)} />
+        </Field>
+        {loginPlatform !== 'wechat' && <Field label="在登录窗口搜索关键词（可选）" htmlFor="quick-login-search" hint="会打开该平台的搜索结果页；你仍需在窗口中手动登录/通过验证。应用只读取当前搜索结果页可见卡片。">
+          <div className="flex gap-2">
+            <input id="quick-login-search" className="input min-w-0 flex-1" placeholder="例如：秋季护肤" value={searchKeyword} onChange={(event) => setSearchKeyword(event.target.value)} />
+            <Button disabled={busy} onClick={() => void openPlatformSearch()}>搜索</Button>
+          </div>
+        </Field>}
+        <Field label="采集深度" htmlFor="quick-capture-depth" hint="“缓慢加载”会在当前搜索结果页向下滚动，最多50条；不会无限翻页，也不会调用平台内部接口。">
+          <select id="quick-capture-depth" className="input" value={captureDepth} onChange={(event) => setCaptureDepth(event.target.value as 'current' | '20' | '50')} disabled={loginPlatform === 'wechat'}>
+            <option value="current">仅当前可见页面</option>
+            <option value="20">缓慢加载约20条</option>
+            <option value="50">缓慢加载约50条</option>
+          </select>
         </Field>
         <div className="flex flex-wrap gap-2">
           <Button variant="primary" disabled={busy} onClick={() => void openPlatformLogin()}>打开登录窗口</Button>
@@ -228,12 +268,12 @@ export function QuickAddModal() {
           <p className="text-sm font-semibold text-ink">操作步骤</p>
           <ol className="mt-2 list-decimal space-y-1 pl-5 text-[12px] leading-6 text-muted">
             <li>点“打开登录窗口”，在独立窗口中扫码或登录。</li>
-            <li>在窗口里打开一篇视频、笔记或公众号文章；搜索页会保存可见链接。</li>
-            <li>回到本窗口，点底部“采集当前页面”。</li>
+            <li>在窗口里打开一篇视频、笔记或公众号文章；也可以输入关键词打开搜索结果。</li>
+            <li>选择采集深度，回到本窗口点底部“采集当前页面/搜索结果”。</li>
             <li>采集结果会进入市场情报，标记为待核实。</li>
           </ol>
         </div>
-        <p className="text-[11px] leading-5 text-faint">只采集当前页面可见内容，不导出 Cookie，不上传账号密码。抖音/小红书页面改版或要求验证时会提示采集失败。</p>
+        <p className="text-[11px] leading-5 text-faint">只读取当前页/当前搜索结果可见内容，最多50条；不导出 Cookie、不上传账号密码、不调用平台内部接口。遇到验证会停止，页面改版时可能失败。</p>
       </div>}
 
       {message && <InfoBanner tone={tone}>{message}</InfoBanner>}

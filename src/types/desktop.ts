@@ -43,7 +43,7 @@ export interface DesktopCommands {
 export type Command = keyof DesktopCommands;
 export interface PlatformBridge {
   open(platform: Platform, url?: string): Promise<void>;
-  capture(platform: Platform): Promise<CapturedItem[]>;
+  capture(platform: Platform, options?: { scrolls?: number; maxItems?: number }): Promise<CapturedItem[]>;
   close(platform: Platform): Promise<void>;
   clear(platform: Platform): Promise<void>;
 }

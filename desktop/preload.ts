@@ -7,7 +7,7 @@ const bridge: GuanceBridge = {
   invoke: (command, input) => ipcRenderer.invoke('guance:request', { command, input }),
   platform: {
     open: (platform, url) => ipcRenderer.invoke('guance:platform', { action: 'open', platform, url }),
-    capture: (platform) => ipcRenderer.invoke('guance:platform', { action: 'capture', platform }),
+    capture: (platform, options) => ipcRenderer.invoke('guance:platform', { action: 'capture', platform, options }),
     close: (platform) => ipcRenderer.invoke('guance:platform', { action: 'close', platform }),
     clear: (platform) => ipcRenderer.invoke('guance:platform', { action: 'clear', platform }),
   },
