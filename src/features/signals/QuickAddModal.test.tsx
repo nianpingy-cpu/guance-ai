@@ -27,7 +27,7 @@ afterEach(async () => {
 });
 function bridge(handler: (command: string, input: Record<string, unknown>) => unknown) {
   const invoke = vi.fn(async (command: string, input: unknown) => handler(command, input as Record<string, unknown>));
-  window.guance = { desktop: true, onBeforeClose() {}, invoke: invoke as GuanceBridge['invoke'] }; return invoke;
+  window.guance = { desktop: true, onBeforeClose() {}, invoke: invoke as GuanceBridge['invoke'], platform: { open: async () => undefined, capture: async () => [], close: async () => undefined, clear: async () => undefined } }; return invoke;
 }
 function setValue(element: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement, value: string) {
   const prototype = element instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : element instanceof HTMLSelectElement ? HTMLSelectElement.prototype : HTMLInputElement.prototype;
@@ -62,4 +62,21 @@ it('公众号链接会拒绝非文章地址，不会提交任务', async () => {
   await act(async () => button('读取并添加文章').click());
   expect(document.body.textContent).toContain('这不是公众号文章链接');
   expect(invoke.mock.calls.some(([command]) => command === 'collect.start')).toBe(false);
+});
+
+it('登录窗口模式会打开选定平台并提示只使用自己的账号', async () => {
+  const open = vi.fn(async () => undefined);
+  window.guance = {
+    desktop: true,
+    onBeforeClose() {},
+    invoke: vi.fn() as GuanceBridge['invoke'],
+    platform: { open, capture: vi.fn(async () => []), close: vi.fn(async () => undefined), clear: vi.fn(async () => undefined) },
+  };
+  await act(async () => { root.render(<QuickAddModal />); });
+  await act(async () => button('登录窗口采集（实验）').click());
+  expect(document.body.textContent).toContain('实验功能：使用你自己的平台账号');
+  await act(async () => button(/扫码登录后打开笔记/).click());
+  await act(async () => button('打开登录窗口').click());
+  expect(open).toHaveBeenCalledWith('xiaohongshu', undefined);
+  expect(document.body.textContent).toContain('登录状态会保存在本机独立分区');
 });

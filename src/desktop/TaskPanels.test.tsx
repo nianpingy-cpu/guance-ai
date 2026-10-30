@@ -25,7 +25,7 @@ beforeEach(() => {
 afterEach(async () => { await act(async () => root.unmount()); node.remove(); localStorage.clear(); delete window.guance; vi.useRealTimers(); vi.unstubAllGlobals(); });
 function bridge(handler: (command: string, input: Record<string, unknown>) => unknown) {
   const invoke = vi.fn(async (command: string, input: unknown) => handler(command, input as Record<string, unknown>));
-  window.guance = { desktop: true, onBeforeClose() {}, invoke: invoke as GuanceBridge['invoke'] }; return invoke;
+  window.guance = { desktop: true, onBeforeClose() {}, invoke: invoke as GuanceBridge['invoke'], platform: { open: async () => undefined, capture: async () => [], close: async () => undefined, clear: async () => undefined } }; return invoke;
 }
 async function switchTo(id: string) { await act(async () => useDesktopState.setState({ current: project(id) })); }
 function button(pattern: string | RegExp) { return [...node.querySelectorAll('button')].find(b => typeof pattern === 'string' ? b.textContent === pattern : pattern.test(b.textContent ?? ''))!; }

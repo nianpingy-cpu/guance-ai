@@ -7,6 +7,7 @@ export interface Provider { id: string; name: string; baseUrl: string; protocol:
 export type ProviderInput = Omit<Provider, 'id' | 'hasKey'> & { id?: string; apiKey?: string };
 export interface Job { id: string; projectId: string; kind: 'analysis' | 'collect'; status: 'running' | 'completed' | 'failed' | 'cancelled' | 'interrupted'; progress: string; createdAt: string; error?: string; result?: string }
 export type Platform = 'wechat' | 'xiaohongshu' | 'douyin';
+export interface CapturedItem { title: string; url: string; content: string; platform: string; publishedAt?: string }
 export interface Connection { id: string; name: string; status: string; link: string; description: string; appId: string; hasSecret: boolean }
 export interface SyncStatus { configured: boolean; url: string; username: string; automatic: boolean; busy: boolean; lastSuccess: string; error: string; conflicts: Array<{ id: string; projectId: string; name: string; remoteRevision: string; remoteUpdatedAt: string; remoteBudgetCents: number; localBudgetCents: number }> }
 export interface DesktopCommands {
@@ -40,9 +41,16 @@ export interface DesktopCommands {
   'projects.resetDemo': { input: { id: string }; output: Project };
 }
 export type Command = keyof DesktopCommands;
+export interface PlatformBridge {
+  open(platform: Platform, url?: string): Promise<void>;
+  capture(platform: Platform): Promise<CapturedItem[]>;
+  close(platform: Platform): Promise<void>;
+  clear(platform: Platform): Promise<void>;
+}
 export interface GuanceBridge {
   readonly desktop: true;
   onBeforeClose(callback: () => Promise<void>): void;
   invoke<K extends Command>(command: K, input: DesktopCommands[K]['input']): Promise<DesktopCommands[K]['output']>;
+  platform: PlatformBridge;
 }
 declare global { interface Window { guance?: GuanceBridge } }

@@ -145,7 +145,7 @@ export function SignalsPage() {
               ) : null}
             </Button>
             {window.guance && <Button variant="primary" icon={<Plus size={14} />} onClick={openQuickAdd}>
-              粘贴添加
+              添加情报
             </Button>}
             <Button variant="ghost" icon={<Upload size={14} />} onClick={openImport}>
               导入情报
@@ -316,7 +316,7 @@ export function SignalsPage() {
                       重置筛选
                     </Button>
                     {window.guance && <Button size="sm" variant="primary" onClick={openQuickAdd} icon={<Plus size={13} />}>
-                      粘贴添加
+                      添加情报
                     </Button>}
                     <Button size="sm" onClick={openImport} icon={<Upload size={13} />}>
                       导入情报

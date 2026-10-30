@@ -19,6 +19,7 @@ async function setup(conflict: boolean) {
   let loadBarrier: { wait: Promise<void>; started: () => void } | undefined;
   const fakeWindow = Object.assign(new EventTarget(), { setInterval: () => 0, setTimeout: () => 0, guance: {
     desktop: true, onBeforeClose: () => undefined,
+    platform: { open: async () => undefined, capture: async () => [], close: async () => undefined, clear: async () => undefined },
     invoke: (async (command: string, input: unknown) => {
       const p = input as { id: string; revision: string; data: AppData };
       if (command === 'projects.list') return db.list();
