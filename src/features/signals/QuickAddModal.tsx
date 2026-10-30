@@ -123,6 +123,10 @@ export function QuickAddModal() {
         <Field label="公众号文章链接" htmlFor="quick-wechat-links" hint="只读取公开文章；遇到“环境异常/需要验证”时，请打开文章复制全文，改用“抖音 / 小红书文案”保存。">
           <textarea id="quick-wechat-links" className="input min-h-32" rows={5} placeholder={'https://mp.weixin.qq.com/s/…\nhttps://mp.weixin.qq.com/s/…'} value={wechatLinks} onChange={(event) => setWechatLinks(event.target.value)} />
         </Field>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] text-muted">也可以上传 .txt / .csv 链接列表：</span>
+          <input type="file" accept=".txt,.csv,text/plain,text/csv" className="text-[11px]" onChange={(event) => { void (async () => { const file = event.target.files?.[0]; if (!file) return; const urls = extractUrls(await file.text()).filter(isWechatArticleLink); if (!urls.length) { setTone('warning'); setMessage('文件里没有识别到公众号文章链接。'); return; } setWechatLinks(urls.slice(0, 10).join('\n')); setTone('neutral'); setMessage(urls.length > 10 ? `文件里识别到 ${urls.length} 个链接，已填入前 10 个；请分批读取。` : `已从文件识别到 ${urls.length} 个公众号文章链接。`); })(); }} />
+        </div>
       </div> : <div className="space-y-4">
         <div className="rounded-xl border border-line bg-[#f8fafc] p-4">
           <p className="text-sm font-semibold text-ink">怎么复制抖音 / 小红书内容</p>
