@@ -123,7 +123,7 @@ async function openPlatformWindow(platform: PlatformId, requestedUrl?: string) {
 async function capturePlatformWindow(platform: PlatformId) {
   const win = platformWindows.get(platform);
   if (!win || win.isDestroyed()) throw new Error('请先打开对应平台的登录窗口，并在窗口中打开一篇内容');
-  const raw = await win.webContents.executeJavaScript(platformCaptureScript(platform), true);
+  const raw = await win.webContents.executeJavaScriptInIsolatedWorld(999, [{ code: platformCaptureScript(platform) }], true);
   if (!Array.isArray(raw)) throw new Error('页面内容格式不支持');
   return raw.slice(0, 20).flatMap((item) => {
     if (!item || typeof item !== 'object') return [];
