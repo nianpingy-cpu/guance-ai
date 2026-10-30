@@ -81,6 +81,7 @@ Web操作回归：启动预览，设置BASE_URL后运行`npm run ui:verify`和`n
 - [设置填写说明：官方平台ID/密钥与WebDAV](docs/SETTINGS-GUIDE.md)
 - [设置填写修复与验收](docs/QA-v0.6.2-settings-help.md)
 - [粘贴添加与公众号公开文章采集验收](docs/QA-v0.6.2-quick-capture.md)
+- [开源采集方案调研：为什么没有直接集成](docs/OPEN-SOURCE-OPTIONS.md)
 - [v0.6.1字体设计与验证](docs/QA-v0.6.1-typography.md)
 - [完整测试方案](docs/TEST-PLAN-v0.6.md)
 - [发布门槛与限制](docs/RELEASE-v0.6.md)
